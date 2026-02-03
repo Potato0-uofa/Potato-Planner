@@ -1,2 +1,3 @@
-STUDENT NAME / CCID / STUDENT ID:
-1. Eypan Mercado / eypan / 1800672
+STUDENT NAME / CCID / Github
+1. Eypan Mercado / eypan / Eypan1
+
