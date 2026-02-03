@@ -2,4 +2,6 @@ STUDENT NAME / CCID / Github
 1. Eypan Mercado / eypan / Eypan1
 2. Priyansha / priyans5 / Priyansha70
 3. Reese Medele / medele / rmedele
+4. Ivan Baldo / ibaldo / IvanBaldo67
+
 
