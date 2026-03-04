@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1C1B2E"
+    android:padding="32dp"
+    android:gravity="center_vertical">
+
+    <!--- Log In Text -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log In"
+        android:textColor="#FFFFFF"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="32dp"/>
+
+    <!--- Username Text (Above user input prompt) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="6dp"/>
+
+    <!--- Username Text (In user input prompt)
+          TODO: Implement functionality (Allows user to enter username)-->
+    <EditText
+        android:id="@+id/edit_username"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:hint="Username"
+        android:textColorHint="#AAAAAA"
+        android:textColor="#000000"
+        android:background="@drawable/input_background"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:inputType="text"
+        android:layout_marginBottom="20dp"/>
+
+    <!--- Password Text (Above user input prompt) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="6dp"/>
+
+    <!--- Password Text (In user input prompt)
+          TODO: Implement functionality (Allows user to enter password) -->
+    <EditText
+        android:id="@+id/edit_password"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:hint="Password"
+        android:textColorHint="#AAAAAA"
+        android:textColor="#000000"
+        android:background="@drawable/input_background"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:inputType="textPassword"
+        android:layout_marginBottom="24dp"/>
+
+    <!--- Log In Text (In purple button) -->
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Log In"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_purple"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
+
+    <!--- Forgot your Password Text
+          TODO: Implement functionality (Redirects to password reset page) -->
+    <TextView
+        android:id="@+id/txt_forgot_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot your password?"
+        android:textColor="#AAAAAA"
+        android:textSize="14sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"/>
+
+    <!--- Or Text -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OR"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF"/>
+
+    </LinearLayout>
+
+    <!--- New user? Sign up Text
+          TODO: Implement functionality (redirects to sign up page) -->
+    <TextView
+        android:id="@+id/txt_sign_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New user? Sign up"
+        android:textColor="#9B72CF"
+        android:textSize="14sp"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

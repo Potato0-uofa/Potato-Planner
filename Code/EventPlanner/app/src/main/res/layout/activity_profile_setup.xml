@@ -7,6 +7,7 @@
     android:padding="32dp"
     android:gravity="center_vertical">
 
+    <!--- Sign Up Header -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,6 +18,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="32dp"/>
 
+    <!--- Name Text (Above user input prompt) -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,6 +28,7 @@
         android:textSize="16sp"
         android:layout_marginBottom="6dp"/>
 
+    <!--- Name Text (In user input prompt) -->
     <EditText
         android:id="@+id/edit_name"
         android:layout_width="match_parent"
@@ -39,6 +42,7 @@
         android:inputType="textPersonName"
         android:layout_marginBottom="20dp"/>
 
+    <!--- Email Text (Above user input prompt) -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,6 +52,7 @@
         android:textSize="16sp"
         android:layout_marginBottom="6dp"/>
 
+    <!--- Email Text (In user input prompt) -->
     <EditText
         android:id="@+id/edit_email"
         android:layout_width="match_parent"
@@ -61,20 +66,22 @@
         android:inputType="textEmailAddress"
         android:layout_marginBottom="20dp"/>
 
+    <!--- Phone Number Text (Above user input prompt) -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phone Number (Optional)"
+        android:text="Phone Number"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         android:textSize="16sp"
         android:layout_marginBottom="6dp"/>
 
+    <!--- Phone Number Text (In user input prompt) -->
     <EditText
         android:id="@+id/edit_phone"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:hint="Phone Number (Optional)"
+        android:hint="Phone Number"
         android:textColorHint="#AAAAAA"
         android:textColor="#000000"
         android:background="@drawable/input_background"
@@ -83,6 +90,7 @@
         android:inputType="phone"
         android:layout_marginBottom="36dp"/>
 
+    <!--- Confirm Text (In purple button) -->
     <Button
         android:id="@+id/btn_save_profile"
         android:layout_width="match_parent"
