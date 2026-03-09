@@ -12,7 +12,7 @@ public class UserSettings {
     public UserSettings() { // Required for Firestore
     }
 
-    // Constructor for UserSettings
+    // Constructor for UserSettingss
     public UserSettings(String name, String username, String email, String phoneNumber, String
                         country, boolean notificationsFromOrganizers,
                         boolean notificationsFromAdmins, boolean appUpdates) {
