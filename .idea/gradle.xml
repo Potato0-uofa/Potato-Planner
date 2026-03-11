@@ -5,12 +5,12 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="testRunner" value="CHOOSE_PER_TEST" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/EventPlanner" />
-        <option name="gradleJvm" value="#JAVA_HOME" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Code/EventPlanner" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/EventPlanner" />
-            <option value="$PROJECT_DIR$/EventPlanner/app" />
+            <option value="$PROJECT_DIR$/Code/EventPlanner" />
+            <option value="$PROJECT_DIR$/Code/EventPlanner/app" />
           </set>
         </option>
       </GradleProjectSettings>

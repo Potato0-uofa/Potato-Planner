@@ -49,4 +49,11 @@ public abstract class CustomLogs {
         return items.size();
     }
 
+    public void clearItems() {
+        /**
+         * Clears all the items in the custom log
+         */
+
+    }
+
 }
