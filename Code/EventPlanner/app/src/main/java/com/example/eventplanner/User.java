@@ -38,7 +38,7 @@ public class User {
         return phone;
     }
 
-    // Setterse
+    // Setters
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
