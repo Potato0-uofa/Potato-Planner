@@ -53,7 +53,32 @@ public abstract class CustomLogs {
         /**
          * Clears all the items in the custom log
          */
-
+        items.clear();
     }
 
+    public void addNotificationLog(Notification notification) {
+        /**
+         * Adds a notification to the custom log
+         * @param notification
+         *      notification to add
+         */
+        if (notification != null) {
+            items.add(notification);
+        }
+    }
+
+    public ArrayList<Notification> getNotificationLogs() {
+        /**
+         * Returns all notification objects stored in the custom log
+         * @return
+         *      list of notifications
+         */
+        ArrayList<Notification> notifications = new ArrayList<>();
+        for (Object item : items) {
+            if (item instanceof Notification) {
+                notifications.add((Notification) item);
+            }
+        }
+        return notifications;
+    }
 }

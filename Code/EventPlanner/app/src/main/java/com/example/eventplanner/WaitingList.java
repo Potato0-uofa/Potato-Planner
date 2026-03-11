@@ -32,8 +32,8 @@ public class WaitingList extends CustomLogs {
         entrants.remove(entrant);
     }
 
-    public List<Entrant> getEntrants() {
-        return entrants;
+    public ArrayList<Entrant> getEntrants() {
+        return new ArrayList<>(entrants);
     }
 
     public int getCount() {
