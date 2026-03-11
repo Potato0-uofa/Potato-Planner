@@ -2,8 +2,7 @@ package com.example.eventplanner;
 
 import java.util.List;
 
-public class EventList extends CustomLogs {
-
+public class History extends CustomLogs{
     private List<Events> events;
 
     public void addEvent(Events event) {

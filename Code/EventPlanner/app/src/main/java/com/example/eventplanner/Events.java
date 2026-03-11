@@ -2,6 +2,10 @@ package com.example.eventplanner;
 
 import com.google.firebase.Timestamp;
 
+/**
+ * Represents an event in the event planner application.
+ * Supports Firestore persistence + waiting list behavior.
+ */
 public class Events {
 
     private String eventId;
@@ -10,17 +14,41 @@ public class Events {
     private String date;
     private String description;
     private String location;
+
+    // Firebase/event management fields
     private int capacity;
     private String status; // open, closed, cancelled
     private Timestamp createdAt;
 
+    // Existing app behavior
+    private WaitingList waitingList;
+
+    /**
+     * Default constructor required for Firestore.
+     */
     public Events() {
-        // Required for Firestore
+        this.waitingList = new WaitingList();
     }
 
+    /**
+     * Backward-compatible constructor used by existing UI/tests.
+     */
+    public Events(String name, String date, String description, String location) {
+        this.name = name;
+        this.date = date;
+        this.description = description;
+        this.location = location;
+        this.waitingList = new WaitingList();
+        this.status = "open";
+    }
+
+    /**
+     * Extended constructor for Firebase-backed event data.
+     */
     public Events(String eventId, String organizerId, String name, String date,
-                  String description, String location, int capacity, String status,
-                  Timestamp createdAt) {
+                  String description, String location, int capacity,
+                  String status, Timestamp createdAt) {
+
         this.eventId = eventId;
         this.organizerId = organizerId;
         this.name = name;
@@ -30,7 +58,36 @@ public class Events {
         this.capacity = capacity;
         this.status = status;
         this.createdAt = createdAt;
+        this.waitingList = new WaitingList();
     }
+
+    // Waiting list behavior
+
+    public void addToWaitingList(Entrant entrant) {
+        if (!waitingList.hasEntrant(entrant)) {
+            waitingList.addEntrant(entrant);
+        }
+    }
+
+    public void removeFromWaitingList(Entrant entrant) {
+        if (waitingList.hasEntrant(entrant)) {
+            waitingList.deleteEntrant(entrant);
+        }
+    }
+
+    public boolean isOnWaitingList(Entrant entrant) {
+        return waitingList.hasEntrant(entrant);
+    }
+
+    public WaitingList getWaitingList() {
+        return waitingList;
+    }
+
+    public void setWaitingList(WaitingList waitingList) {
+        this.waitingList = (waitingList != null) ? waitingList : new WaitingList();
+    }
+
+    // Getters and setters
 
     public String getEventId() {
         return eventId;
@@ -80,7 +137,7 @@ public class Events {
         this.location = location;
     }
 
-    // Keep for backward compatibility with older code typo
+    // Backward compatibility for old typo
     public String getLoction() {
         return location;
     }
