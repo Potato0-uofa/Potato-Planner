@@ -76,7 +76,7 @@ public class User {
     /**
      * Gets the user's phone number.
      *
-     * @return the user's phone number
+     * @return the user's phone numberr
      */
 
     public String getPhone() {
