@@ -87,4 +87,21 @@ public class EventRepository {
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
+
+    public void fetchAllEvents(@NonNull EventsCallback cb) {
+        db.collection("events")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    List<Events> out = new ArrayList<>();
+                    for (var doc : snapshot.getDocuments()) {
+                        Events e = doc.toObject(Events.class);
+                        if (e != null) out.add(e);
+                    }
+                    cb.onSuccess(out);
+                })
+                .addOnFailureListener(cb::onFailure);
+    }
+
+
+
 }

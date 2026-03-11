@@ -49,4 +49,17 @@ public class RegistrationRepository {
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
+
+    public void declineInvitation(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
+        String docId = eventId + "_" + userId;
+
+        db.collection(COLLECTION_REGISTRATIONS)
+                .document(docId)
+                .update("status", "declined")
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+
+
 }

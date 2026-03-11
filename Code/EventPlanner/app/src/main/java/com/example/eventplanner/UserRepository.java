@@ -3,6 +3,8 @@ package com.example.eventplanner;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserRepository {
 
@@ -16,6 +18,11 @@ public class UserRepository {
 
     public interface SimpleCallback {
         void onSuccess();
+        void onFailure(Exception e);
+    }
+
+    public interface UsersCallback {
+        void onSuccess(List<User> users);
         void onFailure(Exception e);
     }
 
@@ -44,4 +51,20 @@ public class UserRepository {
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
+
+
+    public void fetchAllUsers(@NonNull UsersCallback cb) {
+        db.collection(COLLECTION_USERS)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    List<User> out = new ArrayList<>();
+                    for (var doc : snapshot.getDocuments()) {
+                        User u = doc.toObject(User.class);
+                        if (u != null) out.add(u);
+                    }
+                    cb.onSuccess(out);
+                })
+                .addOnFailureListener(cb::onFailure);
+    }
+
 }
