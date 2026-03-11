@@ -1,13 +1,17 @@
 package com.example.eventplanner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-import java.awt.Insets;
+import androidx.core.graphics.Insets;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,12 +22,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_login), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        TextView txtSignUp = findViewById(R.id.txt_sign_up);
+        txtSignUp.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileSetup.class);
+            startActivity(intent);
         });
 
         bootstrapUser();
