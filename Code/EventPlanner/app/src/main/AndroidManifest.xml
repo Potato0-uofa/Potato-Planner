@@ -25,6 +25,11 @@
         <activity android:name=".AdminBrowseEventsActivity" />
         <activity android:name=".AdminBrowseImagesActivity" />
         <activity android:name=".AdminRemoveOrganizersActivity" />
+        <activity android:name=".CreateEventActivity" />
+        <activity android:name=".SearchScreen" />
+        <activity android:name=".NonAdminBrowseEvents" />
+        <activity android:name=".Profile" />
+        <activity android:name=".NotificationLogs" />
 
     </application>
 
