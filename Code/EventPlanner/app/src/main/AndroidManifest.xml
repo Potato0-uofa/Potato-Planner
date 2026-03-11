@@ -24,6 +24,7 @@
         <activity android:name=".ProfileSetup" />
         <activity android:name=".AdminBrowseEventsActivity" />
         <activity android:name=".AdminBrowseImagesActivity" />
+        <activity android:name=".AdminRemoveOrganizersActivity" />
 
     </application>
 
