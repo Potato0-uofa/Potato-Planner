@@ -122,8 +122,8 @@
 
     <EditText
         android:id="@+id/event_description_main"
-        android:layout_width="347dp"
-        android:layout_height="222dp"
+        android:layout_width="350dp"
+        android:layout_height="209dp"
         android:layout_marginTop="40dp"
         android:gravity="top|left"
         android:text="EventDescriptionMain"
@@ -134,11 +134,25 @@
         app:layout_constraintStart_toStartOf="@+id/imageView7"
         app:layout_constraintTop_toBottomOf="@+id/event_image_background" />
 
+    <TextView
+        android:id="@+id/waitlist_Count"
+        android:layout_width="382dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="12dp"
+        android:text="WaitlistCount"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/event_closure_date"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/event_description_main" />
+
     <EditText
         android:id="@+id/event_closure_date"
         android:layout_width="377dp"
         android:layout_height="46dp"
-        android:layout_marginTop="20dp"
         android:gravity="top|left"
         android:text="EventClosureDate"
         android:textAlignment="center"
@@ -146,7 +160,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/event_description_main" />
+        tools:layout_editor_absoluteY="666dp" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/home_bar"
