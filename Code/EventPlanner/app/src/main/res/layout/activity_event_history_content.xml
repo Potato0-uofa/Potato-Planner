@@ -5,6 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/lottery_outcome"
+        android:layout_width="223dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="156dp"
+        android:layout_marginEnd="12dp"
+        android:text="LotteryOutcome"
+        android:textAlignment="viewStart"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toEndOf="@+id/event_image_background"
+        app:layout_constraintTop_toBottomOf="@+id/event_name" />
+
     <ImageView
         android:id="@+id/event_image_background"
         android:layout_width="146dp"
@@ -25,45 +39,11 @@
         app:layout_constraintTop_toTopOf="@+id/event_image_background"
         app:srcCompat="@drawable/ic_launcher_foreground" />
 
-    <Button
-        android:id="@+id/confirm_notification_button"
-        android:layout_width="227dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="@color/confirm_bg"
-        android:text="A slot is available. Confirm?"
-        android:textAllCaps="false"
-        android:textColor="@color/confirm_text"
-        android:textSize="13.90sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/event_image_background"
-        app:layout_constraintTop_toBottomOf="@+id/event_description" />
-
-    <Button
-        android:id="@+id/decline_notification_button"
-        android:layout_width="227dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="@color/decline_bg"
-        android:text="Decline?"
-        android:textAllCaps="false"
-        android:textColor="@color/decline_text"
-        android:textSize="13.90sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/event_image_background"
-        app:layout_constraintTop_toBottomOf="@+id/event_description" />
-
     <TextView
         android:id="@+id/event_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:text="EventName"
         android:textAlignment="center"
         android:textSize="24sp"
@@ -74,15 +54,15 @@
 
     <TextView
         android:id="@+id/event_description"
-        android:layout_width="220dp"
-        android:layout_height="106dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="221dp"
+        android:layout_height="125dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
         android:text="EventDescription"
         android:textAlignment="viewStart"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.692"
+        app:layout_constraintHorizontal_bias="0.684"
         app:layout_constraintStart_toEndOf="@+id/event_image_background"
         app:layout_constraintTop_toBottomOf="@+id/event_name" />
 
