@@ -71,7 +71,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phone Number"
+        android:text="Phone Number (Optional)"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         android:textSize="16sp"
@@ -82,7 +82,7 @@
         android:id="@+id/edit_phone"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:hint="Phone Number"
+        android:hint="Phone Number (Optional)"
         android:textColorHint="#AAAAAA"
         android:textColor="#000000"
         android:background="@drawable/input_background"

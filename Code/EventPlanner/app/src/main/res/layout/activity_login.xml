@@ -125,8 +125,7 @@
 
     </LinearLayout>
 
-    <!--- New user? Sign up Text
-          TODO: Implement functionality (redirects to sign up page) -->
+    <!--- New user? Sign up Text -->
     <TextView
         android:id="@+id/txt_sign_up"
         android:layout_width="wrap_content"
