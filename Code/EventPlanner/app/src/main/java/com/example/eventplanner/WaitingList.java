@@ -6,7 +6,7 @@ import java.util.List;
 public class WaitingList extends CustomLogs{
     private List<Entrant> waitingList;
     public WaitingList(){
-        this.entrants = new ArrayList<>();
+        this.waitingList = new ArrayList<>();
     }
 
     public void addEntrant(Entrant entrant) {
