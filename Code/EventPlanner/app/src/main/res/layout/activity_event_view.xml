@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00B61919"
+    android:backgroundTint="#005B1B1B">
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="440dp"
+        android:layout_height="920dp"
+        android:background="@color/background"
+        app:layout_constraintBottom_toBottomOf="@+id/home_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="380dp"
+        android:layout_height="743dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/home_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/input_background" />
+
+    <ImageButton
+        android:id="@+id/exit_button_event_page"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <Button
+        android:id="@+id/join_event_button"
+        android:layout_width="349dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="124dp"
+        android:backgroundTint="#C498D0"
+        android:text="Join Event"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/event_closure_date" />
+
+    <Button
+        android:id="@+id/leave_event_button"
+        android:layout_width="349dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="124dp"
+        android:backgroundTint="#C498D0"
+        android:text="Leave Waiting List"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/event_closure_date" />
+
+    <TextView
+        android:id="@+id/event_slots"
+        android:layout_width="179dp"
+        android:layout_height="46dp"
+        android:text="EventSlots"
+        android:textAlignment="viewStart"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/event_description_main"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.478"
+        app:layout_constraintStart_toEndOf="@+id/event_image_background" />
+
+    <TextView
+        android:id="@+id/event_details"
+        android:layout_width="179dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="8dp"
+        android:text="EventDetails"
+        android:textAlignment="viewStart"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toEndOf="@+id/event_image_background"
+        app:layout_constraintTop_toBottomOf="@+id/event_name" />
+
+    <ImageView
+        android:id="@+id/event_image_background"
+        android:layout_width="162dp"
+        android:layout_height="272dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toTopOf="@+id/imageView7"
+        app:srcCompat="@drawable/button_purple" />
+
+    <ImageView
+        android:id="@+id/event_image_icon"
+        android:layout_width="159dp"
+        android:layout_height="268dp"
+        app:layout_constraintBottom_toBottomOf="@+id/event_image_background"
+        app:layout_constraintEnd_toEndOf="@+id/event_image_background"
+        app:layout_constraintStart_toStartOf="@+id/event_image_background"
+        app:layout_constraintTop_toTopOf="@+id/event_image_background"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
+
+    <TextView
+        android:id="@+id/event_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="EventName"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toEndOf="@+id/event_image_background"
+        app:layout_constraintTop_toTopOf="@+id/imageView7" />
+
+    <TextView
+        android:id="@+id/event_description_main"
+        android:layout_width="364dp"
+        android:layout_height="287dp"
+        android:layout_marginTop="20dp"
+        android:text="EventDescriptionMain"
+        android:textAlignment="viewStart"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/event_image_background" />
+
+    <TextView
+        android:id="@+id/Waitlist_Count"
+        android:layout_width="382dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="12dp"
+        android:text="WaitlistCount"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/event_description_main" />
+
+    <TextView
+        android:id="@+id/event_closure_date"
+        android:layout_width="377dp"
+        android:layout_height="46dp"
+        android:text="EventClosureDate"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/Waitlist_Count" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/home_bar"
+        android:layout_width="415dp"
+        android:layout_height="90dp"
+        android:background="@color/home_bar"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/search_button_event_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/home_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageButton
+        android:id="@+id/home_button_event_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/browse_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageButton
+        android:id="@+id/browse_button_event_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/profile_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageButton
+        android:id="@+id/profile_button_event_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="6dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageButton
+        android:id="@+id/new_event_button_event_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/search_button_event_page"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView4"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/homeicon" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView2"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="@+id/home_bar"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/neweventicon" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/home_button_event_page"
+        app:layout_constraintStart_toEndOf="@+id/new_event_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/searchicon" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/home_bar"
+        app:layout_constraintHorizontal_bias="0.652"
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/profileicon" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/profile_button_event_page"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toEndOf="@+id/home_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/browseicon" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

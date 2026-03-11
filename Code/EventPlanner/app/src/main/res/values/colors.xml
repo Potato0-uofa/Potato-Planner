@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="home_bar">#625B6F</color>
+    <color name="background">#282430</color>
+    <color name="confirm_bg">#7EB765</color>
+    <color name="confirm_text">#365727</color>
+    <color name="decline_bg">#B85151</color>
+    <color name="decline_text">#501414</color>
 </resources>

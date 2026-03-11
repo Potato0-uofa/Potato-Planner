@@ -1,35 +1,37 @@
 package com.example.eventplanner;
 
-import java.util.List;
+import com.google.firebase.Timestamp;
 
 /**
  * Represents an event in the event planner application.
- * Each event has a name, date, description, location, and a waiting list of entrants.
+ * Supports Firestore persistence + waiting list behavior.
  */
-
 public class Events {
-    //attributes of the events
+
+    private String eventId;
+    private String organizerId;
     private String name;
     private String date;
     private String description;
     private String location;
+
+    // Firebase/event management fields
+    private int capacity;
+    private String status; // open, closed, cancelled
+    private Timestamp createdAt;
+
+    // Existing app behavior
     private WaitingList waitingList;
 
     /**
      * Default constructor required for Firestore.
-     * Initializes an empty waiting list.
      */
-    public Events(){
+    public Events() {
         this.waitingList = new WaitingList();
     }
 
     /**
-     * Constructs an Events object with the specified details.
-     *
-     * @param name        the name of the event
-     * @param date        the date of the event
-     * @param description a brief description of the event
-     * @param location    the location where the event will be held
+     * Backward-compatible constructor used by existing UI/tests.
      */
     public Events(String name, String date, String description, String location) {
         this.name = name;
@@ -37,97 +39,130 @@ public class Events {
         this.description = description;
         this.location = location;
         this.waitingList = new WaitingList();
+        this.status = "open";
     }
 
     /**
-     * Adds an entrant to the waiting list for this event.
-     * Does nothing if entrant is already on the list.
-     *
-     * @param entrant the entrant to add to the waiting list
+     * Extended constructor for Firebase-backed event data.
      */
+    public Events(String eventId, String organizerId, String name, String date,
+                  String description, String location, int capacity,
+                  String status, Timestamp createdAt) {
+
+        this.eventId = eventId;
+        this.organizerId = organizerId;
+        this.name = name;
+        this.date = date;
+        this.description = description;
+        this.location = location;
+        this.capacity = capacity;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.waitingList = new WaitingList();
+    }
+
+    // Waiting list behavior
+
     public void addToWaitingList(Entrant entrant) {
         if (!waitingList.hasEntrant(entrant)) {
             waitingList.addEntrant(entrant);
         }
     }
 
-    /**
-     * Removes an entrant from the waiting list for this event.
-     * Does nothing if the entrant is not on the waiting list.
-     *
-     * @param entrant the entrant to remove from the waiting list
-     */
     public void removeFromWaitingList(Entrant entrant) {
-        if (waitingList.hasEntrant(entrant)){
+        if (waitingList.hasEntrant(entrant)) {
             waitingList.deleteEntrant(entrant);
         }
     }
 
-    /**
-     * Checks whether a given entrant is on the waiting list for this event.
-     *
-     * @param entrant the entrant to check
-     * @return true if the entrant is on the waiting list, false otherwise
-     */
     public boolean isOnWaitingList(Entrant entrant) {
         return waitingList.hasEntrant(entrant);
     }
 
-    /**
-     * Returns the waiting list for this event.
-     *
-     * @return the WaitingList object associated with this event
-     */
     public WaitingList getWaitingList() {
         return waitingList;
     }
 
-    /**
-     * Returns the name of the event.
-     * @return event name
-     */
-    public String getName() { return name; }
+    public void setWaitingList(WaitingList waitingList) {
+        this.waitingList = (waitingList != null) ? waitingList : new WaitingList();
+    }
 
-    /**
-     * Returns the date of the event.
-     * @return event date
-     */
-    public String getDate() { return date; }
+    // Getters and setters
 
-    /**
-     * Returns the event description.
-     * @return event description
-     */
-    public String getDescription() { return description; }
+    public String getEventId() {
+        return eventId;
+    }
 
-    /**
-     * Returns the location of the event.
-     * @return event location
-     */
-    public String getLocation() {return location; }
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
 
+    public String getOrganizerId() {
+        return organizerId;
+    }
 
-    /**
-     * Sets the name of the event.
-     * @param name the event name
-     */
-    public void setName(String name) { this.name = name; }
+    public void setOrganizerId(String organizerId) {
+        this.organizerId = organizerId;
+    }
 
-    /**
-     * Sets the date of the event.
-     * @param date the date of the event
-     */
-    public void setDate(String date) { this.date = date; }
+    public String getName() {
+        return name;
+    }
 
-    /**
-     * Sets the description of the event.
-     * @param description the event description
-     */
-    public void setDescription(String description) { this.description = description; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    /**
-     * Sets the location of the event
-     * @param location the event's location
-     */
-    public void setLocation(String location) {this.location = location;}
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    // Backward compatibility for old typo
+    public String getLoction() {
+        return location;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "653003326049",
+    "project_id": "potato-planner-2350c",
+    "storage_bucket": "potato-planner-2350c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653003326049:android:2017077a075d862ae4e020",
+        "android_client_info": {
+          "package_name": "com.example.eventplanner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_-D6lpyEHDv18EmQ6qsVFnop92OrcO34"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
