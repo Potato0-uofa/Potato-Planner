@@ -3,11 +3,11 @@ package com.example.eventplanner;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository {
-
     private static final String COLLECTION_USERS = "users";
     private final FirebaseFirestore db;
 
@@ -52,7 +52,6 @@ public class UserRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-
     public void fetchAllUsers(@NonNull UsersCallback cb) {
         db.collection(COLLECTION_USERS)
                 .get()
@@ -60,11 +59,20 @@ public class UserRepository {
                     List<User> out = new ArrayList<>();
                     for (var doc : snapshot.getDocuments()) {
                         User u = doc.toObject(User.class);
-                        if (u != null) out.add(u);
+                        if (u != null) {
+                            out.add(u);
+                        }
                     }
                     cb.onSuccess(out);
                 })
                 .addOnFailureListener(cb::onFailure);
     }
 
+    public void deleteUser(@NonNull String deviceId, @NonNull SimpleCallback cb) {
+        db.collection(COLLECTION_USERS)
+                .document(deviceId)
+                .delete()
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
 }
