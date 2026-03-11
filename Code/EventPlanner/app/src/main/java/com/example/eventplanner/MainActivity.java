@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import androidx.core.graphics.Insets;
+import android.text.TextUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,11 +68,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                } else {
-                    Log.d(TAG, "Existing user loaded: " + user.getDeviceId());
+                } else if (!TextUtils.isEmpty(user.getName()) && !TextUtils.isEmpty(user.getEmail())) {
+                    // If they already have a profile, then just skip to the homepage
+                    Intent intent = new Intent(MainActivity.this, HomePage.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
             }
-
             @Override
             public void onFailure(Exception e) {
                 Log.e(TAG, "Failed to load user", e);
