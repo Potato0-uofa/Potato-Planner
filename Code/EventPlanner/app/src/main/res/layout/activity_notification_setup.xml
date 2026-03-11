@@ -32,10 +32,10 @@
         android:id="@+id/enable_notification_button"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:backgroundTint="#7EB765"
+        android:backgroundTint="@color/confirm_bg"
         android:text="Enable"
         android:textAllCaps="false"
-        android:textColor="#365727"
+        android:textColor="@color/confirm_text"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -43,10 +43,10 @@
         android:id="@+id/disable_notification_button"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:backgroundTint="#B85151"
+        android:backgroundTint="@color/decline_bg"
         android:text="Disable"
         android:textAllCaps="false"
-        android:textColor="#501414"
+        android:textColor="@color/decline_text"
         android:textSize="20sp"
         android:textStyle="bold"
         android:translationY="50dp" />

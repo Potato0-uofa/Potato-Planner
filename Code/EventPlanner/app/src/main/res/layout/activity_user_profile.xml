@@ -14,18 +14,19 @@
         android:background="@color/background"
         app:layout_constraintBottom_toBottomOf="@+id/home_bar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.517" />
 
     <ImageView
         android:id="@+id/imageView7"
-        android:layout_width="380dp"
-        android:layout_height="743dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/home_bar"
+        android:layout_width="387dp"
+        android:layout_height="662dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exit_button_event_page"
         app:srcCompat="@drawable/input_background" />
 
     <ImageButton
@@ -41,67 +42,34 @@
 
     <Button
         android:id="@+id/join_event_button"
-        android:layout_width="349dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="124dp"
-        android:backgroundTint="#C498D0"
-        android:text="Join Event"
+        android:layout_width="395dp"
+        android:layout_height="77dp"
+        android:backgroundTint="#FFFFFF"
+        android:text="View Event History"
         android:textAllCaps="false"
-        android:textColor="#4C2162"
-        android:textSize="26sp"
+        android:textColor="#000000"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintHorizontal_bias="0.483"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/event_closure_date" />
-
-    <Button
-        android:id="@+id/leave_event_button"
-        android:layout_width="349dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="124dp"
-        android:backgroundTint="#C498D0"
-        android:text="Leave Waiting List"
-        android:textAllCaps="false"
-        android:textColor="#4C2162"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintHorizontal_bias="0.483"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/event_closure_date" />
+        app:layout_constraintBottom_toTopOf="@+id/home_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView7" />
 
     <TextView
-        android:id="@+id/event_slots"
+        android:id="@+id/profile_username"
         android:layout_width="179dp"
         android:layout_height="46dp"
-        android:text="EventSlots"
-        android:textAlignment="viewStart"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/event_description_main"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintHorizontal_bias="0.478"
-        app:layout_constraintStart_toEndOf="@+id/event_image_background" />
-
-    <TextView
-        android:id="@+id/event_details"
-        android:layout_width="179dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="8dp"
-        android:text="EventDetails"
+        android:text="Username"
         android:textAlignment="viewStart"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
         app:layout_constraintStart_toEndOf="@+id/event_image_background"
-        app:layout_constraintTop_toBottomOf="@+id/event_name" />
+        tools:layout_editor_absoluteY="161dp" />
 
     <ImageView
         android:id="@+id/event_image_background"
         android:layout_width="162dp"
-        android:layout_height="272dp"
+        android:layout_height="162dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
@@ -111,7 +79,7 @@
     <ImageView
         android:id="@+id/event_image_icon"
         android:layout_width="159dp"
-        android:layout_height="268dp"
+        android:layout_height="159dp"
         app:layout_constraintBottom_toBottomOf="@+id/event_image_background"
         app:layout_constraintEnd_toEndOf="@+id/event_image_background"
         app:layout_constraintStart_toStartOf="@+id/event_image_background"
@@ -119,42 +87,29 @@
         app:srcCompat="@drawable/ic_launcher_foreground" />
 
     <TextView
-        android:id="@+id/event_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/profile_name"
+        android:layout_width="175dp"
+        android:layout_height="81dp"
         android:layout_marginTop="32dp"
-        android:text="EventName"
+        android:text="Last Name / First Name"
         android:textAlignment="center"
-        android:textSize="24sp"
+        android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
         app:layout_constraintStart_toEndOf="@+id/event_image_background"
         app:layout_constraintTop_toTopOf="@+id/imageView7" />
 
     <TextView
-        android:id="@+id/event_description_main"
-        android:layout_width="356dp"
-        android:layout_height="314dp"
-        android:layout_marginTop="20dp"
-        android:text="EventDescriptionMain"
+        android:id="@+id/profile_user_description"
+        android:layout_width="358dp"
+        android:layout_height="204dp"
+        android:layout_marginTop="40dp"
+        android:text="ProfileUserDescription"
         android:textAlignment="viewStart"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
         app:layout_constraintTop_toBottomOf="@+id/event_image_background" />
-
-    <TextView
-        android:id="@+id/event_closure_date"
-        android:layout_width="377dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="20dp"
-        android:text="EventClosureDate"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/event_description_main" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/home_bar"
@@ -168,40 +123,40 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/search_button_event_page"
+        android:id="@+id/search_button_profile"
         android:layout_width="76dp"
         android:layout_height="75dp"
         android:layout_marginTop="2dp"
         android:layout_marginEnd="4dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/home_button_event_page"
+        app:layout_constraintEnd_toStartOf="@+id/home_button_profile"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
-        android:id="@+id/home_button_event_page"
+        android:id="@+id/home_button_profile"
         android:layout_width="76dp"
         android:layout_height="75dp"
         android:layout_marginTop="2dp"
         android:layout_marginEnd="4dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/browse_button_event_page"
+        app:layout_constraintEnd_toStartOf="@+id/browse_button_profile"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
-        android:id="@+id/browse_button_event_page"
+        android:id="@+id/browse_button_profile"
         android:layout_width="76dp"
         android:layout_height="75dp"
         android:layout_marginTop="2dp"
         android:layout_marginEnd="4dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/profile_button_event_page"
+        app:layout_constraintEnd_toStartOf="@+id/profile_button_profile"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
-        android:id="@+id/profile_button_event_page"
+        android:id="@+id/profile_button_profile"
         android:layout_width="76dp"
         android:layout_height="75dp"
         android:layout_marginTop="2dp"
@@ -212,14 +167,14 @@
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
-        android:id="@+id/new_event_button_event_page"
+        android:id="@+id/new_event_button_profile"
         android:layout_width="76dp"
         android:layout_height="75dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="2dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/search_button_event_page"
+        app:layout_constraintEnd_toStartOf="@+id/search_button_profile"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
@@ -259,8 +214,8 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/home_button_event_page"
-        app:layout_constraintStart_toEndOf="@+id/new_event_button_event_page"
+        app:layout_constraintEnd_toStartOf="@+id/home_button_profile"
+        app:layout_constraintStart_toEndOf="@+id/new_event_button_profile"
         app:layout_constraintTop_toTopOf="@+id/home_bar"
         app:srcCompat="@drawable/searchicon" />
 
@@ -286,10 +241,96 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/profile_button_event_page"
+        app:layout_constraintEnd_toStartOf="@+id/profile_button_profile"
         app:layout_constraintHorizontal_bias="0.47"
-        app:layout_constraintStart_toEndOf="@+id/home_button_event_page"
+        app:layout_constraintStart_toEndOf="@+id/home_button_profile"
         app:layout_constraintTop_toTopOf="@+id/home_bar"
         app:srcCompat="@drawable/browseicon" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="75dp"
+        android:text="TextView"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/profile_user_description"
+        app:layout_constraintEnd_toEndOf="@+id/event_image_background"
+        app:layout_constraintStart_toStartOf="@+id/event_image_background"
+        app:layout_constraintTop_toBottomOf="@+id/event_image_background"
+        tools:text="About Me" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="227dp"
+        android:layout_height="31dp"
+        android:layout_marginEnd="75dp"
+        android:text="Contact Information"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/event_image_background"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/event_image_background"
+        app:layout_constraintTop_toBottomOf="@+id/profile_user_description" />
+
+    <TextView
+        android:id="@+id/profile_email"
+        android:layout_width="350dp"
+        android:layout_height="38dp"
+        android:text="Email: "
+        android:textAlignment="textStart"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/profile_phone"
+        android:layout_width="350dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="50dp"
+        android:text="Phone Number: "
+        android:textAlignment="textStart"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.405"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/profile_address"
+        android:layout_width="350dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="100dp"
+        android:text="Business Address:  "
+        android:textAlignment="textStart"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.405"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <Button
+        android:id="@+id/settings_button_profile"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView11"
+        android:layout_width="30dp"
+        android:layout_height="29dp"
+        app:layout_constraintBottom_toBottomOf="@+id/settings_button_profile"
+        app:layout_constraintEnd_toEndOf="@+id/settings_button_profile"
+        app:layout_constraintStart_toStartOf="@+id/settings_button_profile"
+        app:layout_constraintTop_toTopOf="@+id/settings_button_profile"
+        app:srcCompat="@drawable/gearicon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
