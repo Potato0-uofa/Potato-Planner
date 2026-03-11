@@ -23,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+        //startActivity(new Intent(this, AdminBrowseEventsActivity.class));
+        //finish();
+        //IF YOU WANT TO GO TO ADMIN PAGE UNCOMMENT
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_login), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
