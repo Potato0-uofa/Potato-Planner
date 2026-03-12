@@ -31,6 +31,7 @@
         <activity android:name=".Profile" />
         <activity android:name=".NotificationLogs" />
         <activity android:name=".SettingsView" />
+        <activity android:name=".EventDescriptionView" />
 
     </application>
 

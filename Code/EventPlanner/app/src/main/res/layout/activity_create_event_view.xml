@@ -140,15 +140,27 @@
         android:layout_width="382dp"
         android:layout_height="30dp"
         android:layout_marginTop="12dp"
-        android:text="WaitlistCount"
+        android:text="Waitlist Limit"
         android:textAlignment="center"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/event_closure_date"
+        app:layout_constraintBottom_toTopOf="@+id/waitlist_limit_input"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
         app:layout_constraintTop_toBottomOf="@+id/event_description_main" />
+
+    <EditText
+        android:id="@+id/waitlist_limit_input"
+        android:layout_width="382dp"
+        android:layout_height="46dp"
+        android:hint="Enter waitlist limit (leave blank for no limit)"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/waitlist_Count"
+        app:layout_constraintBottom_toTopOf="@+id/event_closure_date" />
 
     <EditText
         android:id="@+id/event_closure_date"
