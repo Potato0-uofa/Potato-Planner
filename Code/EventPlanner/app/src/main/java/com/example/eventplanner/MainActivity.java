@@ -3,16 +3,15 @@ package com.example.eventplanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
-import androidx.core.graphics.Insets;
-import android.text.TextUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,16 +23,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-
-        // DEMONSTRATION SETUP: Redirect to EventWaitlistActivity immediately
-        Intent intent = new Intent(this, EventWaitlistActivity.class);
-        startActivity(intent);
-
-
-        //startActivity(new Intent(this, NotificationLogs.class));
-        //finish();
-        /*
-        //IF YOU WANT TO GO TO ADMIN PAGE UNCOMMENT
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_login), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -48,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         bootstrapUser();
-        */
     }
 
     private void bootstrapUser() {
@@ -58,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         );
 
         userRepository.getUserByDeviceId(deviceId, new UserRepository.UserCallback() {
-
             @Override
             public void onSuccess(User user) {
                 if (user == null) {
@@ -77,12 +64,13 @@ public class MainActivity extends AppCompatActivity {
                     });
 
                 } else if (!TextUtils.isEmpty(user.getName()) && !TextUtils.isEmpty(user.getEmail())) {
-                    // If they already have a profile, then just skip to the homepage
+                    // If profile already exists, skip login and go to homepage
                     Intent intent = new Intent(MainActivity.this, HomePage.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 }
             }
+
             @Override
             public void onFailure(Exception e) {
                 Log.e(TAG, "Failed to load user", e);

@@ -10,9 +10,12 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EventRepository {
 
@@ -119,9 +122,12 @@ public class EventRepository {
     }
 
     public void joinWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("waitingList", FieldValue.arrayUnion(deviceId));
+
         db.collection(COLLECTION_EVENTS)
                 .document(eventId)
-                .update("waitingList", FieldValue.arrayUnion(deviceId))
+                .set(data, SetOptions.merge())
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
