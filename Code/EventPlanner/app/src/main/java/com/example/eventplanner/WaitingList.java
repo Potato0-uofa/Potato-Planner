@@ -5,6 +5,7 @@ import java.util.List;
 
 public class WaitingList extends CustomLogs {
     private List<Entrant> entrants;
+    private int cloudCount = 0;
 
     public WaitingList() {
         this.entrants = new ArrayList<>();
@@ -36,11 +37,15 @@ public class WaitingList extends CustomLogs {
         return new ArrayList<>(entrants);
     }
 
+    public void setCloudCount(int count) {
+        this.cloudCount = count;
+    }
+
     public int getCount() {
-        return entrants.size();
+        return (cloudCount > 0) ? cloudCount : entrants.size();
     }
 
     public int countEntrants() {
-        return entrants.size();
+        return (cloudCount > 0) ? cloudCount : entrants.size();
     }
 }

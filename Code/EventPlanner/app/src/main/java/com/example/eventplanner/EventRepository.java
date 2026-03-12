@@ -1,9 +1,15 @@
 package com.example.eventplanner;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +26,11 @@ public class EventRepository {
 
     public interface SimpleCallback {
         void onSuccess();
+        void onFailure(Exception e);
+    }
+
+    public interface CountCallback {
+        void onSuccess(int count);
         void onFailure(Exception e);
     }
 
@@ -107,7 +118,55 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
+    public void joinWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
+        db.collection(COLLECTION_EVENTS)
+                .document(eventId)
+                .update("waitingList", FieldValue.arrayUnion(deviceId))
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
 
+    public ListenerRegistration listenToWaitlistCount(@NonNull String eventId, @NonNull CountCallback cb) {
+        return db.collection(COLLECTION_EVENTS)
+                .document(eventId)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            cb.onFailure(e);
+                            return;
+                        }
 
+                        if (snapshot != null && snapshot.exists()) {
+                            List<String> waitingList = (List<String>) snapshot.get("waitingList");
+                            int count = (waitingList != null) ? waitingList.size() : 0;
+                            cb.onSuccess(count);
+                        } else {
+                            cb.onSuccess(0);
+                        }
+                    }
+                });
+    }
 
+    public ListenerRegistration observeWaitingListCount(@NonNull String eventId, @NonNull CountCallback cb) {
+        return db.collection(COLLECTION_EVENTS)
+                .document(eventId)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            cb.onFailure(e);
+                            return;
+                        }
+
+                        if (snapshot != null && snapshot.exists()) {
+                            List<String> waitingList = (List<String>) snapshot.get("waitingList");
+                            int count = (waitingList != null) ? waitingList.size() : 0;
+                            cb.onSuccess(count);
+                        } else {
+                            cb.onSuccess(0);
+                        }
+                    }
+                });
+    }
 }
