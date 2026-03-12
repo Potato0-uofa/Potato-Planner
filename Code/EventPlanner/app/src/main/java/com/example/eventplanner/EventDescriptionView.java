@@ -9,17 +9,47 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.ListenerRegistration;
 
+import java.util.Objects;
+
+/**
+ * Activity that displays the details of a specified event and allows the user to join the waitlist
+ * Recieves the event data via Intent extrs, renders them in the UI and attaches  real time firestore
+ * listener to keep the displayed waitlist count in sync.
+ */
 public class EventDescriptionView extends AppCompatActivity {
 
+    /**
+     * Repository used to read event data and mutate the waiting list in Firestore.
+     * */
     private EventRepository eventRepository;
+    /**
+     * Local representation of the waiting list, used to cache and display the current count.
+     * */
     private WaitingList waitingList;
+    /**
+     * Active Firestore snapshot listener for the waitlist count.
+     * Held so it can be detached in {@link #onDestroy()} to prevent memory leaks.
+     */
     private ListenerRegistration waitlistListener;
+    /**
+     * TextView that displays the live waitlist headcount.
+     * */
     private TextView tvWaitlistCount;
+    /**
+     * The device's {@code ANDROID_ID}, used as the entrant identifier.
+     * */
     private String eventId;
-    private String deviceId;
 
+    /**
+     * Initializes the event activity
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +57,7 @@ public class EventDescriptionView extends AppCompatActivity {
 
         eventRepository = new EventRepository();
         waitingList = new WaitingList();
-        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         eventId = getIntent().getStringExtra("eventId");
         if (eventId == null || eventId.isEmpty()) {
@@ -44,7 +74,7 @@ public class EventDescriptionView extends AppCompatActivity {
 
         Button btnJoinEvent = findViewById(R.id.join_event_button);
         btnJoinEvent.setOnClickListener(v -> {
-            eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
+            eventRepository.joinWaitingList(eventId, userId, new EventRepository.SimpleCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(EventDescriptionView.this, "Joined Waitlist!", Toast.LENGTH_SHORT).show();
@@ -61,6 +91,10 @@ public class EventDescriptionView extends AppCompatActivity {
         startListeningToWaitlist();
     }
 
+
+    /**
+     *  Attaches a real-time Firestore listener that updates {@link #tvWaitlistCount}
+     */
     private void startListeningToWaitlist() {
         waitlistListener = eventRepository.listenToWaitlistCount(eventId, new EventRepository.CountCallback() {
             @Override
@@ -76,6 +110,9 @@ public class EventDescriptionView extends AppCompatActivity {
         });
     }
 
+    /**
+     * Configures click listeners for the bottom navigation bar and the exit button.
+     */
     private void setupNavigation() {
         findViewById(R.id.home_button_event_page).setOnClickListener(v -> {
             startActivity(new Intent(EventDescriptionView.this, HomePage.class));
@@ -96,6 +133,9 @@ public class EventDescriptionView extends AppCompatActivity {
         findViewById(R.id.exit_button_event_page).setOnClickListener(v -> finish());
     }
 
+    /**
+     * Life style callback invoked when the activity is destroyed
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
