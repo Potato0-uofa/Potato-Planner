@@ -28,7 +28,7 @@ public class NonAdminBrowseEvents extends AppCompatActivity {
         });
 
         findViewById(R.id.profile_button_browse).setOnClickListener(v -> {
-            startActivity(new Intent(NonAdminBrowseEvents.this, HomePage.class));
+            startActivity(new Intent(NonAdminBrowseEvents.this, Profile.class));
         });
     }
 }
