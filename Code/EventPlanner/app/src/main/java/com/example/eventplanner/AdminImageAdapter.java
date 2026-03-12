@@ -10,6 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+/**
+ * RecyclerView adapter used to display images uploaded for events.
+ * Allows administrators to review and remove images if necessary.
+ */
 
 public class AdminImageAdapter extends RecyclerView.Adapter<AdminImageAdapter.ImageViewHolder> {
 

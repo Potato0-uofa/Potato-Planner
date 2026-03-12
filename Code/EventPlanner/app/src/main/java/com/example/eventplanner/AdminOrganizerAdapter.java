@@ -10,7 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-
+/**
+ * RecyclerView adapter used to display organizers to administrators
+ * and allow them to remove organizers from the system.
+ */
 public class AdminOrganizerAdapter extends RecyclerView.Adapter<AdminOrganizerAdapter.OrganizerViewHolder> {
 
     public interface OnOrganizerActionListener {

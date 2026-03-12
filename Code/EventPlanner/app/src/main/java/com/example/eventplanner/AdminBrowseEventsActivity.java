@@ -10,6 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+/**
+ * Activity that allows administrators to browse all events
+ * and remove events that violate application policies.
+ * Implements user stories:
+ * - US 03.02.01: Browse events
+ * - US 03.03.01: Remove events
+ */
 
 public class AdminBrowseEventsActivity extends AppCompatActivity
         implements AdminEventAdapter.OnEventActionListener {
@@ -32,6 +39,10 @@ public class AdminBrowseEventsActivity extends AppCompatActivity
 
         loadEvents();
     }
+    /**
+     * Loads all events from the repository and updates the RecyclerView.
+     * This allows administrators to view the list of existing events.
+     */
 
     private void loadEvents() {
         eventRepository.fetchAllEvents(new EventRepository.EventsCallback() {
@@ -56,6 +67,12 @@ public class AdminBrowseEventsActivity extends AppCompatActivity
             }
         });
     }
+    /**
+     * Handles the removal of an event when an admin clicks the remove button.
+     *
+     * @param event The event selected for deletion
+     * @param position The position of the event in the list
+     */
 
     @Override
     public void onDeleteClicked(Events event, int position) {
