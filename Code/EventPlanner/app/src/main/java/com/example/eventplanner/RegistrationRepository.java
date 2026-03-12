@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,9 +54,15 @@ public class RegistrationRepository {
     public void declineInvitation(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
         String docId = eventId + "_" + userId;
 
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("eventId", eventId);
+        payload.put("userId", userId);
+        payload.put("status", "declined");
+        payload.put("updatedAt", Timestamp.now());
+
         db.collection(COLLECTION_REGISTRATIONS)
                 .document(docId)
-                .update("status", "declined")
+                .set(payload, SetOptions.merge()) // works even if doc doesn't exist yet
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }

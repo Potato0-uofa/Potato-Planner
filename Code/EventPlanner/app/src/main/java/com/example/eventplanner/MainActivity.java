@@ -29,9 +29,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EventWaitlistActivity.class);
         startActivity(intent);
 
-        /*
-        //startActivity(new Intent(this, AdminBrowseEventsActivity.class));
+
+        //startActivity(new Intent(this, NotificationLogs.class));
         //finish();
+        /*
         //IF YOU WANT TO GO TO ADMIN PAGE UNCOMMENT
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_login), (v, insets) -> {
