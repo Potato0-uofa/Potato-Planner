@@ -135,4 +135,16 @@ public class ProfileSetupTest {
 
         onView(withId(R.id.edit_phone)).check(matches(hasErrorText((String) null)));
     }
+
+    /**
+     * Tests that a name with more than two words (ex: middle name) is accepted.
+     */
+    @Test
+    public void testNameWithMiddleNameAccepted() {
+        onView(withId(R.id.edit_name)).perform(typeText("John Michael Doe"), closeSoftKeyboard());
+        onView(withId(R.id.edit_email)).perform(typeText("john@example.com"), closeSoftKeyboard());
+
+        onView(withId(R.id.edit_name)).check(matches(hasErrorText((String) null)));
+        onView(withId(R.id.edit_email)).check(matches(hasErrorText((String) null)));
+    }
 }

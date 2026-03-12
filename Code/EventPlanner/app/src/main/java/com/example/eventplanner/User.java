@@ -10,15 +10,29 @@ public class User {
     /** The user's name */
     private String name;
 
+    /** The user's username */
+    private String username;
+
     /** The user's email address */
     private String email;
 
     /** The user's phone number */
     private String phone;
 
+    /** The user's profile description */
+    private String description;
+
+    /** The user's country */
+    private String country;
+
+    /** The user's business address */
+    private String address;
+
     // When the app launches, it checks if this device is in our Firestore collection
     /** The unique device identifier */
     private String deviceId;
+
+
 
     /**
      * Default constructor required for Firestore.
@@ -39,6 +53,9 @@ public class User {
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.description = "";
+        this.country = "";
+        this.address = "";
     }
 
     // Getters and Setters for the attributes of User
@@ -64,6 +81,15 @@ public class User {
     }
 
     /**
+     * Gets the user's username.
+     * Not prompted on signup, user can choose to have a username when navigating to their
+     * profile settings.
+     *
+     * @return
+     */
+    public String getUsername() { return username; }
+
+    /**
      * Gets the user's email address.
      *
      * @return the user's email
@@ -76,12 +102,30 @@ public class User {
     /**
      * Gets the user's phone number.
      *
-     * @return the user's phone numberr
+     * @return the user's phone number
      */
 
     public String getPhone() {
         return phone;
     }
+
+    /** Gets the user's profile description.
+     *
+     * @return the user's profile description
+     */
+    public String getDescription() { return description; }
+
+    /** Gets the user's country.
+     *
+     * @return the user's country
+     */
+    public String getCountry() { return country; }
+
+    /** Gets the user's business address.
+     *
+     * @return the user's business address
+     */
+    public String getAddress() { return address; }
 
     // Setters
 
@@ -104,6 +148,13 @@ public class User {
     }
 
     /**
+     * Sets the user's username (if they choose to have one)
+     *
+     * @param username
+     */
+    public void setUsername(String username) { this.username = username; }
+
+    /**
      * Sets the user's email address.
      *
      * @param email the user's email
@@ -120,5 +171,25 @@ public class User {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    /** Sets the user's profile description.
+     *
+     * @param description the user's profile description
+     */
+    public void setDescription(String description) { this.description = description; }
+
+    /** Sets the user's country.
+     *
+     * @param country the user's country
+     */
+    public void setCountry(String country) { this.country = country; }
+
+    /** Sets the user's business address.
+     *
+     * @param address the user's business address
+     */
+    public void setAddress(String address) { this.address = address; }
+
+
 
 }

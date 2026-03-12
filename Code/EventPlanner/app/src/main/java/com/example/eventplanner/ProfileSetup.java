@@ -62,8 +62,12 @@ public class ProfileSetup extends AppCompatActivity {
         boolean valid = true;
 
         // If name prompt is empty, state that a name is required
+        // If the name does not consist of a First and Last name, prompt user to enter them
         if (TextUtils.isEmpty(name)) {
             editName.setError("Name is required!");
+            valid = false;
+        } else if (!name.trim().contains(" ")) {
+            editName.setError("Please enter your first and last name");
             valid = false;
         }
 
