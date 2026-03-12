@@ -9,10 +9,34 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Activity for creating a new event in the app. Provides an organizer with an interface to input
+ * an event's name, description, date, and a waitlist limit. When successfully created the event is
+ * persisted using the eventRepository and the user is directed back to the home page. The view also
+ * has a navigation bar at the bottom.
+ */
+
 public class CreateEventActivity extends AppCompatActivity {
 
+    /**
+     * Repository used to perform create, edit, delete, and read options on Events objects
+     */
     private final EventRepository eventRepository = new EventRepository();
 
+    /**
+     * <p>Navigation listeners:</p>
+     *      * <ul>
+     *      *   <li><b>new_event_button_create_page</b> – No-op; already on this screen.</li>
+     *      *   <li><b>search_button_create_page</b> – Navigates to the Search Screen</li>
+     *      *   <li><b>home_button_create_page</b> – Navigates to the Home Page.</li>
+     *      *   <li><b>browse_button_create_page</b> – Navigates to the Browse Events Page.</li>
+     *      *   <li><b>profile_button_create_page</b> – Navigates to Profile Pge.</li>
+     *      * </ul>
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +60,7 @@ public class CreateEventActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.profile_button_create_page).setOnClickListener(v -> {
-            startActivity(new Intent(CreateEventActivity.this, HomePage.class));
+            startActivity(new Intent(CreateEventActivity.this, Profile.class));
         });
 
         // Create event button
