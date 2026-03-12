@@ -19,7 +19,10 @@
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_11">
     <exclude-output />
+    <exclude-output />
     <content url="file://$MODULE_DIR$/../../../Code/EventPlanner/app">
+      <excludeFolder url="file://$MODULE_DIR$/../../../Code/EventPlanner/app/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../Code/EventPlanner/app/build" />
       <excludeFolder url="file://$MODULE_DIR$/../../../Code/EventPlanner/app/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../../Code/EventPlanner/app/build" />
     </content>
