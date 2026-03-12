@@ -15,12 +15,14 @@ public class Events {
     private String description;
     private String location;
     private int capacity;
+    private int waitlistLimit;
     private String status; // open, closed, cancelled
     private Timestamp createdAt;
     private WaitingList waitingList;
 
     public Events() {
         this.waitingList = new WaitingList();
+        this.waitlistLimit = -1;
     }
 
     public Events(String name, String date, String description, String location) {
@@ -30,6 +32,7 @@ public class Events {
         this.location = location;
         this.waitingList = new WaitingList();
         this.status = "open";
+        this.waitlistLimit = -1;
     }
 
     public Events(String eventId, String organizerId, String name, String date,
@@ -45,10 +48,27 @@ public class Events {
         this.status = status;
         this.createdAt = createdAt;
         this.waitingList = new WaitingList();
+        this.waitlistLimit = -1;
+    }
+
+    // Waitlist limit getter and setter
+    public int getWaitlistLimit() {
+        return waitlistLimit;
+    }
+
+    public void setWaitlistLimit(int waitlistLimit) {
+        this.waitlistLimit = waitlistLimit;
+    }
+
+    public boolean hasWaitlistLimit() {
+        return waitlistLimit != -1;
     }
 
     public void addToWaitingList(Entrant entrant) {
         if (!waitingList.hasEntrant(entrant)) {
+            if (hasWaitlistLimit() && waitingList.getCount() >= waitlistLimit) {
+                throw new IllegalStateException("Waiting list is full");
+            }
             waitingList.addEntrant(entrant);
         }
     }
@@ -124,10 +144,6 @@ public class Events {
     }
 
     public String getLocation() {
-        return location;
-    }
-
-    public String getLoction() {
         return location;
     }
 
