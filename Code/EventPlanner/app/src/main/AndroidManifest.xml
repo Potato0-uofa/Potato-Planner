@@ -30,6 +30,7 @@
         <activity android:name=".NonAdminBrowseEvents" />
         <activity android:name=".Profile" />
         <activity android:name=".NotificationLogs" />
+        <activity android:name=".SettingsView" />
 
     </application>
 
