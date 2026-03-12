@@ -1,4 +1,4 @@
-package com.example.eventplanner;
+git statuspackage com.example.eventplanner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -36,5 +36,35 @@ public class UserTest {
         assertEquals("Alex", user.getName());
         assertEquals("alex@email.com", user.getEmail());
         assertEquals("5551234", user.getPhone());
+
+    }
+    @Test
+    public void setters_allowEmptyStrings() {
+        User user = new User();
+
+        user.setDeviceId("");
+        user.setName("");
+        user.setEmail("");
+        user.setPhone("");
+
+        assertEquals("", user.getDeviceId());
+        assertEquals("", user.getName());
+        assertEquals("", user.getEmail());
+        assertEquals("", user.getPhone());
+    }
+
+    @Test
+    public void setters_allowNullValues() {
+        User user = new User();
+
+        user.setDeviceId(null);
+        user.setName(null);
+        user.setEmail(null);
+        user.setPhone(null);
+
+        assertEquals(null, user.getDeviceId());
+        assertEquals(null, user.getName());
+        assertEquals(null, user.getEmail());
+        assertEquals(null, user.getPhone());
     }
 }

@@ -18,4 +18,32 @@ public class WaitingListTest {
         event.removeFromWaitingList(entrant);
         assertFalse(event.isOnWaitingList(entrant));
     }
+    @Test
+    public void newEvent_doesNotContainEntrantInWaitingList() {
+        Events event = new Events();
+        Entrant entrant = new Entrant();
+
+        assertFalse(event.isOnWaitingList(entrant));
+    }
+
+    @Test
+    public void addingEntrantTwice_keepsEntrantOnWaitingList() {
+        Events event = new Events();
+        Entrant entrant = new Entrant();
+
+        event.addToWaitingList(entrant);
+        event.addToWaitingList(entrant);
+
+        assertTrue(event.isOnWaitingList(entrant));
+    }
+
+    @Test
+    public void removingEntrantNotInWaitingList_keepsListValid() {
+        Events event = new Events();
+        Entrant entrant = new Entrant();
+
+        event.removeFromWaitingList(entrant);
+
+        assertFalse(event.isOnWaitingList(entrant));
+    }
 }

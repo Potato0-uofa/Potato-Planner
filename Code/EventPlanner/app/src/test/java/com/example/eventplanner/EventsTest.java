@@ -45,4 +45,47 @@ public class EventsTest {
         assertEquals(50, event.getCapacity());
         assertEquals("closed", event.getStatus());
     }
+    @Test
+    public void defaultConstructor_hasNullBasicFieldsInitially() {
+        Events event = new Events();
+
+        assertEquals(null, event.getEventId());
+        assertEquals(null, event.getOrganizerId());
+        assertEquals(null, event.getName());
+        assertEquals(null, event.getDate());
+        assertEquals(null, event.getDescription());
+        assertEquals(null, event.getLocation());
+    }
+
+    @Test
+    public void setters_allowEmptyStrings() {
+        Events event = new Events();
+
+        event.setEventId("");
+        event.setOrganizerId("");
+        event.setName("");
+        event.setDate("");
+        event.setDescription("");
+        event.setLocation("");
+        event.setStatus("");
+
+        assertEquals("", event.getEventId());
+        assertEquals("", event.getOrganizerId());
+        assertEquals("", event.getName());
+        assertEquals("", event.getDate());
+        assertEquals("", event.getDescription());
+        assertEquals("", event.getLocation());
+        assertEquals("", event.getStatus());
+    }
+
+    @Test
+    public void capacitySetter_updatesCorrectly() {
+        Events event = new Events();
+
+        event.setCapacity(0);
+        assertEquals(0, event.getCapacity());
+
+        event.setCapacity(100);
+        assertEquals(100, event.getCapacity());
+    }
 }
