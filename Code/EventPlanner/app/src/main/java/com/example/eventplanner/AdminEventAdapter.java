@@ -10,9 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+/**
+ * RecyclerView adapter used by administrators to display events
+ * and perform moderation actions such as removing events.
+ */
 
 public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.EventViewHolder> {
-
+    /**
+     * Interface used to notify the activity when an admin
+     * performs an action on an event.
+     */
     public interface OnEventActionListener {
         void onDeleteClicked(Events event, int position);
     }

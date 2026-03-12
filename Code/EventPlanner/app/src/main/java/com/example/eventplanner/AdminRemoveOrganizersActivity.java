@@ -10,6 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+/**
+ * Activity that allows administrators to view organizers and remove
+ * those who violate application policies.
+ * Implements user story:
+ * - US 03.07.01: Remove organizers
+ */
 
 public class AdminRemoveOrganizersActivity extends AppCompatActivity
         implements AdminOrganizerAdapter.OnOrganizerActionListener {
