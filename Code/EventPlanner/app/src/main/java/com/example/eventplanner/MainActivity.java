@@ -24,6 +24,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+
+        // DEMONSTRATION SETUP: Redirect to EventWaitlistActivity immediately
+        Intent intent = new Intent(this, EventWaitlistActivity.class);
+        startActivity(intent);
+
+        /*
         //startActivity(new Intent(this, AdminBrowseEventsActivity.class));
         //finish();
         //IF YOU WANT TO GO TO ADMIN PAGE UNCOMMENT
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         bootstrapUser();
+        */
     }
 
     private void bootstrapUser() {
