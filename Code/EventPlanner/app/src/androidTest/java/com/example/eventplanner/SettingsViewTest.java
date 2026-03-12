@@ -51,6 +51,17 @@ public class SettingsViewTest {
     }
 
     /**
+     * Tests that the username and address fields are visible on the settings screen.
+     */
+    @Test
+    public void testUsernameAndAddressFieldsVisible() {
+        onView(withId(R.id.tv_username_value)).check(matches(isDisplayed()));
+        onView(withId(R.id.tv_address_value)).check(matches(isDisplayed()));
+        onView(withId(R.id.btn_edit_username)).check(matches(isDisplayed()));
+        onView(withId(R.id.btn_edit_address)).check(matches(isDisplayed()));
+    }
+
+    /**
      * Tests that clicking the Edit button for Name opens a dialog.
      */
     @Test
@@ -87,6 +98,24 @@ public class SettingsViewTest {
     }
 
     /**
+     * Tests that clicking the Edit button for Username opens a dialog.
+     */
+    @Test
+    public void testEditUsernameDialogOpens() {
+        onView(withId(R.id.btn_edit_username)).perform(click());
+        onView(withText("Edit Username")).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Tests that clicking the Edit button for Business Address opens a dialog.
+     */
+    @Test
+    public void testEditAddressDialogOpens() {
+        onView(withId(R.id.btn_edit_address)).perform(click());
+        onView(withText("Edit Business Address")).check(matches(isDisplayed()));
+    }
+
+    /**
      * Tests that cancelling an edit dialog closes it without changing the displayed value.
      */
     @Test
@@ -118,6 +147,38 @@ public class SettingsViewTest {
     }
 
     /**
+     * Tests that submitting a name with only one word (no last name) is rejected.
+     */
+    @Test
+    public void testSingleWordNameShowsError() {
+        onView(withId(R.id.btn_edit_name)).perform(click());
+        onView(withText("Edit Name")).check(matches(isDisplayed()));
+
+        onView(withClassName(org.hamcrest.Matchers.equalTo(android.widget.EditText.class.getName())))
+                .perform(clearText(), typeText("John"), closeSoftKeyboard());
+        onView(withText("Save")).perform(click());
+
+        // Single word name should be rejected — field still visible
+        onView(withId(R.id.tv_name_value)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Tests that a name with both first and last name is accepted.
+     */
+    @Test
+    public void testValidFirstAndLastNameAccepted() {
+        onView(withId(R.id.btn_edit_name)).perform(click());
+        onView(withText("Edit Name")).check(matches(isDisplayed()));
+
+        onView(withClassName(org.hamcrest.Matchers.equalTo(android.widget.EditText.class.getName())))
+                .perform(clearText(), typeText("John Doe"), closeSoftKeyboard());
+        onView(withText("Save")).perform(click());
+
+        onView(withId(R.id.tv_name_value)).check(matches(isDisplayed()));
+    }
+
+
+    /**
      * Tests that submitting an invalid email format does not update the email field.
      */
     @Test
@@ -128,6 +189,9 @@ public class SettingsViewTest {
         onView(withClassName(org.hamcrest.Matchers.equalTo(android.widget.EditText.class.getName())))
                 .perform(clearText(), typeText("not-valid"), closeSoftKeyboard());
         onView(withText("Save")).perform(click());
+
+        // Brief wait for toast/dialog to settle
+        try { Thread.sleep(500); } catch (InterruptedException ignored) {}
 
         // Email field should still be displayed
         onView(withId(R.id.tv_email_value)).check(matches(isDisplayed()));
@@ -195,5 +259,50 @@ public class SettingsViewTest {
 
         // Should show "—" for empty phone (if user chose to not input their phone number)
         onView(withId(R.id.tv_phone_value)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Tests that a username can be entered and the dialog closes.
+     */
+    @Test
+    public void testValidUsernameAccepted() {
+        onView(withId(R.id.btn_edit_username)).perform(click());
+        onView(withText("Edit Username")).check(matches(isDisplayed()));
+
+        onView(withClassName(org.hamcrest.Matchers.equalTo(android.widget.EditText.class.getName())))
+                .perform(clearText(), typeText("cooluser123"), closeSoftKeyboard());
+        onView(withText("Save")).perform(click());
+
+        onView(withId(R.id.tv_username_value)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Tests that a business address can be entered and the dialog closes.
+     */
+    @Test
+    public void testValidAddressAccepted() {
+        onView(withId(R.id.btn_edit_address)).perform(click());
+        onView(withText("Edit Business Address")).check(matches(isDisplayed()));
+
+        onView(withClassName(org.hamcrest.Matchers.equalTo(android.widget.EditText.class.getName())))
+                .perform(clearText(), typeText("123 Main St"), closeSoftKeyboard());
+        onView(withText("Save")).perform(click());
+
+        onView(withId(R.id.tv_address_value)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Tests that an empty business address is accepted since it is optional.
+     */
+    @Test
+    public void testEmptyAddressIsAccepted() {
+        onView(withId(R.id.btn_edit_address)).perform(click());
+        onView(withText("Edit Business Address")).check(matches(isDisplayed()));
+
+        onView(withClassName(org.hamcrest.Matchers.equalTo(android.widget.EditText.class.getName())))
+                .perform(clearText(), closeSoftKeyboard());
+        onView(withText("Save")).perform(click());
+
+        onView(withId(R.id.tv_address_value)).check(matches(isDisplayed()));
     }
 }

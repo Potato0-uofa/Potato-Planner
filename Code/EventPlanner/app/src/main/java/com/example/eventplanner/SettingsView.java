@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class SettingsView extends AppCompatActivity {
 
-    private TextView tvName, tvEmail, tvPhone, tvCountry;
+    private TextView tvName, tvEmail, tvPhone, tvCountry, tvAddress, tvUsername;
     private final UserRepository userRepository = new UserRepository();
     private User currentUser;
 
@@ -40,6 +40,7 @@ public class SettingsView extends AppCompatActivity {
         tvEmail   = findViewById(R.id.tv_email_value);
         tvPhone   = findViewById(R.id.tv_phone_value);
         tvCountry = findViewById(R.id.tv_country_value);
+        tvUsername = findViewById(R.id.tv_username_value);
 
         // Close button —> Go back to the User Profile View
         findViewById(R.id.btn_close).setOnClickListener(v ->
@@ -52,6 +53,10 @@ public class SettingsView extends AppCompatActivity {
                 showEditDialog("Name", tvName.getText().toString(), InputType.TYPE_CLASS_TEXT, value -> {
                     if (TextUtils.isEmpty(value)) {
                         Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!value.trim().contains(" ")) {
+                        Toast.makeText(this, "Please enter your first and last name", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     currentUser.setName(value);
@@ -84,8 +89,20 @@ public class SettingsView extends AppCompatActivity {
 
         findViewById(R.id.btn_edit_country).setOnClickListener(v ->
                 showEditDialog("Country", tvCountry.getText().toString(), InputType.TYPE_CLASS_TEXT, value -> {
-                    currentUser.setPhone(value); // stored in User; adapt if User gets a country field
+                    currentUser.setCountry(value);
                     saveUser(() -> tvCountry.setText(TextUtils.isEmpty(value) ? "—" : value));
+                }));
+
+        findViewById(R.id.btn_edit_address).setOnClickListener(v ->
+                showEditDialog("Business Address", tvAddress.getText().toString(), InputType.TYPE_CLASS_TEXT, value -> {
+                    currentUser.setAddress(value);
+                    saveUser(() -> tvAddress.setText(TextUtils.isEmpty(value) ? "—" : value));
+                }));
+
+        findViewById(R.id.btn_edit_username).setOnClickListener(v ->
+                showEditDialog("Username", tvUsername.getText().toString(), InputType.TYPE_CLASS_TEXT, value -> {
+                    currentUser.setUsername(value);
+                    saveUser(() -> tvUsername.setText(TextUtils.isEmpty(value) ? "—" : value));
                 }));
     }
 
@@ -100,13 +117,15 @@ public class SettingsView extends AppCompatActivity {
         userRepository.getUserByDeviceId(deviceId, new UserRepository.UserCallback() {
             @Override
             public void onSuccess(User user) {
+                tvAddress = findViewById(R.id.tv_address_value);
                 if (user != null) {
                     currentUser = user;
                     tvName.setText(TextUtils.isEmpty(user.getName()) ? "—" : user.getName());
                     tvEmail.setText(TextUtils.isEmpty(user.getEmail()) ? "—" : user.getEmail());
                     tvPhone.setText(TextUtils.isEmpty(user.getPhone()) ? "—" : user.getPhone());
-                    tvCountry.setText("—"); // Placeholder, will implement when priorities allow
-                                            // country was not a necessary field to fill out
+                    tvCountry.setText(TextUtils.isEmpty(user.getCountry()) ? "—" : user.getCountry());
+                    tvAddress.setText(TextUtils.isEmpty(user.getAddress()) ? "—" : user.getAddress());
+                    tvUsername.setText(TextUtils.isEmpty(user.getUsername()) ? "—" : user.getUsername());
                 }
             }
 
