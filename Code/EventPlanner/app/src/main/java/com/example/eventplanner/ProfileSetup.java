@@ -18,15 +18,15 @@ import androidx.appcompat.app.AppCompatActivity;
  * The user's profile is saved onto Firestore, and they are redirected to the homepage afterwards.
  */
 public class ProfileSetup extends AppCompatActivity {
-    // Attributes
 
+    // Attributes
     private EditText editName, editEmail, editPhone;
     private final UserRepository userRepository = new UserRepository();
 
     /**
      * Initializes the activity and sets up the layout.
      * Also attaches a click listener to the confirm button
-     * @param savedInstanceState (the previously saved instance state (if applicable)
+     * @param savedInstanceState the previously saved instance state (if applicable)
      */
 
     @Override
@@ -44,7 +44,7 @@ public class ProfileSetup extends AppCompatActivity {
 
     /**
      * Validates the user's input and saves the profile to Firestore.
-     * <p>
+     *
      * Validation rules:
      *
      * Name is required

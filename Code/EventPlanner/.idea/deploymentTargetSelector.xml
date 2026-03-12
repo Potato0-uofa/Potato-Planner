@@ -8,6 +8,9 @@
       <SelectionState runConfigName="Tests in 'com.example.eventplanner'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="SettingsViewTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
