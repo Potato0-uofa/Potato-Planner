@@ -25,29 +25,9 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        // DEMONSTRATION SETUP: Redirect to EventWaitlistActivity immediately
-        Intent intent = new Intent(this, EventWaitlistActivity.class);
+        // DEMONSTRATION SETUP: Redirect to UserSettingsActivity immediately
+        Intent intent = new Intent(this, UserSettingsActivity.class);
         startActivity(intent);
-
-        /*
-        //startActivity(new Intent(this, AdminBrowseEventsActivity.class));
-        //finish();
-        //IF YOU WANT TO GO TO ADMIN PAGE UNCOMMENT
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layout_login), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-        TextView txtSignUp = findViewById(R.id.txt_sign_up);
-        txtSignUp.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ProfileSetup.class);
-            startActivity(intent);
-        });
-
-        bootstrapUser();
-        */
     }
 
     private void bootstrapUser() {

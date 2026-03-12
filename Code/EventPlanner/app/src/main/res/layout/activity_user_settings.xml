@@ -69,7 +69,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="John Doe"
+                android:text="—"
                 android:textColor="#444444"
                 android:textSize="15sp" />
 
@@ -116,7 +116,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="yourname@email.com"
+                android:text="—"
                 android:textColor="#444444"
                 android:textSize="15sp" />
 
@@ -163,7 +163,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="123-456-7890"
+                android:text="—"
                 android:textColor="#444444"
                 android:textSize="15sp" />
 
@@ -210,7 +210,7 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Canada"
+                android:text="—"
                 android:textColor="#444444"
                 android:textSize="15sp" />
 
@@ -304,12 +304,24 @@
 
         <!-- App Version -->
         <TextView
+            android:id="@+id/tv_app_version"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="App Version: 1.1.01"
             android:textColor="#777777"
             android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btn_delete_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center"
+            android:backgroundTint="#FF4444"
+            android:text="DELETE PROFILE"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>

@@ -32,8 +32,7 @@
         <activity android:name=".NotificationLogs" />
         <activity android:name=".SettingsView" />
         <activity android:name=".EventDescriptionView" />
-        <activity android:name=".ProfileSettingsActivity" />
-        <activity android:name=".EventWaitlistActivity" />
+        <activity android:name=".UserSettingsActivity" />
 
     </application>
 
