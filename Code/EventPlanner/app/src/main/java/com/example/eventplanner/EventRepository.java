@@ -132,6 +132,38 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
+    public void leaveWaitingList(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("waitingList", FieldValue.arrayRemove(userId));
+
+        db.collection(COLLECTION_EVENTS)
+                .document(eventId)
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    public interface WaitlistStatusCallback {
+        void onSuccess(boolean isOnWaitlist);
+        void onFailure(Exception e);
+    }
+
+    public void isOnWaitingList(@NonNull String eventId, @NonNull String userId, @NonNull WaitlistStatusCallback cb) {
+        db.collection(COLLECTION_EVENTS)
+                .document(eventId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists()) {
+                        List<String> waitingList = (List<String>) snapshot.get("waitingList");
+                        boolean isOnList = waitingList != null && waitingList.contains(userId);
+                        cb.onSuccess(isOnList);
+                    } else {
+                        cb.onSuccess(false);
+                    }
+                })
+                .addOnFailureListener(cb::onFailure);
+    }
+
     public ListenerRegistration listenToWaitlistCount(@NonNull String eventId, @NonNull CountCallback cb) {
         return db.collection(COLLECTION_EVENTS)
                 .document(eventId)
