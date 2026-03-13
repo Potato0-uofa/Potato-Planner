@@ -323,55 +323,7 @@
 
         </LinearLayout>
 
-        <!-- Notifications from Organizers Toggle Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/settings_row_background"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Enable Notifications from Organizers?"
-                android:textColor="#111111"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <!-- TODO: Add toggle switch for organizer notifications -->
-
-        </LinearLayout>
-
-        <!-- Notifications from Administrators Toggle Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/settings_row_background"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Enable Notifications from Administrators?"
-                android:textColor="#111111"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <!-- TODO: Add toggle switch for admin notifications -->
-
-        </LinearLayout>
-
-        <!-- Receive App Updates Toggle Row -->
+        <!-- Notifications Toggle Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="52dp"
@@ -386,12 +338,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Recieve App Updates?"
+                android:text="Enable Notifications?"
                 android:textColor="#111111"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <!-- TODO: Add toggle switch for app updates -->
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_notifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

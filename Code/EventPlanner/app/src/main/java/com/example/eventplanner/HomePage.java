@@ -25,7 +25,7 @@ public class HomePage extends AppCompatActivity {
         });
 
         findViewById(R.id.browse_button_home).setOnClickListener(v -> {
-            startActivity(new Intent(HomePage.this, NonAdminBrowseEvents.class));
+            startActivity(new Intent(HomePage.this, BrowseEventsActivity.class));
         });
 
         findViewById(R.id.profile_button_home).setOnClickListener(v -> {

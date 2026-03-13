@@ -33,17 +33,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_browse_header" />
 
-    <ListView
-        android:id="@+id/browse_event_list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_events"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:divider="@null"
-        android:dividerHeight="10dp"
-        android:paddingBottom="10dp"
-        android:clipToPadding="false"
         app:layout_constraintBottom_toTopOf="@+id/home_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

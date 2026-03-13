@@ -10,57 +10,25 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.ListenerRegistration;
 
 /**
  * Activity that displays the details of a specific event and allows the user to join
- * or leave the waitlist. Receives event data via Intent extras, renders them in the UI,
- * and attaches a real-time Firestore listener to keep the displayed waitlist count in sync.
- *
- * <p>Expected Intent extras:</p>
- * <ul>
- *   <li>"eventId"          – Firestore document ID of the event.</li>
- *   <li>"eventName"        – Display name of the event.</li>
- *   <li>"eventDescription" – Full description of the event.</li>
- * </ul>
+ * or leave the waitlist, and for organizers to view the waitlist.
  */
 public class EventDescriptionView extends AppCompatActivity {
 
-    /** Repository used to read event data and mutate the waiting list in Firestore. */
     private EventRepository eventRepository;
-
-    /** Local representation of the waiting list, used to cache and display the current count. */
     private WaitingList waitingList;
-
-    /**
-     * Active Firestore snapshot listener for the waitlist count.
-     * Held so it can be detached in #onDestroy() to prevent memory leaks.
-     */
     private ListenerRegistration waitlistListener;
-
-    /** TextView that displays the live waitlist headcount. */
     private TextView tvWaitlistCount;
-
-    /** Firestore document ID for the event being viewed. */
     private String eventId;
-
-    /** The device's ANDROID_ID, used as the entrant identifier. */
     private String deviceId;
-
-    /** Button to join the waitlist. Visible when the user is not on the waitlist. */
     private Button btnJoinEvent;
-
-    /** Button to leave the waitlist. Visible when the user is already on the waitlist. */
     private Button btnLeaveEvent;
+    private Button btnViewWaitlist;
 
-    /**
-     * Initializes the activity: inflates the layout, resolves Intent extras, populates
-     * event name and description views, wires up the join and leave waitlist buttons,
-     * checks the user's current waitlist status, configures bottom navigation, and
-     * starts the real-time waitlist listener.
-     *
-     * @param savedInstanceState Saved instance state bundle, or null on first creation.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +36,7 @@ public class EventDescriptionView extends AppCompatActivity {
 
         eventRepository = new EventRepository();
         waitingList = new WaitingList();
+        
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         eventId = getIntent().getStringExtra("eventId");
@@ -81,9 +50,10 @@ public class EventDescriptionView extends AppCompatActivity {
         tvWaitlistCount = findViewById(R.id.Waitlist_Count);
         btnJoinEvent = findViewById(R.id.join_event_button);
         btnLeaveEvent = findViewById(R.id.leave_event_button);
+        btnViewWaitlist = findViewById(R.id.view_waitlist_button);
 
-        ((TextView) findViewById(R.id.event_name)).setText(eventName != null ? eventName : "Test Event");
-        ((TextView) findViewById(R.id.event_details)).setText(eventDescription != null ? eventDescription : "Test Description");
+        ((TextView) findViewById(R.id.event_name)).setText(eventName != null ? eventName : "Demo Event");
+        ((TextView) findViewById(R.id.event_details)).setText(eventDescription != null ? eventDescription : "This is a demo event description.");
 
         btnJoinEvent.setOnClickListener(v -> {
             eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
@@ -115,15 +85,36 @@ public class EventDescriptionView extends AppCompatActivity {
             });
         });
 
+        // Force visible so you can see the button immediately when running the app
+        btnViewWaitlist.setVisibility(View.VISIBLE); 
+        btnViewWaitlist.setOnClickListener(v -> {
+            Intent intent = new Intent(EventDescriptionView.this, EventWaitlistActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
+        });
+
+        // US 01.05.05 - Info box click listener for detailed lottery guidelines
+        View lotteryInfoBox = findViewById(R.id.lottery_info_box);
+        if (lotteryInfoBox != null) {
+            lotteryInfoBox.setOnClickListener(v -> showLotteryGuidelines());
+        }
+
         checkWaitlistStatus();
         setupNavigation();
         startListeningToWaitlist();
     }
 
-    /**
-     * Checks whether the current device is already on the waitlist and updates
-     * button visibility accordingly.
-     */
+    private void showLotteryGuidelines() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Lottery Guidelines")
+                .setMessage("1. Joining the waitlist does not guarantee a spot.\n" +
+                        "2. Once the organizer initiates the draw, winners are selected randomly.\n" +
+                        "3. Winners will receive a notification to accept or decline their invitation.\n" +
+                        "4. If an invitation is declined, a new winner will be drawn.")
+                .setPositiveButton("Got it", null)
+                .show();
+    }
+
     private void checkWaitlistStatus() {
         eventRepository.isOnWaitingList(eventId, deviceId, new EventRepository.WaitlistStatusCallback() {
             @Override
@@ -133,29 +124,16 @@ public class EventDescriptionView extends AppCompatActivity {
 
             @Override
             public void onFailure(Exception e) {
-                Toast.makeText(EventDescriptionView.this, "Error checking waitlist status: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                // Silently fail
             }
         });
     }
 
-    /**
-     * Toggles the visibility of the join and leave buttons based on the device's
-     * current waitlist status.
-     *
-     * @param isOnWaitlist true to show the leave button, false to show the join button
-     */
     private void updateButtonVisibility(boolean isOnWaitlist) {
         btnJoinEvent.setVisibility(isOnWaitlist ? View.GONE : View.VISIBLE);
         btnLeaveEvent.setVisibility(isOnWaitlist ? View.VISIBLE : View.GONE);
     }
 
-    /**
-     * Attaches a real-time Firestore listener that updates tvWaitlistCount
-     * whenever the number of entrants on the waitlist changes.
-     *
-     * <p>The returned ListenerRegistration is stored in waitlistListener
-     * and removed in onDestroy().</p>
-     */
     private void startListeningToWaitlist() {
         waitlistListener = eventRepository.listenToWaitlistCount(eventId, new EventRepository.CountCallback() {
             @Override
@@ -166,42 +144,28 @@ public class EventDescriptionView extends AppCompatActivity {
 
             @Override
             public void onFailure(Exception e) {
-                Toast.makeText(EventDescriptionView.this, "Error loading waitlist: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                // Ignore error for demo
             }
         });
     }
 
-    /**
-     * Configures click listeners for the bottom navigation bar and the exit button.
-     *
-     * <ul>
-     *   <li><b>home_button_event_page</b>    – Navigates to HomePage.</li>
-     *   <li><b>search_button_event_page</b>  – Navigates to SearchScreen.</li>
-     *   <li><b>browse_button_event_page</b>  – Navigates to NonAdminBrowseEvents.</li>
-     *   <li><b>profile_button_event_page</b> – Navigates to Profile.</li>
-     *   <li><b>exit_button_event_page</b>    – Calls finish() to close the activity.</li>
-     * </ul>
-     */
     private void setupNavigation() {
-        findViewById(R.id.home_button_event_page).setOnClickListener(v ->
-                startActivity(new Intent(EventDescriptionView.this, HomePage.class)));
+        View homeBtn = findViewById(R.id.home_button_event_page);
+        if (homeBtn != null) homeBtn.setOnClickListener(v -> startActivity(new Intent(this, HomePage.class)));
 
-        findViewById(R.id.search_button_event_page).setOnClickListener(v ->
-                startActivity(new Intent(EventDescriptionView.this, SearchScreen.class)));
+        View searchBtn = findViewById(R.id.search_button_event_page);
+        if (searchBtn != null) searchBtn.setOnClickListener(v -> startActivity(new Intent(this, SearchScreen.class)));
 
-        findViewById(R.id.browse_button_event_page).setOnClickListener(v ->
-                startActivity(new Intent(EventDescriptionView.this, NonAdminBrowseEvents.class)));
+        View browseBtn = findViewById(R.id.browse_button_event_page);
+        if (browseBtn != null) browseBtn.setOnClickListener(v -> startActivity(new Intent(this, NonAdminBrowseEvents.class)));
 
-        findViewById(R.id.profile_button_event_page).setOnClickListener(v ->
-                startActivity(new Intent(EventDescriptionView.this, Profile.class)));
+        View profileBtn = findViewById(R.id.profile_button_event_page);
+        if (profileBtn != null) profileBtn.setOnClickListener(v -> startActivity(new Intent(this, Profile.class)));
 
-        findViewById(R.id.exit_button_event_page).setOnClickListener(v -> finish());
+        View exitBtn = findViewById(R.id.exit_button_event_page);
+        if (exitBtn != null) exitBtn.setOnClickListener(v -> finish());
     }
 
-    /**
-     * Lifecycle callback invoked when the activity is being destroyed.
-     * Detaches the Firestore waitlist listener to prevent memory leaks.
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

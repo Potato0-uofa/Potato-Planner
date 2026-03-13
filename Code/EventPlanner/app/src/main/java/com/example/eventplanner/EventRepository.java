@@ -3,6 +3,8 @@ package com.example.eventplanner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -10,6 +12,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
@@ -17,191 +20,88 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Repository for CRUD and waitlist operations on Event documents in Firestore.
- * Used by admin and entrant control screens.
- *
- * Outstanding issues:
- * - Firestore integration tests are currently limited; most behavior validated by intent/manual flow.
  */
 public class EventRepository {
 
-    /** Name of the Firestore collection that stores event documents. */
     private static final String COLLECTION_EVENTS = "events";
-
-    /** Firestore database instance used for all repository operations. */
+    private static final String COLLECTION_USERS = "users";
     private final FirebaseFirestore db;
 
-    /**
-     * Callback for operations that return a list of {@link Events}.
-     */
     public interface EventsCallback {
-
-        /**
-         * Called when the requested events are successfully retrieved.
-         *
-         * @param events list of retrieved events
-         */
         void onSuccess(List<Events> events);
-
-        /**
-         * Called when the operation fails.
-         *
-         * @param e exception describing the failure
-         */
         void onFailure(Exception e);
     }
 
-    /**
-     * Callback for operations that only need to report success or failure.
-     */
+    public interface EventCallback {
+        void onSuccess(Events event);
+        void onFailure(Exception e);
+    }
+
+    public interface EntrantsCallback {
+        void onSuccess(List<Entrant> entrants);
+        void onFailure(Exception e);
+    }
+
     public interface SimpleCallback {
-
-        /**
-         * Called when the operation completes successfully.
-         */
         void onSuccess();
-
-        /**
-         * Called when the operation fails.
-         *
-         * @param e exception describing the failure
-         */
         void onFailure(Exception e);
     }
 
-    /**
-     * Callback for operations that return a single integer count.
-     */
     public interface CountCallback {
-
-        /**
-         * Called when the count is successfully computed or retrieved.
-         *
-         * @param count resulting count value
-         */
         void onSuccess(int count);
-
-        /**
-         * Called when the operation fails.
-         *
-         * @param e exception describing the failure
-         */
         void onFailure(Exception e);
     }
 
-    /**
-     * Creates a new repository backed by the default Firestore instance.
-     */
+    public interface WaitlistStatusCallback {
+        void onSuccess(boolean isOnWaitlist);
+        void onFailure(Exception e);
+    }
+
     public EventRepository() {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    /**
-     * Creates a new event document in Firestore.
-     * <p>
-     * A new Firestore document ID is generated and assigned to the event before saving.
-     * If the event does not already have a creation timestamp, the current timestamp is used.
-     * If the event does not already have a status, the default status {@code "open"} is assigned.
-     *
-     * @param event event object to create
-     * @param cb callback invoked on success or failure
-     */
     public void createEvent(@NonNull Events event, @NonNull SimpleCallback cb) {
         String id = db.collection(COLLECTION_EVENTS).document().getId();
         event.setEventId(id);
-
         if (event.getCreatedAt() == null) {
             event.setCreatedAt(Timestamp.now());
         }
-
         if (event.getStatus() == null || event.getStatus().isEmpty()) {
             event.setStatus("open");
         }
-
-        db.collection(COLLECTION_EVENTS)
-                .document(id)
-                .set(event)
+        db.collection(COLLECTION_EVENTS).document(id).set(event)
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Fetches all events whose status is {@code "open"}.
-     *
-     * @param cb callback receiving the list of open events on success, or an exception on failure
-     */
-    public void fetchOpenEvents(@NonNull EventsCallback cb) {
-        db.collection(COLLECTION_EVENTS)
-                .whereEqualTo("status", "open")
-                .get()
-                .addOnSuccessListener(snapshot -> {
-
-                    List<Events> out = new ArrayList<>();
-
-                    for (var doc : snapshot.getDocuments()) {
-                        Events e = doc.toObject(Events.class);
-                        if (e != null) {
-                            out.add(e);
+    public void fetchEventById(@NonNull String eventId, @NonNull EventCallback cb) {
+        db.collection(COLLECTION_EVENTS).document(eventId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Events event = documentSnapshot.toObject(Events.class);
+                        if (event != null && (event.getEventId() == null || event.getEventId().isEmpty())) {
+                            event.setEventId(documentSnapshot.getId());
                         }
+                        cb.onSuccess(event);
+                    } else {
+                        cb.onFailure(new Exception("Event not found"));
                     }
-
-                    cb.onSuccess(out);
                 })
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Replaces an existing event document in Firestore with the provided event data.
-     *
-     * @param event event object containing updated values; must include a non-empty event ID
-     * @param cb callback invoked on success or failure
-     */
-    public void updateEvent(@NonNull Events event, @NonNull SimpleCallback cb) {
-
-        if (event.getEventId() == null || event.getEventId().isEmpty()) {
-            cb.onFailure(new IllegalArgumentException("eventId is required"));
-            return;
-        }
-
-        db.collection(COLLECTION_EVENTS)
-                .document(event.getEventId())
-                .set(event)
-                .addOnSuccessListener(unused -> cb.onSuccess())
-                .addOnFailureListener(cb::onFailure);
-    }
-
-    /**
-     * Deletes an event document by id.
-     *
-     * @param eventId Firestore event document id
-     * @param cb callback for success/failure
-     */
-    public void deleteEvent(@NonNull String eventId, @NonNull SimpleCallback cb) {
-        db.collection(COLLECTION_EVENTS)
-                .document(eventId)
-                .delete()
-                .addOnSuccessListener(unused -> cb.onSuccess())
-                .addOnFailureListener(cb::onFailure);
-    }
-
-    /**
-     * Fetches all events from Firestore.
-     * If an event does not contain an eventId field, the Firestore document id is used.
-     *
-     * @param cb callback receiving event list on success or exception on failure
-     */
-    public void fetchAllEvents(@NonNull EventsCallback cb) {
-        db.collection(COLLECTION_EVENTS)
-                .get()
+    public void fetchOpenEvents(@NonNull EventsCallback cb) {
+        db.collection(COLLECTION_EVENTS).whereEqualTo("status", "open").get()
                 .addOnSuccessListener(snapshot -> {
                     List<Events> out = new ArrayList<>();
                     for (var doc : snapshot.getDocuments()) {
                         Events e = doc.toObject(Events.class);
                         if (e != null) {
                             if (e.getEventId() == null || e.getEventId().isEmpty()) {
-                                e.setEventId(doc.getId()); // critical fix
+                                e.setEventId(doc.getId());
                             }
                             out.add(e);
                         }
@@ -211,74 +111,64 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Adds a device or user identifier to an event's waiting list using Firestore array union.
-     *
-     * @param eventId ID of the event document
-     * @param deviceId identifier to add to the waiting list
-     * @param cb callback invoked on success or failure
-     */
+    public void updateEvent(@NonNull Events event, @NonNull SimpleCallback cb) {
+        if (event.getEventId() == null || event.getEventId().isEmpty()) {
+            cb.onFailure(new IllegalArgumentException("eventId is required"));
+            return;
+        }
+        db.collection(COLLECTION_EVENTS).document(event.getEventId()).set(event)
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    public void deleteEvent(@NonNull String eventId, @NonNull SimpleCallback cb) {
+        db.collection(COLLECTION_EVENTS).document(eventId).delete()
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    public void fetchAllEvents(@NonNull EventsCallback cb) {
+        db.collection(COLLECTION_EVENTS).get()
+                .addOnSuccessListener(snapshot -> {
+                    List<Events> out = new ArrayList<>();
+                    for (var doc : snapshot.getDocuments()) {
+                        Events e = doc.toObject(Events.class);
+                        if (e != null) {
+                            if (e.getEventId() == null || e.getEventId().isEmpty()) {
+                                e.setEventId(doc.getId());
+                            }
+                            out.add(e);
+                        }
+                    }
+                    cb.onSuccess(out);
+                })
+                .addOnFailureListener(cb::onFailure);
+    }
+
     public void joinWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
         Map<String, Object> data = new HashMap<>();
         data.put("waitingList", FieldValue.arrayUnion(deviceId));
-
-        db.collection(COLLECTION_EVENTS)
-                .document(eventId)
-                .set(data, SetOptions.merge())
+        db.collection(COLLECTION_EVENTS).document(eventId).set(data, SetOptions.merge())
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Removes a device or user identifier from an event's waiting list using Firestore array remove.
-     *
-     * @param eventId ID of the event document
-     * @param userId identifier to remove from the waiting list
-     * @param cb callback invoked on success or failure
-     */
-    public void leaveWaitingList(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
+    public void leaveWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
         Map<String, Object> data = new HashMap<>();
-        data.put("waitingList", FieldValue.arrayRemove(userId));
-
-        db.collection(COLLECTION_EVENTS)
-                .document(eventId)
-                .set(data, SetOptions.merge())
+        data.put("waitingList", FieldValue.arrayRemove(deviceId));
+        db.collection(COLLECTION_EVENTS).document(eventId).set(data, SetOptions.merge())
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
-    }
-
-    /**
-     * Callback for checking whether a user or device is currently on a waiting list.
-     */
-    public interface WaitlistStatusCallback {
-
-        /**
-         * Called when the waitlist membership check completes successfully.
-         *
-         * @param isOnWaitlist {@code true} if the identifier is on the waiting list; {@code false} otherwise
-         */
-        void onSuccess(boolean isOnWaitlist);
-
-        /**
-         * Called when the operation fails.
-         *
-         * @param e exception describing the failure
-         */
-        void onFailure(Exception e);
     }
 
     public void isOnWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull WaitlistStatusCallback cb) {
-        db.collection(COLLECTION_EVENTS)
-                .document(eventId)
-                .get()
+        db.collection(COLLECTION_EVENTS).document(eventId).get()
                 .addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()) {
-                        Object waitingListObj = snapshot.get("waitingList");
+                        Object wlObj = snapshot.get("waitingList");
                         boolean isOnList = false;
-                        if (waitingListObj instanceof List) {
-                            isOnList = ((List<?>) waitingListObj).contains(deviceId);
-                        } else if (waitingListObj instanceof Map) {
-                            isOnList = ((Map<?, ?>) waitingListObj).containsValue(deviceId);
+                        if (wlObj instanceof List) {
+                            isOnList = ((List<?>) wlObj).contains(deviceId);
                         }
                         cb.onSuccess(isOnList);
                     } else {
@@ -288,60 +178,44 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Registers a realtime listener that reports the current waiting list count for an event.
-     *
-     * @param eventId ID of the event document to observe
-     * @param cb callback receiving updated waitlist counts or errors
-     * @return listener registration that can be used to stop observing
-     */
-    public ListenerRegistration listenToWaitlistCount(@NonNull String eventId, @NonNull CountCallback cb) {
-        return db.collection(COLLECTION_EVENTS)
-                .document(eventId)
-                .addSnapshotListener((snapshot, e) -> {
-                    if (e != null) {
-                        cb.onFailure(e);
-                        return;
-                    }
-                    if (snapshot != null && snapshot.exists()) {
-                        Object waitingListObj = snapshot.get("waitingList");
-                        int count = 0;
-                        if (waitingListObj instanceof List) {
-                            count = ((List<?>) waitingListObj).size();
-                        } else if (waitingListObj instanceof Map) {
-                            count = ((Map<?, ?>) waitingListObj).size();
+    public void fetchWaitlistEntrants(@NonNull String eventId, @NonNull EntrantsCallback cb) {
+        db.collection(COLLECTION_EVENTS).document(eventId).get().addOnSuccessListener(documentSnapshot -> {
+            List<String> deviceIds = (List<String>) documentSnapshot.get("waitingList");
+            if (deviceIds == null || deviceIds.isEmpty()) {
+                cb.onSuccess(new ArrayList<>());
+                return;
+            }
+            List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+            for (String deviceId : deviceIds) {
+                tasks.add(db.collection(COLLECTION_USERS).document(deviceId).get());
+            }
+            Tasks.whenAllComplete(tasks).addOnCompleteListener(t -> {
+                List<Entrant> entrants = new ArrayList<>();
+                for (Task<DocumentSnapshot> task : tasks) {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        Entrant entrant = task.getResult().toObject(Entrant.class);
+                        if (entrant != null) {
+                            entrants.add(entrant);
                         }
-                        cb.onSuccess(count);
-                    } else {
-                        cb.onSuccess(0);
                     }
-                });
+                }
+                cb.onSuccess(entrants);
+            });
+        }).addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Registers a realtime listener that reports the current waiting list count for an event.
-     * <p>
-     * This method currently mirrors {@link #listenToWaitlistCount(String, CountCallback)}.
-     *
-     * @param eventId ID of the event document to observe
-     * @param cb callback receiving updated waitlist counts or errors
-     * @return listener registration that can be used to stop observing
-     */
-    public ListenerRegistration observeWaitingListCount(@NonNull String eventId, @NonNull CountCallback cb) {
-        return db.collection(COLLECTION_EVENTS)
-                .document(eventId)
+    public ListenerRegistration listenToWaitlistCount(@NonNull String eventId, @NonNull CountCallback cb) {
+        return db.collection(COLLECTION_EVENTS).document(eventId)
                 .addSnapshotListener((snapshot, e) -> {
                     if (e != null) {
                         cb.onFailure(e);
                         return;
                     }
                     if (snapshot != null && snapshot.exists()) {
-                        Object waitingListObj = snapshot.get("waitingList");
+                        Object wlObj = snapshot.get("waitingList");
                         int count = 0;
-                        if (waitingListObj instanceof List) {
-                            count = ((List<?>) waitingListObj).size();
-                        } else if (waitingListObj instanceof Map) {
-                            count = ((Map<?, ?>) waitingListObj).size();
+                        if (wlObj instanceof List) {
+                            count = ((List<?>) wlObj).size();
                         }
                         cb.onSuccess(count);
                     } else {

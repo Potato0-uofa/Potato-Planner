@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(User user) {
                 if (user == null) {
+                    // Only create a new user if one doesn't exist at all
                     User newUser = new User(deviceId, "", "", "");
-
                     userRepository.upsertUser(newUser, new UserRepository.SimpleCallback() {
                         @Override
                         public void onSuccess() {
@@ -62,12 +62,17 @@ public class MainActivity extends AppCompatActivity {
                             Log.e(TAG, "User bootstrap failed", e);
                         }
                     });
-
-                } else if (!TextUtils.isEmpty(user.getName()) && !TextUtils.isEmpty(user.getEmail())) {
-                    // If profile already exists, skip login and go to homepage
-                    Intent intent = new Intent(MainActivity.this, HomePage.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
+                } else {
+                    // User exists. Check if they have completed their profile.
+                    if (!TextUtils.isEmpty(user.getName()) && !TextUtils.isEmpty(user.getEmail())) {
+                        Log.d(TAG, "Existing user found with complete profile. Redirecting to HomePage.");
+                        Intent intent = new Intent(MainActivity.this, HomePage.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Log.d(TAG, "Existing user found but profile is incomplete.");
+                    }
                 }
             }
 
