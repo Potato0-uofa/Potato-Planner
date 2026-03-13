@@ -9,20 +9,55 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * Repository for event registration records in Firestore
+ * Supports join, leave, and invitation response flows.
+ */
 public class RegistrationRepository {
 
+    /** Name of the Firestore collection that stores registration documents. */
     private static final String COLLECTION_REGISTRATIONS = "registrations";
+
+    /** Firestore database instance used for registration operations. */
     private final FirebaseFirestore db;
 
+    /**
+     * Callback for operations that only need to report success or failure.
+     */
     public interface SimpleCallback {
+
+        /**
+         * Called when the operation completes successfully.
+         */
         void onSuccess();
+
+        /**
+         * Called when the operation fails.
+         *
+         * @param e exception describing the failure
+         */
         void onFailure(Exception e);
     }
 
+    /**
+     * Creates a new repository backed by the default Firestore instance.
+     */
     public RegistrationRepository() {
         this.db = FirebaseFirestore.getInstance();
     }
 
+    /**
+     * Creates or replaces a registration record for a user joining an event.
+     * <p>
+     * The registration document ID is composed as {@code eventId + "_" + userId}.
+     * A newly joined registration is stored with status {@code "pending"} and the
+     * current timestamp as {@code joinedAt}.
+     *
+     * @param eventId identifier of the event being joined
+     * @param userId identifier of the user or device joining the event
+     * @param cb callback invoked on success or failure
+     */
     public void joinEvent(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
 
         String docId = eventId + "_" + userId;
@@ -40,6 +75,13 @@ public class RegistrationRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
+    /**
+     * Deletes a registration record for a user leaving an event.
+     *
+     * @param eventId identifier of the event being left
+     * @param userId identifier of the user or device leaving the event
+     * @param cb callback invoked on success or failure
+     */
     public void leaveEvent(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
 
         String docId = eventId + "_" + userId;
@@ -51,6 +93,16 @@ public class RegistrationRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
+    /**
+     * Marks a registration or invitation as declined for a given event and user.
+     * <p>
+     * This uses Firestore merge semantics so the document is updated if it exists,
+     * or created if it does not.
+     *
+     * @param eventId event identifier
+     * @param userId user or device identifier
+     * @param cb callback for success or failure
+     */
     public void declineInvitation(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
         String docId = eventId + "_" + userId;
 
@@ -66,7 +118,4 @@ public class RegistrationRepository {
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
-
-
-
 }

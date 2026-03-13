@@ -7,10 +7,25 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
+/**
+ * Notification screen controller for entrant invitation actions.
+ * Current implementation wires decline action to Firestore registration status updates.
+ *
+ * User story covered:
+ * - US 01.05.03: Entrant declines invitation
+ */
 public class NotificationLogs extends AppCompatActivity {
 
+    /** Repository used to update registration records for invitation actions. */
     private RegistrationRepository registrationRepository;
 
+    /**
+     * Initializes the notification action UI and binds the decline button handler.
+     * <p>
+     * This screen expects an {@code eventId} extra in the launching intent. If no event ID
+     * is provided, a fallback test value is used by the current implementation.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +51,9 @@ public class NotificationLogs extends AppCompatActivity {
                     finalEventId,
                     userId,
                     new RegistrationRepository.SimpleCallback() {
+                        /**
+                         * Displays a confirmation message after the invitation is declined.
+                         */
                         @Override
                         public void onSuccess() {
                             Toast.makeText(
@@ -45,6 +63,11 @@ public class NotificationLogs extends AppCompatActivity {
                             ).show();
                         }
 
+                        /**
+                         * Displays an error message if declining the invitation fails.
+                         *
+                         * @param e exception describing the failure
+                         */
                         @Override
                         public void onFailure(Exception e) {
                             Toast.makeText(
@@ -58,6 +81,3 @@ public class NotificationLogs extends AppCompatActivity {
         });
     }
 }
-
-
-
