@@ -15,7 +15,7 @@ import java.util.List;
  * and perform moderation actions such as removing events.
  */
 
-public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.EventViewHolder> {
+public class  AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.EventViewHolder> {
     /**
      * Interface used to notify the activity when an admin
      * performs an action on an event.
