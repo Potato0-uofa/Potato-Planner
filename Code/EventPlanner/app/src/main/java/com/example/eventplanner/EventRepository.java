@@ -267,21 +267,19 @@ public class EventRepository {
         void onFailure(Exception e);
     }
 
-    /**
-     * Checks whether a given user or device identifier is on an event's waiting list.
-     *
-     * @param eventId ID of the event document
-     * @param userId identifier to check for membership in the waiting list
-     * @param cb callback invoked with the result or an exception
-     */
-    public void isOnWaitingList(@NonNull String eventId, @NonNull String userId, @NonNull WaitlistStatusCallback cb) {
+    public void isOnWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull WaitlistStatusCallback cb) {
         db.collection(COLLECTION_EVENTS)
                 .document(eventId)
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()) {
-                        List<String> waitingList = (List<String>) snapshot.get("waitingList");
-                        boolean isOnList = waitingList != null && waitingList.contains(userId);
+                        Object waitingListObj = snapshot.get("waitingList");
+                        boolean isOnList = false;
+                        if (waitingListObj instanceof List) {
+                            isOnList = ((List<?>) waitingListObj).contains(deviceId);
+                        } else if (waitingListObj instanceof Map) {
+                            isOnList = ((Map<?, ?>) waitingListObj).containsValue(deviceId);
+                        }
                         cb.onSuccess(isOnList);
                     } else {
                         cb.onSuccess(false);
@@ -300,21 +298,22 @@ public class EventRepository {
     public ListenerRegistration listenToWaitlistCount(@NonNull String eventId, @NonNull CountCallback cb) {
         return db.collection(COLLECTION_EVENTS)
                 .document(eventId)
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            cb.onFailure(e);
-                            return;
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        cb.onFailure(e);
+                        return;
+                    }
+                    if (snapshot != null && snapshot.exists()) {
+                        Object waitingListObj = snapshot.get("waitingList");
+                        int count = 0;
+                        if (waitingListObj instanceof List) {
+                            count = ((List<?>) waitingListObj).size();
+                        } else if (waitingListObj instanceof Map) {
+                            count = ((Map<?, ?>) waitingListObj).size();
                         }
-
-                        if (snapshot != null && snapshot.exists()) {
-                            List<String> waitingList = (List<String>) snapshot.get("waitingList");
-                            int count = (waitingList != null) ? waitingList.size() : 0;
-                            cb.onSuccess(count);
-                        } else {
-                            cb.onSuccess(0);
-                        }
+                        cb.onSuccess(count);
+                    } else {
+                        cb.onSuccess(0);
                     }
                 });
     }
@@ -331,21 +330,22 @@ public class EventRepository {
     public ListenerRegistration observeWaitingListCount(@NonNull String eventId, @NonNull CountCallback cb) {
         return db.collection(COLLECTION_EVENTS)
                 .document(eventId)
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            cb.onFailure(e);
-                            return;
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        cb.onFailure(e);
+                        return;
+                    }
+                    if (snapshot != null && snapshot.exists()) {
+                        Object waitingListObj = snapshot.get("waitingList");
+                        int count = 0;
+                        if (waitingListObj instanceof List) {
+                            count = ((List<?>) waitingListObj).size();
+                        } else if (waitingListObj instanceof Map) {
+                            count = ((Map<?, ?>) waitingListObj).size();
                         }
-
-                        if (snapshot != null && snapshot.exists()) {
-                            List<String> waitingList = (List<String>) snapshot.get("waitingList");
-                            int count = (waitingList != null) ? waitingList.size() : 0;
-                            cb.onSuccess(count);
-                        } else {
-                            cb.onSuccess(0);
-                        }
+                        cb.onSuccess(count);
+                    } else {
+                        cb.onSuccess(0);
                     }
                 });
     }
