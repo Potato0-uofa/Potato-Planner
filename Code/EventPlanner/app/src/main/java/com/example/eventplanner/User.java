@@ -6,47 +6,25 @@ package com.example.eventplanner;
  * used to identify the device in Firestore.
  */
 public class User {
-    // Attributes of user
-    /** The user's name */
     private String name;
-
-    /** The user's username */
     private String username;
-
-    /** The user's email address */
     private String email;
-
-    /** The user's phone number */
     private String phone;
-
-    /** The user's profile description */
     private String description;
-
-    /** The user's country */
     private String country;
-
-    /** The user's business address */
     private String address;
-
-    // When the app launches, it checks if this device is in our Firestore collection
-    /** The unique device identifier */
     private String deviceId;
 
-
+    /** Master notification toggle for the user. Defaults to true for new users. */
+    private boolean notificationsEnabled = true;
 
     /**
      * Default constructor required for Firestore.
      */
-    public User() {} // Required for Firestore
+    public User() {} 
 
-    // Constructor for the User class
     /**
      * Constructs a User with the specified information.
-     *
-     * @param deviceId unique identifier for the user's device
-     * @param name the user's name
-     * @param email the user's email address
-     * @param phone the user's phone number
      */
     public User(String deviceId, String name, String email, String phone) {
         this.deviceId = deviceId;
@@ -56,140 +34,40 @@ public class User {
         this.description = "";
         this.country = "";
         this.address = "";
+        // Note: notificationsEnabled remains true by default unless changed
     }
 
-    // Getters and Setters for the attributes of User
+    // Getters and Setters
 
-    // Getters
+    public String getDeviceId() { return deviceId; }
+    public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
 
-    /**
-     * Gets the device ID associated with the user.
-     *
-     * @return the device ID
-     */
-    public String getDeviceId() {
-        return deviceId;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    /**
-     * Gets the user's name.
-     *
-     * @return the user's name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the user's username.
-     * Not prompted on signup, user can choose to have a username when navigating to their
-     * profile settings.
-     *
-     * @return
-     */
     public String getUsername() { return username; }
-
-    /**
-     * Gets the user's email address.
-     *
-     * @return the user's email
-     */
-
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * Gets the user's phone number.
-     *
-     * @return the user's phone number
-     */
-
-    public String getPhone() {
-        return phone;
-    }
-
-    /** Gets the user's profile description.
-     *
-     * @return the user's profile description
-     */
-    public String getDescription() { return description; }
-
-    /** Gets the user's country.
-     *
-     * @return the user's country
-     */
-    public String getCountry() { return country; }
-
-    /** Gets the user's business address.
-     *
-     * @return the user's business address
-     */
-    public String getAddress() { return address; }
-
-    // Setters
-
-    /**
-     * Sets the device ID for the user.
-     *
-     * @param deviceId the new device ID
-     */
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    /**
-     * Sets the user's name.
-     *
-     * @param name the user's name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Sets the user's username (if they choose to have one)
-     *
-     * @param username
-     */
     public void setUsername(String username) { this.username = username; }
 
-    /**
-     * Sets the user's email address.
-     *
-     * @param email the user's email
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    /**
-     * Sets the user's phone number.
-     *
-     * @param phone the user's phone number
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-    /** Sets the user's profile description.
-     *
-     * @param description the user's profile description
-     */
+    public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    /** Sets the user's country.
-     *
-     * @param country the user's country
-     */
+    public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
 
-    /** Sets the user's business address.
-     *
-     * @param address the user's business address
-     */
+    public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
+    public boolean isNotificationsEnabled() {
+        return notificationsEnabled;
+    }
 
-
+    public void setNotificationsEnabled(boolean notificationsEnabled) {
+        this.notificationsEnabled = notificationsEnabled;
+    }
 }

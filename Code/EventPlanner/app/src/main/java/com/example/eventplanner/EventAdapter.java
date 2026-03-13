@@ -1,5 +1,6 @@
 package com.example.eventplanner;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +23,24 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(android.R.layout.simple_list_item_2, parent, false);
+                .inflate(R.layout.item_event_browse, parent, false);
         return new EventViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Events event = events.get(position);
-        holder.text1.setText(event.getName());
-        holder.text2.setText(event.getCategory() + " - " + event.getStatus());
+        holder.tvName.setText(event.getName() != null ? event.getName() : "Unnamed Event");
+        holder.tvCategory.setText(event.getCategory() != null ? event.getCategory() : "No Category");
+        holder.tvStatus.setText(event.getStatus() != null ? event.getStatus() : "Open");
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), EventDescriptionView.class);
+            intent.putExtra("eventId", event.getEventId());
+            intent.putExtra("eventName", event.getName());
+            intent.putExtra("eventDescription", event.getDescription());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
@@ -39,12 +49,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView text1, text2;
+        TextView tvName, tvCategory, tvStatus;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
-            text1 = itemView.findViewById(android.R.id.text1);
-            text2 = itemView.findViewById(android.R.id.text2);
+            tvName = itemView.findViewById(R.id.tv_event_name);
+            tvCategory = itemView.findViewById(R.id.tv_event_category);
+            tvStatus = itemView.findViewById(R.id.tv_event_status);
         }
     }
 }

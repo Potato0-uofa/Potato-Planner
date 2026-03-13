@@ -1,6 +1,7 @@
 package com.example.eventplanner;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.Exclude;
 
 /**
  * Represents an event in the event planner application.
@@ -41,15 +42,21 @@ public class Events {
     /** Timestamp recording when this event was created in Firestore. */
     private Timestamp createdAt;
 
-    /** The waiting list associated with this event. */
-    private WaitingList waitingList;
+    /** The category of the event (e.g., "Sport", "Music"). */
+    private String category;
+
+    /** The date/time for availability checks as a timestamp. */
+    private long eventTimestamp;
+
+    /** The waiting list associated with this event. Excluded from Firestore to prevent deserialization crashes. */
+    private WaitingList waitingListObject;
 
     /**
      * No-argument constructor required for Firestore deserialization.
      * Initializes an empty waiting list and sets waitlist limit to -1 (unlimited).
      */
     public Events() {
-        this.waitingList = new WaitingList();
+        this.waitingListObject = new WaitingList();
         this.waitlistLimit = -1;
     }
 
@@ -67,7 +74,7 @@ public class Events {
         this.date = date;
         this.description = description;
         this.location = location;
-        this.waitingList = new WaitingList();
+        this.waitingListObject = new WaitingList();
         this.status = "open";
         this.waitlistLimit = -1;
     }
@@ -98,7 +105,7 @@ public class Events {
         this.capacity = capacity;
         this.status = status;
         this.createdAt = createdAt;
-        this.waitingList = new WaitingList();
+        this.waitingListObject = new WaitingList();
         this.waitlistLimit = -1;
     }
 
@@ -139,12 +146,13 @@ public class Events {
      * @param entrant the Entrant to add
      * @throws IllegalStateException if the waitlist is full
      */
+    @Exclude
     public void addToWaitingList(Entrant entrant) {
-        if (!waitingList.hasEntrant(entrant)) {
-            if (hasWaitlistLimit() && waitingList.getCount() >= waitlistLimit) {
+        if (!waitingListObject.hasEntrant(entrant)) {
+            if (hasWaitlistLimit() && waitingListObject.getCount() >= waitlistLimit) {
                 throw new IllegalStateException("Waiting list is full");
             }
-            waitingList.addEntrant(entrant);
+            waitingListObject.addEntrant(entrant);
         }
     }
 
@@ -153,9 +161,10 @@ public class Events {
      *
      * @param entrant the entrant to remove
      */
+    @Exclude
     public void removeFromWaitingList(Entrant entrant) {
-        if (waitingList.hasEntrant(entrant)) {
-            waitingList.deleteEntrant(entrant);
+        if (waitingListObject.hasEntrant(entrant)) {
+            waitingListObject.deleteEntrant(entrant);
         }
     }
 
@@ -165,8 +174,9 @@ public class Events {
      * @param entrant the Entrant to check
      * @return true if the entrant is on the waiting list, false otherwise
      */
+    @Exclude
     public boolean isOnWaitingList(Entrant entrant) {
-        return waitingList.hasEntrant(entrant);
+        return waitingListObject.hasEntrant(entrant);
     }
 
 
@@ -175,8 +185,9 @@ public class Events {
      *
      * @return the Waiting list for this event
      */
+    @Exclude
     public WaitingList getWaitingList() {
-        return waitingList;
+        return waitingListObject;
     }
 
     /**
@@ -185,8 +196,9 @@ public class Events {
      *
      * @param waitingList the waiting list to assign
      */
+    @Exclude
     public void setWaitingList(WaitingList waitingList) {
-        this.waitingList = (waitingList != null) ? waitingList : new WaitingList();
+        this.waitingListObject = (waitingList != null) ? waitingList : new WaitingList();
     }
 
     /**
@@ -194,8 +206,9 @@ public class Events {
      *
      * @return the waitlist headcount
      */
+    @Exclude
     public int getWaitingListCount() {
-        return waitingList.getCount();
+        return waitingListObject.getCount();
     }
 
     /** @return the unique Firestore document ID for this event */
@@ -286,5 +299,25 @@ public class Events {
     /** @param createdAt the creation timestamp to assign */
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    /** @return the category of the event */
+    public String getCategory() {
+        return category;
+    }
+
+    /** @param category the category to assign */
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    /** @return the event timestamp for availability checks */
+    public long getEventTimestamp() {
+        return eventTimestamp;
+    }
+
+    /** @param eventTimestamp the event timestamp to assign */
+    public void setEventTimestamp(long eventTimestamp) {
+        this.eventTimestamp = eventTimestamp;
     }
 }

@@ -15,11 +15,13 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ProfileSettingsActivity"
+            android:exported="true">
+        </activity>
+
         <activity android:name=".HomePage" />
         <activity android:name=".ProfileSetup" />
         <activity android:name=".AdminBrowseEventsActivity" />
@@ -27,11 +29,28 @@
         <activity android:name=".AdminRemoveOrganizersActivity" />
         <activity android:name=".CreateEventActivity" />
         <activity android:name=".SearchScreen" />
-        <activity android:name=".NonAdminBrowseEvents" />
+        <activity android:name=".BrowseEventsActivity" />
+
+        <activity
+            android:name=".EventDescriptionView"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".EventWaitlistActivity" />
+        <activity android:name=".WaitlistActivity" />
+
+        <activity
+            android:name=".NonAdminBrowseEvents"
+            android:exported="false">
+        </activity>
+
         <activity android:name=".Profile" />
         <activity android:name=".NotificationLogs" />
         <activity android:name=".SettingsView" />
-        <activity android:name=".EventDescriptionView" />
         <activity android:name=".UserSettingsActivity" />
         <activity android:name=".EventHistoryActivity" />
 

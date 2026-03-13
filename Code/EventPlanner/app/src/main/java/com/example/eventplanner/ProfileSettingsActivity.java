@@ -16,7 +16,7 @@ public class ProfileSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_settings);
+        setContentView(R.layout.activity_user_settings);
 
         userRepository = new UserRepository();
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);

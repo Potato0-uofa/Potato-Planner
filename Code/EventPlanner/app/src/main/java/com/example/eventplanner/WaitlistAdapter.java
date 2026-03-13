@@ -22,15 +22,26 @@ public class WaitlistAdapter extends RecyclerView.Adapter<WaitlistAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(android.R.layout.simple_list_item_2, parent, false);
+                .inflate(R.layout.item_waitlist_entrant, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Entrant entrant = entrants.get(position);
-        holder.text1.setText(entrant.getName() != null ? entrant.getName() : "Anonymous");
-        holder.text2.setText(entrant.getEmail() != null ? entrant.getEmail() : "No Email");
+        
+        String name = entrant.getName();
+        if (name == null || name.trim().isEmpty()) {
+            name = "User: " + entrant.getDeviceId();
+        }
+        
+        String email = entrant.getEmail();
+        if (email == null || email.trim().isEmpty()) {
+            email = "ID: " + entrant.getDeviceId();
+        }
+
+        holder.tvName.setText(name);
+        holder.tvId.setText(email);
     }
 
     @Override
@@ -39,13 +50,13 @@ public class WaitlistAdapter extends RecyclerView.Adapter<WaitlistAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView text1;
-        public final TextView text2;
+        public final TextView tvName;
+        public final TextView tvId;
 
         public ViewHolder(View view) {
             super(view);
-            text1 = view.findViewById(android.R.id.text1);
-            text2 = view.findViewById(android.R.id.text2);
+            tvName = view.findViewById(R.id.tv_entrant_name);
+            tvId = view.findViewById(R.id.tv_entrant_id);
         }
     }
 }

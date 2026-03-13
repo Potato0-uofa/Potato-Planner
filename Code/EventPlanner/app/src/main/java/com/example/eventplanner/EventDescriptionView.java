@@ -3,53 +3,29 @@ package com.example.eventplanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.ListenerRegistration;
 
-import java.util.Objects;
-
 /**
- * Activity that displays the details of a specified event and allows the user to join the waitlist
- * Recieves the event data via Intent extrs, renders them in the UI and attaches  real time firestore
- * listener to keep the displayed waitlist count in sync.
+ * Activity that displays the details of a specified event and allows the user to join the waitlist.
  */
 public class EventDescriptionView extends AppCompatActivity {
 
-    /**
-     * Repository used to read event data and mutate the waiting list in Firestore.
-     * */
     private EventRepository eventRepository;
-    /**
-     * Local representation of the waiting list, used to cache and display the current count.
-     * */
     private WaitingList waitingList;
-    /**
-     * Active Firestore snapshot listener for the waitlist count.
-     * Held so it can be detached in {@link #onDestroy()} to prevent memory leaks.
-     */
     private ListenerRegistration waitlistListener;
-    /**
-     * TextView that displays the live waitlist headcount.
-     * */
     private TextView tvWaitlistCount;
-    /**
-     * The device's {@code ANDROID_ID}, used as the entrant identifier.
-     * */
     private String eventId;
+    private String deviceId;
+    private Button btnViewWaitlist;
 
-    /**
-     * Initializes the event activity
-     * @param savedInstanceState If the activity is being re-initialized after
-     *     previously being shut down then this Bundle contains the data it most
-     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
-     *
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +33,8 @@ public class EventDescriptionView extends AppCompatActivity {
 
         eventRepository = new EventRepository();
         waitingList = new WaitingList();
-        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        
+        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         eventId = getIntent().getStringExtra("eventId");
         if (eventId == null || eventId.isEmpty()) {
@@ -67,14 +44,13 @@ public class EventDescriptionView extends AppCompatActivity {
         String eventName = getIntent().getStringExtra("eventName");
         String eventDescription = getIntent().getStringExtra("eventDescription");
 
-        // Set the data to your views
         tvWaitlistCount = findViewById(R.id.Waitlist_Count);
-        ((TextView) findViewById(R.id.event_name)).setText(eventName != null ? eventName : "Test Event");
-        ((TextView) findViewById(R.id.event_details)).setText(eventDescription != null ? eventDescription : "Test Description");
+        ((TextView) findViewById(R.id.event_name)).setText(eventName != null ? eventName : "Demo Event");
+        ((TextView) findViewById(R.id.event_details)).setText(eventDescription != null ? eventDescription : "This is a demo event description.");
 
         Button btnJoinEvent = findViewById(R.id.join_event_button);
         btnJoinEvent.setOnClickListener(v -> {
-            eventRepository.joinWaitingList(eventId, userId, new EventRepository.SimpleCallback() {
+            eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(EventDescriptionView.this, "Joined Waitlist!", Toast.LENGTH_SHORT).show();
@@ -87,14 +63,37 @@ public class EventDescriptionView extends AppCompatActivity {
             });
         });
 
-        setupNavigation();
+        btnViewWaitlist = findViewById(R.id.view_waitlist_button);
+        // Force visible so you can see the button immediately when running the app
+        btnViewWaitlist.setVisibility(View.VISIBLE); 
+        btnViewWaitlist.setOnClickListener(v -> {
+            Intent intent = new Intent(EventDescriptionView.this, EventWaitlistActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
+        });
+
+        // US 01.05.05 - Info box click listener for detailed lottery guidelines
+        findViewById(R.id.lottery_info_box).setOnClickListener(v -> showLotteryGuidelines());
+
+        View exitBtn = findViewById(R.id.exit_button_event_page);
+        if (exitBtn != null) {
+            exitBtn.setOnClickListener(v -> finish());
+        }
+
         startListeningToWaitlist();
     }
 
+    private void showLotteryGuidelines() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Lottery Guidelines")
+                .setMessage("1. Joining the waitlist does not guarantee a spot.\n" +
+                        "2. Once the organizer initiates the draw, winners are selected randomly.\n" +
+                        "3. Winners will receive a notification to accept or decline their invitation.\n" +
+                        "4. If an invitation is declined, a new winner will be drawn.")
+                .setPositiveButton("Got it", null)
+                .show();
+    }
 
-    /**
-     *  Attaches a real-time Firestore listener that updates {@link #tvWaitlistCount}
-     */
     private void startListeningToWaitlist() {
         waitlistListener = eventRepository.listenToWaitlistCount(eventId, new EventRepository.CountCallback() {
             @Override
@@ -105,37 +104,11 @@ public class EventDescriptionView extends AppCompatActivity {
 
             @Override
             public void onFailure(Exception e) {
-                Toast.makeText(EventDescriptionView.this, "Error loading waitlist: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                // Ignore error for demo
             }
         });
     }
 
-    /**
-     * Configures click listeners for the bottom navigation bar and the exit button.
-     */
-    private void setupNavigation() {
-        findViewById(R.id.home_button_event_page).setOnClickListener(v -> {
-            startActivity(new Intent(EventDescriptionView.this, HomePage.class));
-        });
-
-        findViewById(R.id.search_button_event_page).setOnClickListener(v -> {
-            startActivity(new Intent(EventDescriptionView.this, SearchScreen.class));
-        });
-
-        findViewById(R.id.browse_button_event_page).setOnClickListener(v -> {
-            startActivity(new Intent(EventDescriptionView.this, NonAdminBrowseEvents.class));
-        });
-
-        findViewById(R.id.profile_button_event_page).setOnClickListener(v -> {
-            startActivity(new Intent(EventDescriptionView.this, Profile.class));
-        });
-
-        findViewById(R.id.exit_button_event_page).setOnClickListener(v -> finish());
-    }
-
-    /**
-     * Life style callback invoked when the activity is destroyed
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

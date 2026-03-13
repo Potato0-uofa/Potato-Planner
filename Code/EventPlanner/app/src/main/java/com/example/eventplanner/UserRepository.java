@@ -1,9 +1,7 @@
 package com.example.eventplanner;
 
 import androidx.annotation.NonNull;
-
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +34,14 @@ public class UserRepository {
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
-                        cb.onSuccess(doc.toObject(User.class));
+                        User user = doc.toObject(User.class);
+                        if (user != null) {
+                            // Ensure the deviceId is populated from the document ID if missing in fields
+                            if (user.getDeviceId() == null || user.getDeviceId().isEmpty()) {
+                                user.setDeviceId(doc.getId());
+                            }
+                        }
+                        cb.onSuccess(user);
                     } else {
                         cb.onSuccess(null);
                     }
@@ -45,6 +50,10 @@ public class UserRepository {
     }
 
     public void upsertUser(@NonNull User user, @NonNull SimpleCallback cb) {
+        if (user.getDeviceId() == null || user.getDeviceId().isEmpty()) {
+            cb.onFailure(new Exception("Cannot save user: Device ID is missing."));
+            return;
+        }
         db.collection(COLLECTION_USERS)
                 .document(user.getDeviceId())
                 .set(user)
@@ -60,6 +69,9 @@ public class UserRepository {
                     for (var doc : snapshot.getDocuments()) {
                         User u = doc.toObject(User.class);
                         if (u != null) {
+                            if (u.getDeviceId() == null || u.getDeviceId().isEmpty()) {
+                                u.setDeviceId(doc.getId());
+                            }
                             out.add(u);
                         }
                     }

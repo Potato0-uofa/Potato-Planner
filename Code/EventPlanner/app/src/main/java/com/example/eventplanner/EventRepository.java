@@ -3,6 +3,8 @@ package com.example.eventplanner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -10,6 +12,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
@@ -20,10 +23,21 @@ import java.util.Map;
 public class EventRepository {
 
     private static final String COLLECTION_EVENTS = "events";
+    private static final String COLLECTION_USERS = "users";
     private final FirebaseFirestore db;
 
     public interface EventsCallback {
         void onSuccess(List<Events> events);
+        void onFailure(Exception e);
+    }
+
+    public interface EventCallback {
+        void onSuccess(Events event);
+        void onFailure(Exception e);
+    }
+
+    public interface EntrantsCallback {
+        void onSuccess(List<Entrant> entrants);
         void onFailure(Exception e);
     }
 
@@ -60,6 +74,22 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
+    public void fetchEventById(@NonNull String eventId, @NonNull EventCallback cb) {
+        db.collection(COLLECTION_EVENTS).document(eventId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Events event = documentSnapshot.toObject(Events.class);
+                        if (event != null && (event.getEventId() == null || event.getEventId().isEmpty())) {
+                            event.setEventId(documentSnapshot.getId());
+                        }
+                        cb.onSuccess(event);
+                    } else {
+                        cb.onFailure(new Exception("Event not found"));
+                    }
+                })
+                .addOnFailureListener(cb::onFailure);
+    }
+
     public void fetchOpenEvents(@NonNull EventsCallback cb) {
         db.collection(COLLECTION_EVENTS)
                 .whereEqualTo("status", "open")
@@ -69,9 +99,16 @@ public class EventRepository {
                     List<Events> out = new ArrayList<>();
 
                     for (var doc : snapshot.getDocuments()) {
-                        Events e = doc.toObject(Events.class);
-                        if (e != null) {
-                            out.add(e);
+                        try {
+                            Events e = doc.toObject(Events.class);
+                            if (e != null) {
+                                if (e.getEventId() == null || e.getEventId().isEmpty()) {
+                                    e.setEventId(doc.getId());
+                                }
+                                out.add(e);
+                            }
+                        } catch (Exception e) {
+                            // Skip documents that fail to deserialize due to schema mismatch
                         }
                     }
 
@@ -108,12 +145,16 @@ public class EventRepository {
                 .addOnSuccessListener(snapshot -> {
                     List<Events> out = new ArrayList<>();
                     for (var doc : snapshot.getDocuments()) {
-                        Events e = doc.toObject(Events.class);
-                        if (e != null) {
-                            if (e.getEventId() == null || e.getEventId().isEmpty()) {
-                                e.setEventId(doc.getId()); // critical fix
+                        try {
+                            Events e = doc.toObject(Events.class);
+                            if (e != null) {
+                                if (e.getEventId() == null || e.getEventId().isEmpty()) {
+                                    e.setEventId(doc.getId());
+                                }
+                                out.add(e);
                             }
-                            out.add(e);
+                        } catch (Exception e) {
+                            // Skip documents that fail to deserialize
                         }
                     }
                     cb.onSuccess(out);
@@ -132,6 +173,42 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
+    /**
+     * Fetches the detailed information of all entrants on the waiting list for a specific event.
+     *
+     * @param eventId the ID of the event
+     * @param cb      callback to return the list of Entrants
+     */
+    public void fetchWaitlistEntrants(@NonNull String eventId, @NonNull EntrantsCallback cb) {
+        db.collection(COLLECTION_EVENTS).document(eventId).get().addOnSuccessListener(documentSnapshot -> {
+            List<String> deviceIds = (List<String>) documentSnapshot.get("waitingList");
+            if (deviceIds == null || deviceIds.isEmpty()) {
+                cb.onSuccess(new ArrayList<>());
+                return;
+            }
+
+            // Firebase 'whereIn' is limited to 10 items per query.
+            // For larger lists, we need to split into multiple queries or fetch individually.
+            List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+            for (String deviceId : deviceIds) {
+                tasks.add(db.collection(COLLECTION_USERS).document(deviceId).get());
+            }
+
+            Tasks.whenAllComplete(tasks).addOnCompleteListener(t -> {
+                List<Entrant> entrants = new ArrayList<>();
+                for (Task<DocumentSnapshot> task : tasks) {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        Entrant entrant = task.getResult().toObject(Entrant.class);
+                        if (entrant != null) {
+                            entrants.add(entrant);
+                        }
+                    }
+                }
+                cb.onSuccess(entrants);
+            });
+        }).addOnFailureListener(cb::onFailure);
+    }
+
     public ListenerRegistration listenToWaitlistCount(@NonNull String eventId, @NonNull CountCallback cb) {
         return db.collection(COLLECTION_EVENTS)
                 .document(eventId)
@@ -144,9 +221,13 @@ public class EventRepository {
                         }
 
                         if (snapshot != null && snapshot.exists()) {
-                            List<String> waitingList = (List<String>) snapshot.get("waitingList");
-                            int count = (waitingList != null) ? waitingList.size() : 0;
-                            cb.onSuccess(count);
+                            Object wl = snapshot.get("waitingList");
+                            if (wl instanceof List) {
+                                List<?> waitingList = (List<?>) wl;
+                                cb.onSuccess(waitingList.size());
+                            } else {
+                                cb.onSuccess(0);
+                            }
                         } else {
                             cb.onSuccess(0);
                         }
@@ -166,9 +247,13 @@ public class EventRepository {
                         }
 
                         if (snapshot != null && snapshot.exists()) {
-                            List<String> waitingList = (List<String>) snapshot.get("waitingList");
-                            int count = (waitingList != null) ? waitingList.size() : 0;
-                            cb.onSuccess(count);
+                            Object wl = snapshot.get("waitingList");
+                            if (wl instanceof List) {
+                                List<?> waitingList = (List<?>) wl;
+                                cb.onSuccess(waitingList.size());
+                            } else {
+                                cb.onSuccess(0);
+                            }
                         } else {
                             cb.onSuccess(0);
                         }

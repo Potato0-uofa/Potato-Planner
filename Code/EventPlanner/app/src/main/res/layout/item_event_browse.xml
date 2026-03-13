@@ -1,28 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     android:background="@drawable/settings_row_background"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp">
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tv_event_name"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Event Name"
-        android:textColor="#111111"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event Name"
+            android:textColor="#111111"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_event_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textColor="#666666"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_event_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View"
+        android:text="Open"
         android:textColor="#5BAED4"
         android:textSize="14sp"
         android:textStyle="bold" />

@@ -12,25 +12,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 /**
  * Activity that displays and allows editing of the user's profile settings.
- * Loads the current user's data from Firestore and populates the name, email,
- * phone, and country fields. Each field has an "Edit" button that opens a
- * dialog for inline editing with validation before saving back to Firestore.
+ * Loads the current user's data from Firestore and populates the fields.
+ * Includes a master notification toggle.
  */
 public class SettingsView extends AppCompatActivity {
 
     private TextView tvName, tvEmail, tvPhone, tvCountry, tvAddress, tvUsername;
+    private SwitchCompat switchNotifications;
     private final UserRepository userRepository = new UserRepository();
     private User currentUser;
+    private boolean isUpdatingUI = false;
 
-    /**
-     * Initializes the activity, loads the current user from Firestore,
-     * and sets up Edit button click listeners for each field.
-     *
-     * @param savedInstanceState the previously saved instance state (if applicable)
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,12 +37,21 @@ public class SettingsView extends AppCompatActivity {
         tvPhone   = findViewById(R.id.tv_phone_value);
         tvCountry = findViewById(R.id.tv_country_value);
         tvUsername = findViewById(R.id.tv_username_value);
+        tvAddress = findViewById(R.id.tv_address_value);
+        switchNotifications = findViewById(R.id.switch_notifications);
 
-        // Close button —> Go back to the User Profile View
-        findViewById(R.id.btn_close).setOnClickListener(v ->
-                startActivity(new Intent(SettingsView.this, Profile.class)));
+        // Close button -> Go back to the User Profile View
+        findViewById(R.id.btn_close).setOnClickListener(v -> finish());
 
         loadUser();
+
+        // Notification toggle listener
+        switchNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (currentUser != null && !isUpdatingUI) {
+                currentUser.setNotificationsEnabled(isChecked);
+                saveUser(() -> {}); // Save preference to Firestore
+            }
+        });
 
         // Edit button listeners
         findViewById(R.id.btn_edit_name).setOnClickListener(v ->
@@ -106,10 +111,6 @@ public class SettingsView extends AppCompatActivity {
                 }));
     }
 
-    /**
-     * Loads the current user's data from Firestore using the device ID,
-     * and populates the UI fields with their saved information.
-     */
     private void loadUser() {
         String deviceId = Settings.Secure.getString(
                 getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -117,15 +118,19 @@ public class SettingsView extends AppCompatActivity {
         userRepository.getUserByDeviceId(deviceId, new UserRepository.UserCallback() {
             @Override
             public void onSuccess(User user) {
-                tvAddress = findViewById(R.id.tv_address_value);
                 if (user != null) {
                     currentUser = user;
+                    isUpdatingUI = true;
                     tvName.setText(TextUtils.isEmpty(user.getName()) ? "—" : user.getName());
                     tvEmail.setText(TextUtils.isEmpty(user.getEmail()) ? "—" : user.getEmail());
                     tvPhone.setText(TextUtils.isEmpty(user.getPhone()) ? "—" : user.getPhone());
                     tvCountry.setText(TextUtils.isEmpty(user.getCountry()) ? "—" : user.getCountry());
                     tvAddress.setText(TextUtils.isEmpty(user.getAddress()) ? "—" : user.getAddress());
                     tvUsername.setText(TextUtils.isEmpty(user.getUsername()) ? "—" : user.getUsername());
+                    
+                    // Set switch state WITHOUT triggering the listener
+                    switchNotifications.setChecked(user.isNotificationsEnabled());
+                    isUpdatingUI = false;
                 }
             }
 
@@ -136,11 +141,6 @@ public class SettingsView extends AppCompatActivity {
         });
     }
 
-    /**
-     * Saves the current user object to Firestore and runs a UI update on success.
-     *
-     * @param onSuccess a {@link Runnable} that updates the UI after a successful save
-     */
     private void saveUser(Runnable onSuccess) {
         userRepository.upsertUser(currentUser, new UserRepository.SimpleCallback() {
             @Override
@@ -156,16 +156,6 @@ public class SettingsView extends AppCompatActivity {
         });
     }
 
-    /**
-     * Shows an {@link AlertDialog} with an {@link EditText} pre-filled with the current value,
-     * allowing the user to edit a single field. Calls the provided callback with the new value
-     * when the user confirms.
-     *
-     * @param fieldName   the label shown in the dialog title
-     * @param currentValue the current value to pre-fill in the input
-     * @param inputType   the {@link InputType} for the EditText
-     * @param onConfirm   callback invoked with the new trimmed value on confirmation
-     */
     private void showEditDialog(String fieldName, String currentValue, int inputType, OnConfirmListener onConfirm) {
         EditText input = new EditText(this);
         input.setInputType(inputType);
@@ -181,15 +171,7 @@ public class SettingsView extends AppCompatActivity {
                 .show();
     }
 
-    /**
-     * Callback interface used to return a confirmed value from the edit dialog.
-     */
     interface OnConfirmListener {
-        /**
-         * Called when the user confirms their edits for their chosen info.
-         *
-         * @param value the trimmed string value entered by the user
-         */
         void onConfirm(String value);
     }
 }

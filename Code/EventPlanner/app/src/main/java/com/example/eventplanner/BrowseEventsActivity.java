@@ -1,10 +1,10 @@
 package com.example.eventplanner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +21,7 @@ public class BrowseEventsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private EventAdapter adapter;
-    private List<Events> eventList = new ArrayList<>();
+    private final List<Events> eventList = new ArrayList<>();
     private FirebaseFirestore db;
 
     @Override
@@ -33,15 +33,34 @@ public class BrowseEventsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_events);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         
-        // Using a basic adapter - assuming EventAdapter will be created or exists
         adapter = new EventAdapter(eventList);
         recyclerView.setAdapter(adapter);
 
         Button btnFilter = findViewById(R.id.btn_filter);
         btnFilter.setOnClickListener(v -> showFilterDialog());
 
-        // Initialize dummy events if needed (e.g., first run)
-        // For the sake of the task, we can call it here or keep it available.
+        // Setup bottom navigation bar
+        findViewById(R.id.new_event_button_browse).setOnClickListener(v -> {
+            startActivity(new Intent(BrowseEventsActivity.this, CreateEventActivity.class));
+        });
+
+        findViewById(R.id.search_button_browse).setOnClickListener(v -> {
+            startActivity(new Intent(BrowseEventsActivity.this, SearchScreen.class));
+        });
+
+        findViewById(R.id.home_button_browse).setOnClickListener(v -> {
+            startActivity(new Intent(BrowseEventsActivity.this, HomePage.class));
+        });
+
+        findViewById(R.id.browse_button_browse).setOnClickListener(v -> {
+            // Already on browse
+        });
+
+        findViewById(R.id.profile_button_browse).setOnClickListener(v -> {
+            startActivity(new Intent(BrowseEventsActivity.this, Profile.class));
+        });
+
+        // Initialize dummy events
         initializeDummyEvents();
         
         loadEvents("All");
@@ -51,8 +70,8 @@ public class BrowseEventsActivity extends AppCompatActivity {
         String[] options = {"All", "Sport", "Music"};
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Filter Events")
-                .setItems(options, (dialog, which) -> {
-                    loadEvents(options[which]);
+                .setItems(options, (dialog, index) -> {
+                    loadEvents(options[index]);
                 })
                 .show();
     }
