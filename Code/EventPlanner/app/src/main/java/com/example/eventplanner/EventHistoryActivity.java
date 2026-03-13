@@ -3,6 +3,7 @@ package com.example.eventplanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -19,8 +20,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Activity that displays the user's event registration history.
@@ -62,19 +65,14 @@ public class EventHistoryActivity extends AppCompatActivity {
 
         // Navigation bar
         findViewById(R.id.exit_button_event_history).setOnClickListener(v -> finish());
-
         findViewById(R.id.home_button_event_history).setOnClickListener(v ->
                 startActivity(new Intent(this, HomePage.class)));
-
         findViewById(R.id.search_button_event_history).setOnClickListener(v ->
                 startActivity(new Intent(this, SearchScreen.class)));
-
         findViewById(R.id.browse_button_event_history).setOnClickListener(v ->
                 startActivity(new Intent(this, NonAdminBrowseEvents.class)));
-
         findViewById(R.id.profile_button_event_history).setOnClickListener(v ->
                 startActivity(new Intent(this, Profile.class)));
-
         findViewById(R.id.new_event_button_event_history).setOnClickListener(v ->
                 startActivity(new Intent(this, CreateEventActivity.class)));
 
@@ -93,7 +91,6 @@ public class EventHistoryActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(registrationSnapshots -> {
                     if (registrationSnapshots.isEmpty()) {
-                        // Empty view will show automatically via setEmptyView
                         return;
                     }
 
@@ -106,8 +103,7 @@ public class EventHistoryActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot doc : registrationSnapshots) {
                         String eventId = doc.getString("eventId");
                         String status  = doc.getString("status");
-                        com.google.firebase.Timestamp joinedAt =
-                                doc.getTimestamp("joinedAt");
+                        com.google.firebase.Timestamp joinedAt = doc.getTimestamp("joinedAt");
 
                         if (eventId != null) {
                             eventIds.add(eventId);
@@ -126,68 +122,84 @@ public class EventHistoryActivity extends AppCompatActivity {
 
     /**
      * Fetches the event details from our Firestore DB for each event ID in the registration list,
-     * builds a display string for each entry, and populates the ListView.
+     * builds a structured map for each entry, and populates the ListView with card views.
      *
      * @param eventIds   list of event IDs from the user's registrations
      * @param statuses   list of registration statuses corresponding to each event
      * @param timestamps list of formatted registration timestamps for each event
      */
     private void fetchEventsAndDisplay(List<String> eventIds, List<String> statuses, List<String> timestamps) {
-        List<String> displayItems = new ArrayList<>();
+        List<Map<String, String>> displayItems = new ArrayList<>();
         final int[] remaining = {eventIds.size()};
 
         for (int i = 0; i < eventIds.size(); i++) {
             final int index = i;
-            final String eventId = eventIds.get(i);
 
             db.collection("events")
-                    .document(eventId)
+                    .document(eventIds.get(i))
                     .get()
                     .addOnSuccessListener(eventDoc -> {
                         String eventName = eventDoc.getString("name");
                         String eventDate = eventDoc.getString("date");
-                        String status    = statuses.get(index);
-                        String joinedAt  = timestamps.get(index);
 
-                        String displayText =
-                                (eventName != null ? eventName : "Unknown Event") + "\n" +
-                                        "Date: " + (eventDate != null ? eventDate : "N/A") + "\n" +
-                                        "Registered: " + joinedAt + "\n" +
-                                        "Status: " + capitalize(status);
+                        Map<String, String> item = new HashMap<>();
+                        item.put("name", eventName != null ? eventName : "Unknown Event");
+                        item.put("date", eventDate != null ? eventDate : "N/A");
+                        item.put("registered", timestamps.get(index));
+                        item.put("status", capitalize(statuses.get(index)));
+                        displayItems.add(item);
 
-                        displayItems.add(displayText);
                         remaining[0]--;
-
-                        if (remaining[0] == 0) {
-                            showList(displayItems);
-                        }
+                        if (remaining[0] == 0) showList(displayItems);
                     })
                     .addOnFailureListener(e -> {
-                        displayItems.add("Unknown Event\nFailed to load details");
+                        Map<String, String> item = new HashMap<>();
+                        item.put("name", "Unknown Event");
+                        item.put("date", "N/A");
+                        item.put("registered", timestamps.get(index));
+                        item.put("status", "Unknown");
+                        displayItems.add(item);
+
                         remaining[0]--;
-                        if (remaining[0] == 0) {
-                            showList(displayItems);
-                        }
+                        if (remaining[0] == 0) showList(displayItems);
                     });
         }
     }
 
     /**
-     * Populates the ListView with the given list of display strings.
+     * Populates the ListView with card views using the structured history data.
      *
-     * @param items the list of formatted strings to display in the history list
+     * @param items the list of maps containing event history data
      */
-    private void showList(List<String> items) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                items
-        );
+    private void showList(List<Map<String, String>> items) {
+        ArrayAdapter<Map<String, String>> adapter = new ArrayAdapter<Map<String, String>>(
+                this, 0, items) {
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = LayoutInflater.from(getContext())
+                            .inflate(R.layout.item_event_history, parent, false);
+                }
+                Map<String, String> item = getItem(position);
+                if (item != null) {
+                    ((TextView) convertView.findViewById(R.id.tv_history_event_name))
+                            .setText(item.get("name"));
+                    ((TextView) convertView.findViewById(R.id.tv_history_event_date))
+                            .setText("Date: " + item.get("date"));
+                    ((TextView) convertView.findViewById(R.id.tv_history_registered))
+                            .setText("Registered: " + item.get("registered"));
+                    ((TextView) convertView.findViewById(R.id.tv_history_status))
+                            .setText(item.get("status"));
+                }
+                return convertView;
+            }
+        };
         listView.setAdapter(adapter);
     }
 
     /**
-     * Capitalizes the first letter of a string. (For cleanliness)
+     * Capitalizes the first letter of a string.
      *
      * @param text the string to capitalize
      * @return the capitalized string, or the original if null or empty
