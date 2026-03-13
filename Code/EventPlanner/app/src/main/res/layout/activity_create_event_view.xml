@@ -177,139 +177,108 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/home_bar"
-        android:layout_width="415dp"
+        android:layout_width="match_parent"
         android:layout_height="90dp"
         android:background="@color/home_bar"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
+        android:id="@+id/new_event_button_create_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/search_button_create_page"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageButton
         android:id="@+id/search_button_create_page"
         android:layout_width="76dp"
         android:layout_height="75dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="4dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/home_button_create_page"
+        app:layout_constraintStart_toEndOf="@+id/new_event_button_create_page"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
         android:id="@+id/home_button_create_page"
         android:layout_width="76dp"
         android:layout_height="75dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="4dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/browse_button_create_page"
+        app:layout_constraintStart_toEndOf="@+id/search_button_create_page"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
         android:id="@+id/browse_button_create_page"
         android:layout_width="76dp"
         android:layout_height="75dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="4dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/profile_button_create_page"
+        app:layout_constraintStart_toEndOf="@+id/home_button_create_page"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
         android:id="@+id/profile_button_create_page"
         android:layout_width="76dp"
         android:layout_height="75dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="6dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/home_bar" />
-
-    <ImageButton
-        android:id="@+id/new_event_button_create_page"
-        android:layout_width="76dp"
-        android:layout_height="75dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="2dp"
-        android:background="#00FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/search_button_create_page"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/browse_button_create_page"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageView
-        android:id="@+id/imageView3"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView4"
-        app:layout_constraintHorizontal_bias="0.468"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
-        app:srcCompat="@drawable/homeicon" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView2"
-        app:layout_constraintHorizontal_bias="0.333"
-        app:layout_constraintStart_toStartOf="@+id/home_bar"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/new_event_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/new_event_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/new_event_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/new_event_button_create_page"
         app:srcCompat="@drawable/neweventicon" />
 
     <ImageView
-        android:id="@+id/imageView2"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/home_button_create_page"
-        app:layout_constraintStart_toEndOf="@+id/new_event_button_create_page"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/search_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/search_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/search_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/search_button_create_page"
         app:srcCompat="@drawable/searchicon" />
 
     <ImageView
-        android:id="@+id/imageView5"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/home_bar"
-        app:layout_constraintHorizontal_bias="0.652"
-        app:layout_constraintStart_toEndOf="@+id/imageView4"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
-        app:srcCompat="@drawable/profileicon" />
+        app:layout_constraintBottom_toBottomOf="@+id/home_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/home_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/home_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/home_button_create_page"
+        app:srcCompat="@drawable/homeicon" />
 
     <ImageView
-        android:id="@+id/imageView4"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/profile_button_create_page"
-        app:layout_constraintHorizontal_bias="0.47"
-        app:layout_constraintStart_toEndOf="@+id/home_button_create_page"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/browse_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/browse_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/browse_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/browse_button_create_page"
         app:srcCompat="@drawable/browseicon" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/profile_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/profile_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/profile_button_create_page"
+        app:srcCompat="@drawable/profileicon" />
 
     <ImageView
         android:id="@+id/imageView8"
