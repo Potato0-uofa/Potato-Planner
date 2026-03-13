@@ -2,49 +2,83 @@ package com.example.eventplanner;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * Activity for creating a new event in the app. Provides an organizer with an interface to input
- * an event's name, description, date, and a waitlist limit. When successfully created the event is
- * persisted using the eventRepository and the user is directed back to the home page. The view also
- * has a navigation bar at the bottom.
+ * an event's name, description, date, and a waitlist limit. Also supports selecting and uploading
+ * an event image. When successfully created the event is persisted using the eventRepository and
+ * the user is directed back to the home page. The view also has a navigation bar at the bottom.
  */
-
 public class CreateEventActivity extends AppCompatActivity {
 
     /**
-     * Repository used to perform create, edit, delete, and read options on Events objects
+     * Repository used to perform create, edit, delete, and read operations on Events objects.
      */
     private final EventRepository eventRepository = new EventRepository();
 
     /**
-     * <p>Navigation listeners:</p>
-     *      * <ul>
-     *      *   <li><b>new_event_button_create_page</b> – No-op; already on this screen.</li>
-     *      *   <li><b>search_button_create_page</b> – Navigates to the Search Screen</li>
-     *      *   <li><b>home_button_create_page</b> – Navigates to the Home Page.</li>
-     *      *   <li><b>browse_button_create_page</b> – Navigates to the Browse Events Page.</li>
-     *      *   <li><b>profile_button_create_page</b> – Navigates to Profile Pge.</li>
-     *      * </ul>
-     * @param savedInstanceState If the activity is being re-initialized after
-     *     previously being shut down then this Bundle contains the data it most
-     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     * Firebase Storage reference used to upload event images.
+     */
+    private final StorageReference storageReference =
+            FirebaseStorage.getInstance().getReference("event_images");
+
+    /**
+     * URI of the image selected by the organizer, if any.
+     */
+    private Uri selectedImageUri = null;
+
+    /**
+     * Image preview for the selected event image.
+     */
+    private ImageView eventImageView;
+
+    /**
+     * Launcher used to pick an image from device storage.
+     */
+    private final ActivityResultLauncher<String> imagePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    selectedImageUri = uri;
+                    if (eventImageView != null) {
+                        eventImageView.setImageURI(uri);
+                    }
+                }
+            });
+
+    /**
+     * Sets up navigation, image selection, and event creation logic.
      *
+     * @param savedInstanceState If the activity is being re-initialized after previously being
+     *                           shut down, this Bundle contains the data it most recently supplied
+     *                           in onSaveInstanceState. Otherwise it is null.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event_view);
 
+        eventImageView = findViewById(R.id.event_image_icon);
+
+        findViewById(R.id.edit_photo_create_page).setOnClickListener(v ->
+                imagePickerLauncher.launch("image/*")
+        );
+
         // Home bar navigation
         findViewById(R.id.new_event_button_create_page).setOnClickListener(v -> {
-            //Do nothing since already on new event page
+            // Do nothing since already on new event page
         });
 
         findViewById(R.id.search_button_create_page).setOnClickListener(v -> {
@@ -80,8 +114,8 @@ public class CreateEventActivity extends AppCompatActivity {
                 return;
             }
 
-            // Get the organizer's device ID
-            @SuppressLint("HardwareIds") String organizerId = Settings.Secure.getString(
+            @SuppressLint("HardwareIds")
+            String organizerId = Settings.Secure.getString(
                     getContentResolver(),
                     Settings.Secure.ANDROID_ID
             );
@@ -89,26 +123,67 @@ public class CreateEventActivity extends AppCompatActivity {
             Events event = new Events(name, closureDate, description, "");
             event.setOrganizerId(organizerId);
 
-            // Set waitlist limit if provided
             if (!waitlistLimitStr.isEmpty()) {
                 int limit = Integer.parseInt(waitlistLimitStr);
                 event.setWaitlistLimit(limit);
             }
-            // If blank, waitlistLimit stays -1 (no limit)
 
-            eventRepository.createEvent(event, new EventRepository.SimpleCallback() {
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(CreateEventActivity.this, "Event created!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(CreateEventActivity.this, HomePage.class));
-                    finish();
-                }
+            if (selectedImageUri != null) {
+                uploadImageAndCreateEvent(event);
+            } else {
+                createEventInFirestore(event);
+            }
+        });
+    }
 
-                @Override
-                public void onFailure(Exception e) {
-                    Toast.makeText(CreateEventActivity.this, "Failed to create event: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
+    /**
+     * Uploads the selected image to Firebase Storage, stores the download URL in the event,
+     * and then creates the event in Firestore.
+     *
+     * @param event the event being created
+     */
+    private void uploadImageAndCreateEvent(Events event) {
+        String fileName = "event_" + System.currentTimeMillis() + ".jpg";
+        StorageReference imageRef = storageReference.child(fileName);
+
+        imageRef.putFile(selectedImageUri)
+                .addOnSuccessListener(taskSnapshot ->
+                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            event.setImageUrl(uri.toString());
+                            createEventInFirestore(event);
+                        }).addOnFailureListener(e ->
+                                Toast.makeText(CreateEventActivity.this,
+                                        "Failed to get image URL: " + e.getMessage(),
+                                        Toast.LENGTH_LONG).show()
+                        )
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(CreateEventActivity.this,
+                                "Image upload failed: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show()
+                );
+    }
+
+    /**
+     * Persists the event in Firestore and navigates back to the home page on success.
+     *
+     * @param event the event to create
+     */
+    private void createEventInFirestore(Events event) {
+        eventRepository.createEvent(event, new EventRepository.SimpleCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(CreateEventActivity.this, "Event created!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(CreateEventActivity.this, HomePage.class));
+                finish();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(CreateEventActivity.this,
+                        "Failed to create event: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
         });
     }
 }

@@ -10,3 +10,5 @@ public class SearchScreen extends AppCompatActivity {
         setContentView(R.layout.activity_browse_events_view);
     }
 }
+
+

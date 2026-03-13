@@ -44,6 +44,9 @@ public class Events {
     /** The waiting list associated with this event. */
     private WaitingList waitingList;
 
+    /** Download URL of the event image stored in Firebase Storage. */
+    private String imageUrl;
+
     /**
      * No-argument constructor required for Firestore deserialization.
      * Initializes an empty waiting list and sets waitlist limit to -1 (unlimited).
@@ -286,5 +289,15 @@ public class Events {
     /** @param createdAt the creation timestamp to assign */
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    /** @return the download URL of the event image */
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    /** @param imageUrl the download URL of the event image to assign */
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

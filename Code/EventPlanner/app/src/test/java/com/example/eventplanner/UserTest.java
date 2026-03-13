@@ -1,4 +1,4 @@
-git statuspackage com.example.eventplanner;
+package com.example.eventplanner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

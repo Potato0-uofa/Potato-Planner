@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Activity that allows administrators to browse all events
  * and remove events that violate application policies.
@@ -17,15 +18,26 @@ import java.util.List;
  * - US 03.02.01: Browse events
  * - US 03.03.01: Remove events
  */
-
 public class AdminBrowseEventsActivity extends AppCompatActivity
         implements AdminEventAdapter.OnEventActionListener {
 
+    /** RecyclerView used to display the list of events. */
     private RecyclerView recyclerView;
+
+    /** Adapter that binds event data to the admin event list UI. */
     private AdminEventAdapter adapter;
+
+    /** In-memory list of events displayed in the RecyclerView. */
     private final List<Events> eventList = new ArrayList<>();
+
+    /** Repository used to load and delete events from persistence. */
     private final EventRepository eventRepository = new EventRepository();
 
+    /**
+     * Initializes the activity, sets up the RecyclerView, and loads all events.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +51,11 @@ public class AdminBrowseEventsActivity extends AppCompatActivity
 
         loadEvents();
     }
+
     /**
      * Loads all events from the repository and updates the RecyclerView.
      * This allows administrators to view the list of existing events.
      */
-
     private void loadEvents() {
         eventRepository.fetchAllEvents(new EventRepository.EventsCallback() {
             @Override
@@ -67,13 +79,14 @@ public class AdminBrowseEventsActivity extends AppCompatActivity
             }
         });
     }
+
     /**
      * Handles the removal of an event when an admin clicks the remove button.
+     * A confirmation dialog is shown before the event is deleted.
      *
-     * @param event The event selected for deletion
-     * @param position The position of the event in the list
+     * @param event the event selected for deletion
+     * @param position the position of the event in the displayed list
      */
-
     @Override
     public void onDeleteClicked(Events event, int position) {
         if (event == null || event.getEventId() == null || event.getEventId().trim().isEmpty()) {
