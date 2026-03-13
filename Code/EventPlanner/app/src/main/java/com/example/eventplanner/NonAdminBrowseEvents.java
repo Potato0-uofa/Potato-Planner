@@ -23,13 +23,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Activity that displays a browsable list of open events for non-admin users.
+ * Tapping an event will navigate to the event's specific description view.
+ */
 public class NonAdminBrowseEvents extends AppCompatActivity {
 
+    /** Repository used to fetch event data from Firestore. */
     private final EventRepository eventRepository = new EventRepository();
     private final List<Events> eventList = new ArrayList<>();
     private ArrayAdapter<Events> adapter;
     private FirebaseFirestore db;
 
+    /**
+     * Initializes the activity, sets up bottom navigation, and loads the list of open events.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +119,26 @@ public class NonAdminBrowseEvents extends AppCompatActivity {
         loadEvents("All");
     }
 
+<<<<<<< HEAD
+    /**
+     * Fetches all open events from Firestore and populates the ListView.
+     */
+    private void loadEvents() {
+        eventRepository.fetchOpenEvents(new EventRepository.EventsCallback() {
+            @Override
+            public void onSuccess(List<Events> events) {
+                ListView listView = findViewById(R.id.browse_event_list);
+                List<String> eventNames = new ArrayList<>();
+                for (Events e : events) {
+                    eventNames.add(e.getName());
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        NonAdminBrowseEvents.this,
+                        android.R.layout.simple_list_item_1,
+                        eventNames
+                );
+                listView.setAdapter(adapter);
+=======
     private void showFilterDialog() {
         String[] options = {"All", "Sport", "Music"};
         new MaterialAlertDialogBuilder(this)
@@ -115,6 +148,7 @@ public class NonAdminBrowseEvents extends AppCompatActivity {
                 })
                 .show();
     }
+>>>>>>> origin/main
 
     private void loadEvents(String filterTag) {
         if (filterTag.equals("All")) {

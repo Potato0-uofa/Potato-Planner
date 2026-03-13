@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/EventPlanner.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/EventPlanner.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/EventPlanner.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/EventPlanner.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/EventPlanner.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/EventPlanner.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/EventPlanner.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/EventPlanner.app.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Potato-Planner.iml" filepath="$PROJECT_DIR$/.idea/Potato-Planner.iml" />
     </modules>
   </component>
