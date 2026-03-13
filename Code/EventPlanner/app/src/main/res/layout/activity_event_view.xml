@@ -86,7 +86,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:text="Full Event Description goes here..."
         android:textColor="#333333"
         android:textSize="16sp"
@@ -102,7 +102,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/settings_row_background"
         android:orientation="horizontal"
         android:padding="12dp"
@@ -143,16 +143,34 @@
     <Button
         android:id="@+id/join_event_button"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="52dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:backgroundTint="#C498D0"
-        android:text="Join Event"
+        android:text="Join Waitlist"
         android:textAllCaps="false"
         android:textColor="#4C2162"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/leave_event_button"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="@+id/imageView7" />
+
+    <Button
+        android:id="@+id/leave_event_button"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="4dp"
+        android:backgroundTint="#C498D0"
+        android:text="Leave Waitlist"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/view_waitlist_button"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
         app:layout_constraintStart_toStartOf="@+id/imageView7" />
@@ -160,15 +178,15 @@
     <Button
         android:id="@+id/view_waitlist_button"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="52dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="12dp"
         android:backgroundTint="#4E4B7E"
         android:text="View Waitlist"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/imageView7"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
@@ -180,5 +198,49 @@
         android:layout_height="70dp"
         android:background="@color/home_bar"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageButton
+        android:id="@+id/home_button_event_page"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/search_button_event_page"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/homeicon" />
+
+    <ImageButton
+        android:id="@+id/search_button_event_page"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/browse_button_event_page"
+        app:layout_constraintStart_toEndOf="@+id/home_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/searchicon" />
+
+    <ImageButton
+        android:id="@+id/browse_button_event_page"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/profile_button_event_page"
+        app:layout_constraintStart_toEndOf="@+id/search_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/browseicon" />
+
+    <ImageButton
+        android:id="@+id/profile_button_event_page"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/browse_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/profileicon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

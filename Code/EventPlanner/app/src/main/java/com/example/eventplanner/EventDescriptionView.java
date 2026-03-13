@@ -14,7 +14,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.ListenerRegistration;
 
 /**
- * Activity that displays the details of a specified event and allows the user to join the waitlist.
+ * Activity that displays the details of a specific event and allows the user to join
+ * or leave the waitlist, and for organizers to view the waitlist.
  */
 public class EventDescriptionView extends AppCompatActivity {
 
@@ -24,6 +25,8 @@ public class EventDescriptionView extends AppCompatActivity {
     private TextView tvWaitlistCount;
     private String eventId;
     private String deviceId;
+    private Button btnJoinEvent;
+    private Button btnLeaveEvent;
     private Button btnViewWaitlist;
 
     @Override
@@ -38,22 +41,26 @@ public class EventDescriptionView extends AppCompatActivity {
 
         eventId = getIntent().getStringExtra("eventId");
         if (eventId == null || eventId.isEmpty()) {
-            eventId = "test_event_1"; // Default for demo
+            eventId = "test_event_1";
         }
 
         String eventName = getIntent().getStringExtra("eventName");
         String eventDescription = getIntent().getStringExtra("eventDescription");
 
         tvWaitlistCount = findViewById(R.id.Waitlist_Count);
+        btnJoinEvent = findViewById(R.id.join_event_button);
+        btnLeaveEvent = findViewById(R.id.leave_event_button);
+        btnViewWaitlist = findViewById(R.id.view_waitlist_button);
+
         ((TextView) findViewById(R.id.event_name)).setText(eventName != null ? eventName : "Demo Event");
         ((TextView) findViewById(R.id.event_details)).setText(eventDescription != null ? eventDescription : "This is a demo event description.");
 
-        Button btnJoinEvent = findViewById(R.id.join_event_button);
         btnJoinEvent.setOnClickListener(v -> {
             eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(EventDescriptionView.this, "Joined Waitlist!", Toast.LENGTH_SHORT).show();
+                    updateButtonVisibility(true);
                 }
 
                 @Override
@@ -63,7 +70,21 @@ public class EventDescriptionView extends AppCompatActivity {
             });
         });
 
-        btnViewWaitlist = findViewById(R.id.view_waitlist_button);
+        btnLeaveEvent.setOnClickListener(v -> {
+            eventRepository.leaveWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(EventDescriptionView.this, "Left Waitlist!", Toast.LENGTH_SHORT).show();
+                    updateButtonVisibility(false);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(EventDescriptionView.this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
         // Force visible so you can see the button immediately when running the app
         btnViewWaitlist.setVisibility(View.VISIBLE); 
         btnViewWaitlist.setOnClickListener(v -> {
@@ -73,13 +94,13 @@ public class EventDescriptionView extends AppCompatActivity {
         });
 
         // US 01.05.05 - Info box click listener for detailed lottery guidelines
-        findViewById(R.id.lottery_info_box).setOnClickListener(v -> showLotteryGuidelines());
-
-        View exitBtn = findViewById(R.id.exit_button_event_page);
-        if (exitBtn != null) {
-            exitBtn.setOnClickListener(v -> finish());
+        View lotteryInfoBox = findViewById(R.id.lottery_info_box);
+        if (lotteryInfoBox != null) {
+            lotteryInfoBox.setOnClickListener(v -> showLotteryGuidelines());
         }
 
+        checkWaitlistStatus();
+        setupNavigation();
         startListeningToWaitlist();
     }
 
@@ -92,6 +113,25 @@ public class EventDescriptionView extends AppCompatActivity {
                         "4. If an invitation is declined, a new winner will be drawn.")
                 .setPositiveButton("Got it", null)
                 .show();
+    }
+
+    private void checkWaitlistStatus() {
+        eventRepository.isOnWaitingList(eventId, deviceId, new EventRepository.WaitlistStatusCallback() {
+            @Override
+            public void onSuccess(boolean isOnWaitlist) {
+                updateButtonVisibility(isOnWaitlist);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // Silently fail
+            }
+        });
+    }
+
+    private void updateButtonVisibility(boolean isOnWaitlist) {
+        btnJoinEvent.setVisibility(isOnWaitlist ? View.GONE : View.VISIBLE);
+        btnLeaveEvent.setVisibility(isOnWaitlist ? View.VISIBLE : View.GONE);
     }
 
     private void startListeningToWaitlist() {
@@ -107,6 +147,23 @@ public class EventDescriptionView extends AppCompatActivity {
                 // Ignore error for demo
             }
         });
+    }
+
+    private void setupNavigation() {
+        View homeBtn = findViewById(R.id.home_button_event_page);
+        if (homeBtn != null) homeBtn.setOnClickListener(v -> startActivity(new Intent(this, HomePage.class)));
+
+        View searchBtn = findViewById(R.id.search_button_event_page);
+        if (searchBtn != null) searchBtn.setOnClickListener(v -> startActivity(new Intent(this, SearchScreen.class)));
+
+        View browseBtn = findViewById(R.id.browse_button_event_page);
+        if (browseBtn != null) browseBtn.setOnClickListener(v -> startActivity(new Intent(this, NonAdminBrowseEvents.class)));
+
+        View profileBtn = findViewById(R.id.profile_button_event_page);
+        if (profileBtn != null) profileBtn.setOnClickListener(v -> startActivity(new Intent(this, Profile.class)));
+
+        View exitBtn = findViewById(R.id.exit_button_event_page);
+        if (exitBtn != null) exitBtn.setOnClickListener(v -> finish());
     }
 
     @Override

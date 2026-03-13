@@ -5,7 +5,14 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+<<<<<<< HEAD
       <SelectionState runConfigName="New Run Config">
+=======
+      <SelectionState runConfigName="AdminBrowseEventsActivityTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="NotificationLogsTest">
+>>>>>>> 750d3f7e7f30c3f400208bf5eaf8957e629398af
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

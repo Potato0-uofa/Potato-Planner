@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Repository for CRUD and waitlist operations on Event documents in Firestore.
+ */
 public class EventRepository {
 
     private static final String COLLECTION_EVENTS = "events";
@@ -51,6 +54,11 @@ public class EventRepository {
         void onFailure(Exception e);
     }
 
+    public interface WaitlistStatusCallback {
+        void onSuccess(boolean isOnWaitlist);
+        void onFailure(Exception e);
+    }
+
     public EventRepository() {
         this.db = FirebaseFirestore.getInstance();
     }
@@ -58,18 +66,13 @@ public class EventRepository {
     public void createEvent(@NonNull Events event, @NonNull SimpleCallback cb) {
         String id = db.collection(COLLECTION_EVENTS).document().getId();
         event.setEventId(id);
-
         if (event.getCreatedAt() == null) {
             event.setCreatedAt(Timestamp.now());
         }
-
         if (event.getStatus() == null || event.getStatus().isEmpty()) {
             event.setStatus("open");
         }
-
-        db.collection(COLLECTION_EVENTS)
-                .document(id)
-                .set(event)
+        db.collection(COLLECTION_EVENTS).document(id).set(event)
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
@@ -91,70 +94,50 @@ public class EventRepository {
     }
 
     public void fetchOpenEvents(@NonNull EventsCallback cb) {
-        db.collection(COLLECTION_EVENTS)
-                .whereEqualTo("status", "open")
-                .get()
+        db.collection(COLLECTION_EVENTS).whereEqualTo("status", "open").get()
                 .addOnSuccessListener(snapshot -> {
-
                     List<Events> out = new ArrayList<>();
-
                     for (var doc : snapshot.getDocuments()) {
-                        try {
-                            Events e = doc.toObject(Events.class);
-                            if (e != null) {
-                                if (e.getEventId() == null || e.getEventId().isEmpty()) {
-                                    e.setEventId(doc.getId());
-                                }
-                                out.add(e);
+                        Events e = doc.toObject(Events.class);
+                        if (e != null) {
+                            if (e.getEventId() == null || e.getEventId().isEmpty()) {
+                                e.setEventId(doc.getId());
                             }
-                        } catch (Exception e) {
-                            // Skip documents that fail to deserialize due to schema mismatch
+                            out.add(e);
                         }
                     }
-
                     cb.onSuccess(out);
                 })
                 .addOnFailureListener(cb::onFailure);
     }
 
     public void updateEvent(@NonNull Events event, @NonNull SimpleCallback cb) {
-
         if (event.getEventId() == null || event.getEventId().isEmpty()) {
             cb.onFailure(new IllegalArgumentException("eventId is required"));
             return;
         }
-
-        db.collection(COLLECTION_EVENTS)
-                .document(event.getEventId())
-                .set(event)
+        db.collection(COLLECTION_EVENTS).document(event.getEventId()).set(event)
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
 
     public void deleteEvent(@NonNull String eventId, @NonNull SimpleCallback cb) {
-        db.collection(COLLECTION_EVENTS)
-                .document(eventId)
-                .delete()
+        db.collection(COLLECTION_EVENTS).document(eventId).delete()
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
 
     public void fetchAllEvents(@NonNull EventsCallback cb) {
-        db.collection(COLLECTION_EVENTS)
-                .get()
+        db.collection(COLLECTION_EVENTS).get()
                 .addOnSuccessListener(snapshot -> {
                     List<Events> out = new ArrayList<>();
                     for (var doc : snapshot.getDocuments()) {
-                        try {
-                            Events e = doc.toObject(Events.class);
-                            if (e != null) {
-                                if (e.getEventId() == null || e.getEventId().isEmpty()) {
-                                    e.setEventId(doc.getId());
-                                }
-                                out.add(e);
+                        Events e = doc.toObject(Events.class);
+                        if (e != null) {
+                            if (e.getEventId() == null || e.getEventId().isEmpty()) {
+                                e.setEventId(doc.getId());
                             }
-                        } catch (Exception e) {
-                            // Skip documents that fail to deserialize
+                            out.add(e);
                         }
                     }
                     cb.onSuccess(out);
@@ -165,20 +148,36 @@ public class EventRepository {
     public void joinWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
         Map<String, Object> data = new HashMap<>();
         data.put("waitingList", FieldValue.arrayUnion(deviceId));
-
-        db.collection(COLLECTION_EVENTS)
-                .document(eventId)
-                .set(data, SetOptions.merge())
+        db.collection(COLLECTION_EVENTS).document(eventId).set(data, SetOptions.merge())
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Fetches the detailed information of all entrants on the waiting list for a specific event.
-     *
-     * @param eventId the ID of the event
-     * @param cb      callback to return the list of Entrants
-     */
+    public void leaveWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("waitingList", FieldValue.arrayRemove(deviceId));
+        db.collection(COLLECTION_EVENTS).document(eventId).set(data, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    public void isOnWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull WaitlistStatusCallback cb) {
+        db.collection(COLLECTION_EVENTS).document(eventId).get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists()) {
+                        Object wlObj = snapshot.get("waitingList");
+                        boolean isOnList = false;
+                        if (wlObj instanceof List) {
+                            isOnList = ((List<?>) wlObj).contains(deviceId);
+                        }
+                        cb.onSuccess(isOnList);
+                    } else {
+                        cb.onSuccess(false);
+                    }
+                })
+                .addOnFailureListener(cb::onFailure);
+    }
+
     public void fetchWaitlistEntrants(@NonNull String eventId, @NonNull EntrantsCallback cb) {
         db.collection(COLLECTION_EVENTS).document(eventId).get().addOnSuccessListener(documentSnapshot -> {
             List<String> deviceIds = (List<String>) documentSnapshot.get("waitingList");
@@ -186,14 +185,10 @@ public class EventRepository {
                 cb.onSuccess(new ArrayList<>());
                 return;
             }
-
-            // Firebase 'whereIn' is limited to 10 items per query.
-            // For larger lists, we need to split into multiple queries or fetch individually.
             List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
             for (String deviceId : deviceIds) {
                 tasks.add(db.collection(COLLECTION_USERS).document(deviceId).get());
             }
-
             Tasks.whenAllComplete(tasks).addOnCompleteListener(t -> {
                 List<Entrant> entrants = new ArrayList<>();
                 for (Task<DocumentSnapshot> task : tasks) {
@@ -210,53 +205,21 @@ public class EventRepository {
     }
 
     public ListenerRegistration listenToWaitlistCount(@NonNull String eventId, @NonNull CountCallback cb) {
-        return db.collection(COLLECTION_EVENTS)
-                .document(eventId)
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            cb.onFailure(e);
-                            return;
-                        }
-
-                        if (snapshot != null && snapshot.exists()) {
-                            Object wl = snapshot.get("waitingList");
-                            if (wl instanceof List) {
-                                List<?> waitingList = (List<?>) wl;
-                                cb.onSuccess(waitingList.size());
-                            } else {
-                                cb.onSuccess(0);
-                            }
-                        } else {
-                            cb.onSuccess(0);
-                        }
+        return db.collection(COLLECTION_EVENTS).document(eventId)
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        cb.onFailure(e);
+                        return;
                     }
-                });
-    }
-
-    public ListenerRegistration observeWaitingListCount(@NonNull String eventId, @NonNull CountCallback cb) {
-        return db.collection(COLLECTION_EVENTS)
-                .document(eventId)
-                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            cb.onFailure(e);
-                            return;
+                    if (snapshot != null && snapshot.exists()) {
+                        Object wlObj = snapshot.get("waitingList");
+                        int count = 0;
+                        if (wlObj instanceof List) {
+                            count = ((List<?>) wlObj).size();
                         }
-
-                        if (snapshot != null && snapshot.exists()) {
-                            Object wl = snapshot.get("waitingList");
-                            if (wl instanceof List) {
-                                List<?> waitingList = (List<?>) wl;
-                                cb.onSuccess(waitingList.size());
-                            } else {
-                                cb.onSuccess(0);
-                            }
-                        } else {
-                            cb.onSuccess(0);
-                        }
+                        cb.onSuccess(count);
+                    } else {
+                        cb.onSuccess(0);
                     }
                 });
     }
