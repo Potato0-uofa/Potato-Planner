@@ -8,11 +8,25 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Activity that provides profile management settings for the current user.
+ */
 public class ProfileSettingsActivity extends AppCompatActivity {
 
+    /** Repository used to perform operations on user documents in Firestore. */
     private UserRepository userRepository;
+
+    /** The device's ID, used as the unique identifier for the current user. */
     private String deviceId;
 
+    /**
+     * Initializes the activity, retrieves the device ID, and wires up the delete profile button.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

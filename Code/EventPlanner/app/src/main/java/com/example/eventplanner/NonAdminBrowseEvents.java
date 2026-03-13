@@ -11,10 +11,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Activity that displays a browsable list of open events for non-admin users.
+ * Tapping an event will navigate to the event's specific description view.
+ */
 public class NonAdminBrowseEvents extends AppCompatActivity {
 
+    /** Repository used to fetch event data from Firestore. */
     private final EventRepository eventRepository = new EventRepository();
 
+    /**
+     * Initializes the activity, sets up bottom navigation, and loads the list of open events.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +57,9 @@ public class NonAdminBrowseEvents extends AppCompatActivity {
         loadEvents();
     }
 
+    /**
+     * Fetches all open events from Firestore and populates the ListView.
+     */
     private void loadEvents() {
         eventRepository.fetchOpenEvents(new EventRepository.EventsCallback() {
             @Override
