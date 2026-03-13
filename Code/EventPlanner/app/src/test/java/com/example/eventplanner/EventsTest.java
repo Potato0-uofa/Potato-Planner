@@ -88,4 +88,12 @@ public class EventsTest {
         event.setCapacity(100);
         assertEquals(100, event.getCapacity());
     }
+    @Test
+    public void descriptionSetter_updatesCorrectly() {
+        Events event = new Events();
+
+        event.setDescription("Music Festival");
+
+        assertEquals("Music Festival", event.getDescription());
+    }
 }
