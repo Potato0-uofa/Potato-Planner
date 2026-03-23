@@ -40,8 +40,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/input_background" />
 
+    <ImageView
+        android:id="@+id/imageView16"
+        android:layout_width="326dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toTopOf="@+id/imageView7"
+        app:srcCompat="@drawable/search_bar" />
+
     <TextView
-        android:id="@+id/tv_browse_header"
+        android:id="@+id/tv_browse_header3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Browse Events"
@@ -53,20 +63,34 @@
         app:layout_constraintStart_toStartOf="@+id/imageView8"
         app:layout_constraintTop_toTopOf="@+id/imageView8" />
 
+    <EditText
+        android:id="@+id/et_search_bar"
+        android:layout_width="311dp"
+        android:layout_height="43dp"
+        android:hint="Search Events: "
+        android:textAlignment="textStart"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView16"
+        app:layout_constraintEnd_toEndOf="@+id/imageView16"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="@+id/imageView16"
+        app:layout_constraintTop_toTopOf="@+id/imageView16" />
+
     <Button
         android:id="@+id/btn_filter"
-        android:layout_width="349dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="103dp"
+        android:layout_height="78dp"
         android:backgroundTint="#C498D0"
         android:text="Filter Events"
         android:textAllCaps="false"
         android:textColor="#4C2162"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toTopOf="@+id/imageView7" />
+        app:layout_constraintBottom_toTopOf="@+id/imageView7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView8"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_events"
@@ -79,7 +103,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageView7"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/btn_filter" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView16" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/home_bar"
