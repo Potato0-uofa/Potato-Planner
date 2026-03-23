@@ -54,6 +54,12 @@ public class Events {
     /** Download URL of the event image stored in Firebase Storage. */
     private String imageUrl;
 
+    /** Registration period start date as a string (yyyy-MM-dd). */
+    private String registrationStart;
+
+    /** Registration period end date as a string (yyyy-MM-dd). */
+    private String registrationEnd;
+
     /**
      * No-argument constructor required for Firestore deserialization.
      * Initializes an empty waiting list and sets waitlist limit to -1 (unlimited).
@@ -332,5 +338,25 @@ public class Events {
     /** @param imageUrl the download URL of the event image to assign */
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    /** @return the registration period start date */
+    public String getRegistrationStart() {
+        return registrationStart;
+    }
+
+    /** @param registrationStart the registration start date to assign */
+    public void setRegistrationStart(String registrationStart) {
+        this.registrationStart = registrationStart;
+    }
+
+    /** @return the registration period end date */
+    public String getRegistrationEnd() {
+        return registrationEnd;
+    }
+
+    /** @param registrationEnd the registration end date to assign */
+    public void setRegistrationEnd(String registrationEnd) {
+        this.registrationEnd = registrationEnd;
     }
 }
