@@ -38,6 +38,9 @@ public class Profile extends AppCompatActivity {
         findViewById(R.id.settings_button_profile).setOnClickListener(v ->
                 startActivity(new Intent(Profile.this, SettingsView.class)));
 
+        // Exit button
+        findViewById(R.id.exit_button_event_page).setOnClickListener(v -> finish());
+
         // Home bar navigation
 
         // Create Event Button
