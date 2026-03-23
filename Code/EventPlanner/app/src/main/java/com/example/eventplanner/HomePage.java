@@ -29,7 +29,8 @@ public class HomePage extends AppCompatActivity {
         notificationButton.setVisibility(View.GONE);
 
         findViewById(R.id.new_event_button_home).setOnClickListener(v -> {
-            startActivity(new Intent(HomePage.this, CreateEventActivity.class));
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
         });
 
         findViewById(R.id.search_button_home).setOnClickListener(v -> {
