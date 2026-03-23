@@ -85,12 +85,28 @@ public class EventDescriptionView extends AppCompatActivity {
             });
         });
 
-        // Force visible so you can see the button immediately when running the app
-        btnViewWaitlist.setVisibility(View.VISIBLE); 
         btnViewWaitlist.setOnClickListener(v -> {
             Intent intent = new Intent(EventDescriptionView.this, EventWaitlistActivity.class);
             intent.putExtra("eventId", eventId);
             startActivity(intent);
+        });
+
+        // Force visible so you can see the button immediately when running the app
+        btnViewWaitlist.setVisibility(View.GONE); // hidden by default
+
+        eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
+            @Override
+            public void onSuccess(Events event) {
+                if (deviceId.equals(event.getOrganizerId()) ||
+                        event.getCoOrganizerIds().contains(deviceId)) {
+                    btnViewWaitlist.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // keep button hidden
+            }
         });
 
         // US 01.05.05 - Info box click listener for detailed lottery guidelines
