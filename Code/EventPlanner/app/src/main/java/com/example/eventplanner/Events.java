@@ -3,6 +3,9 @@ package com.example.eventplanner;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents an event in the event planner application.
  * Supports Firestore persistence + waiting list behavior.
@@ -53,6 +56,8 @@ public class Events {
 
     /** Download URL of the event image stored in Firebase Storage. */
     private String imageUrl;
+    private List<String> coOrganizerIds = new ArrayList<>();
+
 
     /** Registration period start date as a string (yyyy-MM-dd). */
     private String registrationStart;
@@ -340,23 +345,6 @@ public class Events {
         this.imageUrl = imageUrl;
     }
 
-    /** @return the registration period start date */
-    public String getRegistrationStart() {
-        return registrationStart;
-    }
-
-    /** @param registrationStart the registration start date to assign */
-    public void setRegistrationStart(String registrationStart) {
-        this.registrationStart = registrationStart;
-    }
-
-    /** @return the registration period end date */
-    public String getRegistrationEnd() {
-        return registrationEnd;
-    }
-
-    /** @param registrationEnd the registration end date to assign */
-    public void setRegistrationEnd(String registrationEnd) {
-        this.registrationEnd = registrationEnd;
-    }
+    public List<String> getCoOrganizerIds() { return coOrganizerIds; }
+    public void setCoOrganizerIds(List<String> coOrganizerIds) { this.coOrganizerIds = coOrganizerIds; }
 }

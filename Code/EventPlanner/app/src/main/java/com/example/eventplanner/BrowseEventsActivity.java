@@ -61,7 +61,7 @@ public class BrowseEventsActivity extends AppCompatActivity {
         });
 
         // Initialize dummy events
-        initializeDummyEvents();
+        //initializeDummyEvents();
         
         loadEvents("All");
     }
