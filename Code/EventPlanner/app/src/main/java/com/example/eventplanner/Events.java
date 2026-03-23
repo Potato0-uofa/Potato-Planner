@@ -59,6 +59,12 @@ public class Events {
     private List<String> coOrganizerIds = new ArrayList<>();
 
 
+    /** Registration period start date as a string (yyyy-MM-dd). */
+    private String registrationStart;
+
+    /** Registration period end date as a string (yyyy-MM-dd). */
+    private String registrationEnd;
+
     /**
      * No-argument constructor required for Firestore deserialization.
      * Initializes an empty waiting list and sets waitlist limit to -1 (unlimited).
