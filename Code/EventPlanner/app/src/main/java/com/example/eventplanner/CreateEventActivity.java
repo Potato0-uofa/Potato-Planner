@@ -72,7 +72,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
         eventImageView = findViewById(R.id.event_image_icon);
 
-        findViewById(R.id.edit_photo_create_page).setOnClickListener(v ->
+        findViewById(R.id.add_poster_button).setOnClickListener(v ->
                 imagePickerLauncher.launch("image/*")
         );
 
