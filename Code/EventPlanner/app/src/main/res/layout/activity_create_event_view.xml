@@ -5,24 +5,36 @@
     android:id="@+id/create_event"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00B61919"
-    android:backgroundTint="#005B1B1B">
+    android:background="@color/background">
 
-    <ImageView
-        android:id="@+id/background"
-        android:layout_width="440dp"
-        android:layout_height="920dp"
-        android:background="@color/background"
-        app:layout_constraintBottom_toBottomOf="@+id/home_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/home_bar"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="380dp"
-        android:layout_height="675dp"
-        android:layout_marginTop="16dp"
+        <ImageButton
+            android:id="@+id/exit_button_create_page"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Create New Event"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/home_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.548"

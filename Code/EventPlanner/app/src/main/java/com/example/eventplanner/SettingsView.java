@@ -109,6 +109,35 @@ public class SettingsView extends AppCompatActivity {
                     currentUser.setUsername(value);
                     saveUser(() -> tvUsername.setText(TextUtils.isEmpty(value) ? "—" : value));
                 }));
+
+        // Delete Profile Button
+        findViewById(R.id.btn_delete_profile).setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Profile")
+                    .setMessage("Are you sure you want to delete your profile? This action cannot be undone.")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        if (currentUser != null) {
+                            userRepository.deleteUser(currentUser.getDeviceId(), new UserRepository.SimpleCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(SettingsView.this, "Profile deleted", Toast.LENGTH_SHORT).show();
+                                    // Navigate to MainActivity to "reset" the app state (will trigger bootstrap)
+                                    Intent intent = new Intent(SettingsView.this, MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Toast.makeText(SettingsView.this, "Failed to delete profile", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
     }
 
     private void loadUser() {
@@ -127,7 +156,7 @@ public class SettingsView extends AppCompatActivity {
                     tvCountry.setText(TextUtils.isEmpty(user.getCountry()) ? "—" : user.getCountry());
                     tvAddress.setText(TextUtils.isEmpty(user.getAddress()) ? "—" : user.getAddress());
                     tvUsername.setText(TextUtils.isEmpty(user.getUsername()) ? "—" : user.getUsername());
-                    
+
                     // Set switch state WITHOUT triggering the listener
                     switchNotifications.setChecked(user.isNotificationsEnabled());
                     isUpdatingUI = false;

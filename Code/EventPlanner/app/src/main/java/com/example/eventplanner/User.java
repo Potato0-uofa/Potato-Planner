@@ -14,6 +14,9 @@ public class User {
     private String country;
     private String address;
     private String deviceId;
+    private boolean isEntrant = true;
+    private boolean isOrganizer = true;
+    private boolean isAdmin = false;
 
     /** Master notification toggle for the user. Defaults to true for new users. */
     private boolean notificationsEnabled = true;
@@ -70,4 +73,13 @@ public class User {
     public void setNotificationsEnabled(boolean notificationsEnabled) {
         this.notificationsEnabled = notificationsEnabled;
     }
+
+    public boolean isEntrant() { return isEntrant; }
+    public void setEntrant(boolean isEntrant) { this.isEntrant = isEntrant; }
+
+    public boolean isOrganizer() { return isOrganizer; }
+    public void setOrganizer(boolean isOrganizer) { this.isOrganizer = isOrganizer; }
+
+    public boolean isAdmin() { return isAdmin; }
+    public void setAdmin(boolean isAdmin) { this.isAdmin = isAdmin; }
 }

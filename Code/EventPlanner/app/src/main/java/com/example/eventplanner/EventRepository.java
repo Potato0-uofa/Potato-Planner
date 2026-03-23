@@ -223,4 +223,12 @@ public class EventRepository {
                     }
                 });
     }
+
+    public void addCoOrganizer(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("coOrganizerIds", FieldValue.arrayUnion(deviceId));
+        db.collection(COLLECTION_EVENTS).document(eventId).set(data, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
 }
