@@ -3,6 +3,9 @@ package com.example.eventplanner;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents an event in the event planner application.
  * Supports Firestore persistence + waiting list behavior.
@@ -53,6 +56,8 @@ public class Events {
 
     /** Download URL of the event image stored in Firebase Storage. */
     private String imageUrl;
+    private List<String> coOrganizerIds = new ArrayList<>();
+
 
     /**
      * No-argument constructor required for Firestore deserialization.
@@ -333,4 +338,7 @@ public class Events {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public List<String> getCoOrganizerIds() { return coOrganizerIds; }
+    public void setCoOrganizerIds(List<String> coOrganizerIds) { this.coOrganizerIds = coOrganizerIds; }
 }
