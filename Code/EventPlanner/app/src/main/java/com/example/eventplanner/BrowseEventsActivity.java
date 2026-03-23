@@ -60,9 +60,6 @@ public class BrowseEventsActivity extends AppCompatActivity {
             startActivity(new Intent(BrowseEventsActivity.this, Profile.class));
         });
 
-        // Initialize dummy events
-        //initializeDummyEvents();
-        
         loadEvents("All");
     }
 
@@ -105,29 +102,5 @@ public class BrowseEventsActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> Toast.makeText(this, "Error filtering events", Toast.LENGTH_SHORT).show());
         }
-    }
-
-    public void initializeDummyEvents() {
-        String[] sports = {"Soccer Match", "Basketball Game", "Tennis Tournament"};
-        String[] music = {"Rock Concert", "Jazz Night", "Pop Festival"};
-        Random random = new Random();
-
-        for (int i = 0; i < 3; i++) {
-            Events event = new Events(sports[i], "2024-12-01", "Exciting sport event", "Stadium");
-            event.setCategory("Sport");
-            event.setStatus("Open");
-            event.setEventTimestamp(System.currentTimeMillis() + random.nextInt(100000000));
-            db.collection("events").add(event);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            Events event = new Events(music[i], "2024-12-05", "Great music event", "Concert Hall");
-            event.setCategory("Music");
-            event.setStatus("Open");
-            event.setEventTimestamp(System.currentTimeMillis() + random.nextInt(100000000));
-            db.collection("events").add(event);
-        }
-        
-        Toast.makeText(this, "6 Dummy events uploaded", Toast.LENGTH_SHORT).show();
     }
 }
