@@ -8,4 +8,6 @@
     <color name="confirm_text">#365727</color>
     <color name="decline_bg">#B85151</color>
     <color name="decline_text">#501414</color>
+    <color name="regular_button_text">#4C2162</color>
+    <color name="regular_button_bg">#C498D0</color>
 </resources>
