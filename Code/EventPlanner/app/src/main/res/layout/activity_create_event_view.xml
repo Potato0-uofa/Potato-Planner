@@ -2,40 +2,106 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/create_event"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="0dp"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/home_bar"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/exit_button_create_page"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Create New Event"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/home_bar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.548"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.836"
         app:srcCompat="@drawable/input_background" />
 
     <ImageButton
-        android:id="@+id/exit_button_event_page"
+        android:id="@+id/exit_button_create_page"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:background="#00FFFFFF"
-        android:elevation="2dp"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toTopOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <Button
+        android:id="@+id/edit_photo_create_page"
+        android:layout_width="138dp"
+        android:layout_height="39dp"
+        android:backgroundTint="#C498D0"
+        android:text="Edit Photo"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/event_image_background"
+        app:layout_constraintHorizontal_bias="0.458"
+        app:layout_constraintStart_toStartOf="@+id/event_image_background"
+        tools:layout_editor_absoluteY="396dp" />
+
+    <Button
+        android:id="@+id/create_button_create_page"
+        android:layout_width="349dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="124dp"
+        android:backgroundTint="@color/regular_button_bg"
+        android:text="Create Event"
+        android:textAllCaps="false"
+        android:textColor="@color/regular_button_text"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/event_closure_date" />
+
+    <EditText
+        android:id="@+id/event_details"
+        android:layout_width="179dp"
+        android:layout_height="46dp"
+        android:text="EventDetails"
+        android:textAlignment="viewStart"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.347"
+        app:layout_constraintStart_toEndOf="@+id/event_image_background"
+        tools:layout_editor_absoluteY="179dp" />
 
     <ImageView
         android:id="@+id/event_image_background"
-        android:layout_width="120dp"
-        android:layout_height="180dp"
+        android:layout_width="162dp"
+        android:layout_height="272dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
@@ -44,203 +110,272 @@
 
     <ImageView
         android:id="@+id/event_image_icon"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="159dp"
+        android:layout_height="268dp"
         app:layout_constraintBottom_toBottomOf="@+id/event_image_background"
         app:layout_constraintEnd_toEndOf="@+id/event_image_background"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/event_image_background"
         app:layout_constraintTop_toTopOf="@+id/event_image_background"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/ic_launcher_foreground" />
 
-    <TextView
+    <EditText
         android:id="@+id/event_name"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:text="Event Name"
-        android:textColor="#000000"
+        android:text="EventName"
+        android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
         app:layout_constraintStart_toEndOf="@+id/event_image_background"
         app:layout_constraintTop_toTopOf="@+id/imageView7" />
 
-    <TextView
-        android:id="@+id/event_details"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Event Details"
-        android:textColor="#666666"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/event_name"
-        app:layout_constraintStart_toStartOf="@+id/event_name"
-        app:layout_constraintTop_toBottomOf="@+id/event_name" />
-
-    <TextView
+    <EditText
         android:id="@+id/event_description_main"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Full Event Description goes here..."
-        android:textColor="#333333"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/lottery_info_box"
+        android:layout_width="350dp"
+        android:layout_height="209dp"
+        android:layout_marginTop="40dp"
+        android:gravity="top|left"
+        android:text="EventDescriptionMain"
+        android:textAlignment="viewStart"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.538"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
         app:layout_constraintTop_toBottomOf="@+id/event_image_background" />
 
-    <!-- Lottery Info Box -->
-    <LinearLayout
-        android:id="@+id/lottery_info_box"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/settings_row_background"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/Waitlist_Count"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center_vertical"
-            android:src="@android:drawable/ic_dialog_info"
-            app:tint="#4E4B7E" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:text="Lottery Selection: Attendees are randomly selected from the waitlist once the capacity is reached."
-            android:textColor="#555555"
-            android:textSize="13sp"
-            android:textStyle="italic" />
-    </LinearLayout>
-
     <TextView
-        android:id="@+id/Waitlist_Count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Waitlist: 0 people"
-        android:textColor="#000000"
-        android:textSize="18sp"
+        android:id="@+id/waitlist_Count"
+        android:layout_width="382dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="12dp"
+        android:text="Waitlist Limit"
+        android:textAlignment="center"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/join_event_button"
+        app:layout_constraintBottom_toTopOf="@+id/waitlist_limit_input"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7" />
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/event_description_main" />
 
-    <Button
-        android:id="@+id/join_event_button"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="4dp"
-        android:backgroundTint="#C498D0"
-        android:text="Join Waitlist"
-        android:textAllCaps="false"
-        android:textColor="#4C2162"
+    <EditText
+        android:id="@+id/waitlist_limit_input"
+        android:layout_width="382dp"
+        android:layout_height="46dp"
+        android:hint="Enter waitlist limit (leave blank for no limit)"
+        android:inputType="number"
+        android:textAlignment="center"
         android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/leave_event_button"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7" />
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/waitlist_Count"
+        app:layout_constraintBottom_toTopOf="@+id/event_closure_date" />
 
-    <Button
-        android:id="@+id/leave_event_button"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="4dp"
-        android:backgroundTint="#C498D0"
-        android:text="Leave Waitlist"
-        android:textAllCaps="false"
-        android:textColor="#4C2162"
-        android:textSize="18sp"
+    <EditText
+        android:id="@+id/event_closure_date"
+        android:layout_width="377dp"
+        android:layout_height="46dp"
+        android:gravity="top|left"
+        android:text="EventClosureDate"
+        android:textAlignment="center"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/view_waitlist_button"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7" />
-
-    <Button
-        android:id="@+id/view_waitlist_button"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="12dp"
-        android:backgroundTint="#4E4B7E"
-        android:text="View Waitlist"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7" />
+        app:layout_constraintStart_toStartOf="@+id/imageView7"
+        tools:layout_editor_absoluteY="666dp" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/home_bar"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="90dp"
         android:background="@color/home_bar"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/home_button_event_page"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:id="@+id/new_event_button_create_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/search_button_event_page"
+        app:layout_constraintEnd_toStartOf="@+id/search_button_create_page"
+        app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
-        app:srcCompat="@drawable/homeicon" />
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
-        android:id="@+id/search_button_event_page"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:id="@+id/search_button_create_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/browse_button_event_page"
-        app:layout_constraintStart_toEndOf="@+id/home_button_event_page"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
-        app:srcCompat="@drawable/searchicon" />
+        app:layout_constraintEnd_toStartOf="@+id/home_button_create_page"
+        app:layout_constraintStart_toEndOf="@+id/new_event_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
-        android:id="@+id/browse_button_event_page"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:id="@+id/home_button_create_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/profile_button_event_page"
-        app:layout_constraintStart_toEndOf="@+id/search_button_event_page"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
-        app:srcCompat="@drawable/browseicon" />
+        app:layout_constraintEnd_toStartOf="@+id/browse_button_create_page"
+        app:layout_constraintStart_toEndOf="@+id/search_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
-        android:id="@+id/profile_button_event_page"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:id="@+id/browse_button_create_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/profile_button_create_page"
+        app:layout_constraintStart_toEndOf="@+id/home_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageButton
+        android:id="@+id/profile_button_create_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/browse_button_event_page"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:layout_constraintStart_toEndOf="@+id/browse_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/new_event_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/new_event_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/new_event_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/new_event_button_create_page"
+        app:srcCompat="@drawable/neweventicon" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/search_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/search_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/search_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/search_button_create_page"
+        app:srcCompat="@drawable/searchicon" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/home_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/home_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/home_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/home_button_create_page"
+        app:srcCompat="@drawable/homeicon" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/browse_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/browse_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/browse_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/browse_button_create_page"
+        app:srcCompat="@drawable/browseicon" />
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_button_create_page"
+        app:layout_constraintEnd_toEndOf="@+id/profile_button_create_page"
+        app:layout_constraintStart_toStartOf="@+id/profile_button_create_page"
+        app:layout_constraintTop_toTopOf="@+id/profile_button_create_page"
         app:srcCompat="@drawable/profileicon" />
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="151dp"
+        android:layout_height="62dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/input_background" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Event Details"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView8"
+        app:layout_constraintEnd_toEndOf="@+id/imageView8"
+        app:layout_constraintStart_toStartOf="@+id/imageView8"
+        app:layout_constraintTop_toTopOf="@+id/imageView8" />
+
+    <Button
+        android:id="@+id/qr_code_button"
+        android:layout_width="59dp"
+        android:layout_height="66dp"
+        android:layout_marginEnd="36dp"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.212"
+        app:layout_constraintStart_toEndOf="@+id/imageView8"
+        tools:layout_editor_absoluteY="22dp" />
+
+    <Button
+        android:id="@+id/map_view_button"
+        android:layout_width="59dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="36dp"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintEnd_toStartOf="@+id/imageView8"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="22dp" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/qr_code_button"
+        app:layout_constraintEnd_toEndOf="@+id/qr_code_button"
+        app:layout_constraintStart_toStartOf="@+id/qr_code_button"
+        app:layout_constraintTop_toTopOf="@+id/qr_code_button"
+        app:srcCompat="@drawable/qrcodeicon" />
+
+    <ImageView
+        android:id="@+id/imageView10"
+        android:layout_width="52dp"
+        android:layout_height="56dp"
+        app:layout_constraintBottom_toBottomOf="@+id/map_view_button"
+        app:layout_constraintEnd_toEndOf="@+id/map_view_button"
+        app:layout_constraintStart_toStartOf="@+id/map_view_button"
+        app:layout_constraintTop_toTopOf="@+id/map_view_button"
+        app:srcCompat="@drawable/mapicon" />
+
+    <ImageView
+        android:id="@+id/imageView15"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/comment_button_public"
+        app:layout_constraintEnd_toEndOf="@+id/comment_button_public"
+        app:layout_constraintStart_toStartOf="@+id/comment_button_public"
+        app:layout_constraintTop_toTopOf="@+id/comment_button_public"
+        app:srcCompat="@drawable/qrcodeicon"
+        tools:srcCompat="@drawable/commenticon" />
+
+    <Button
+        android:id="@+id/comment_button_public"
+        android:layout_width="59dp"
+        android:layout_height="66dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/imageView7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/qr_code_button"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
