@@ -65,6 +65,12 @@ public class Events {
     /** Registration period end date as a string (yyyy-MM-dd). */
     private String registrationEnd;
 
+    /** Whether the event is private or not */
+    private boolean isPrivate;
+
+    /** Whether the event requires geolocation */
+    private boolean geolocationRequired;
+
     /**
      * No-argument constructor required for Firestore deserialization.
      * Initializes an empty waiting list and sets waitlist limit to -1 (unlimited).
@@ -343,6 +349,36 @@ public class Events {
     /** @param imageUrl the download URL of the event image to assign */
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    /** @return isPrivate whether the event is private or not */
+    public boolean isPrivate() { return isPrivate; }
+
+    /** @param isPrivate the private notation to assign to an event */
+    public void setPrivate(boolean isPrivate) { this.isPrivate = isPrivate; }
+
+    /** @return geolocationRequired whether the event needs geolocation */
+    public boolean isGeolocationRequired() { return geolocationRequired; }
+
+    /** @param geolocationRequired the notation to assign an event if it needs geolocation or not */
+    public void setGeolocationRequired(boolean geolocationRequired) {
+        this.geolocationRequired = geolocationRequired;
+    }
+
+    /** @return registrationStart when event registration begins */
+    public String getRegistrationStart() { return registrationStart; }
+
+    /** @param registrationStart the field to fill out when creating an event */
+    public void setRegistrationStart(String registrationStart) {
+        this.registrationStart = registrationStart;
+    }
+
+    /** @return registrationEnd when event registration ends */
+    public String getRegistrationEnd() { return registrationEnd; }
+
+    /** @param registrationEnd the field to fill out when creating an event */
+    public void setRegistrationEnd(String registrationEnd) {
+        this.registrationEnd = registrationEnd;
     }
 
     public List<String> getCoOrganizerIds() { return coOrganizerIds; }
