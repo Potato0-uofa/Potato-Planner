@@ -53,14 +53,8 @@ public class EventHistoryActivity extends AppCompatActivity {
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         listView  = findViewById(R.id.notification_list);
-        emptyText = new TextView(this);
-        emptyText.setText("User has not registered in any events!");
-        emptyText.setTextSize(16f);
-        emptyText.setTextColor(android.graphics.Color.WHITE);
-        emptyText.setTypeface(null, android.graphics.Typeface.BOLD);
-        emptyText.setPadding(32, 64, 32, 0);
-        emptyText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        ((ViewGroup) listView.getParent()).addView(emptyText);
+        listView  = findViewById(R.id.notification_list);
+        emptyText = findViewById(R.id.empty_text);
         listView.setEmptyView(emptyText);
 
         // Navigation bar

@@ -56,16 +56,44 @@ public class EventDescriptionView extends AppCompatActivity {
         ((TextView) findViewById(R.id.event_details)).setText(eventDescription != null ? eventDescription : "This is a demo event description.");
 
         btnJoinEvent.setOnClickListener(v -> {
-            eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
+            eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
                 @Override
-                public void onSuccess() {
-                    Toast.makeText(EventDescriptionView.this, "Joined Waitlist!", Toast.LENGTH_SHORT).show();
-                    updateButtonVisibility(true);
+                public void onSuccess(Events event) {
+                    String regStart = event.getRegistrationStart();
+                    if (regStart != null && !regStart.isEmpty()) {
+                        try {
+                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+                            java.util.Date startDate = sdf.parse(regStart);
+                            java.util.Date today = new java.util.Date();
+                            if (startDate != null && today.before(startDate)) {
+                                Toast.makeText(EventDescriptionView.this,
+                                        "Registration opens on " + regStart,
+                                        Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        } catch (java.text.ParseException e) {
+                            // If date can't be parsed, allow joining
+                        }
+                    }
+                    // Date check passed, join the waitlist
+                    eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(EventDescriptionView.this, "Joined Waitlist!", Toast.LENGTH_SHORT).show();
+                            updateButtonVisibility(true);
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(EventDescriptionView.this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-                    Toast.makeText(EventDescriptionView.this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EventDescriptionView.this,
+                            "Could not verify registration period", Toast.LENGTH_SHORT).show();
                 }
             });
         });
@@ -100,6 +128,16 @@ public class EventDescriptionView extends AppCompatActivity {
                 if (deviceId.equals(event.getOrganizerId()) ||
                         event.getCoOrganizerIds().contains(deviceId)) {
                     btnViewWaitlist.setVisibility(View.VISIBLE);
+                }
+
+                // Show registration period
+                TextView regPeriodText = findViewById(R.id.registration_period_text);
+                String start = event.getRegistrationStart();
+                String end = event.getRegistrationEnd();
+                if (start != null && end != null && !start.isEmpty() && !end.isEmpty()) {
+                    regPeriodText.setText("Registration: " + start + " – " + end);
+                } else if (end != null && !end.isEmpty()) {
+                    regPeriodText.setText("Registration closes: " + end);
                 }
             }
 
