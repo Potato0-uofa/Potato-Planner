@@ -3,6 +3,7 @@ package com.example.eventplanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,9 +17,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import android.widget.EditText;
 
 public class BrowseEventsActivity extends AppCompatActivity {
 
+    private final List<Events> allEventsList = new ArrayList<>();
     private RecyclerView recyclerView;
     private EventAdapter adapter;
     private final List<Events> eventList = new ArrayList<>();
@@ -60,6 +63,20 @@ public class BrowseEventsActivity extends AppCompatActivity {
             startActivity(new Intent(BrowseEventsActivity.this, Profile.class));
         });
 
+        EditText searchBar = findViewById(R.id.et_search_bar);
+        searchBar.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterBySearch(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
         loadEvents("All");
     }
 
@@ -79,10 +96,12 @@ public class BrowseEventsActivity extends AppCompatActivity {
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                         eventList.clear();
+                        allEventsList.clear(); // add this line
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             Events event = document.toObject(Events.class);
                             event.setEventId(document.getId());
                             eventList.add(event);
+                            allEventsList.add(event);
                         }
                         adapter.notifyDataSetChanged();
                     })
@@ -93,14 +112,27 @@ public class BrowseEventsActivity extends AppCompatActivity {
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                         eventList.clear();
+                        allEventsList.clear();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             Events event = document.toObject(Events.class);
                             event.setEventId(document.getId());
                             eventList.add(event);
+                            allEventsList.add(event);
                         }
                         adapter.notifyDataSetChanged();
                     })
                     .addOnFailureListener(e -> Toast.makeText(this, "Error filtering events", Toast.LENGTH_SHORT).show());
         }
+    }
+
+    private void filterBySearch(String query) {
+        String lowerQuery = query.toLowerCase().trim();
+        eventList.clear();
+        for (Events event : allEventsList) {
+            if (event.getName() != null && event.getName().toLowerCase().contains(lowerQuery)) {
+                eventList.add(event);
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 }
