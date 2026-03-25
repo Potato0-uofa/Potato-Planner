@@ -101,7 +101,44 @@ public class CreateEventActivity extends AppCompatActivity {
 
         eventImageView = findViewById(R.id.event_image_icon);
 
+        // Make event description independently scrollable
+        EditText descriptionField = findViewById(R.id.event_description_main);
+        descriptionField.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
 
+        // Limit event_details to 20 words
+        EditText eventDetailsField = findViewById(R.id.event_details);
+        eventDetailsField.addTextChangedListener(new android.text.TextWatcher() {
+            private boolean isEditing = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                if (isEditing) return;
+                String text = s.toString().trim();
+                String[] words = text.isEmpty() ? new String[0] : text.split("\\s+");
+                if (words.length > 20) {
+                    isEditing = true;
+                    // Trim back to 20 words
+                    StringBuilder trimmed = new StringBuilder();
+                    for (int i = 0; i < 20; i++) {
+                        if (i > 0) trimmed.append(" ");
+                        trimmed.append(words[i]);
+                    }
+                    s.replace(0, s.length(), trimmed.toString());
+                    Toast.makeText(CreateEventActivity.this,
+                            "Event details limited to 20 words", Toast.LENGTH_SHORT).show();
+                    isEditing = false;
+                }
+            }
+        });
 
         // Pre-fill fields for the setup fragment
         if (existingEventId != null) {
