@@ -89,7 +89,7 @@ public class EventHistoryActivityTest {
      */
     @Test
     public void testSearchButtonIsVisible() {
-        onView(withId(R.id.search_button_event_history)).check(matches(isDisplayed()));
+        onView(withId(R.id.qr_button_event_history)).check(matches(isDisplayed()));
     }
 
     /**

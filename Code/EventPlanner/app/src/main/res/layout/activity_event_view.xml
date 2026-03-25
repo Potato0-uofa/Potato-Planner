@@ -11,31 +11,33 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/home_bar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exit_button_event_page"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/input_background" />
 
     <ImageButton
         android:id="@+id/exit_button_event_page"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:background="#00FFFFFF"
         android:elevation="2dp"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toTopOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
     <ImageView
         android:id="@+id/event_image_background"
-        android:layout_width="120dp"
-        android:layout_height="180dp"
+        android:layout_width="117dp"
+        android:layout_height="187dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
@@ -194,53 +196,160 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/home_bar"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_width="415dp"
+        android:layout_height="90dp"
         android:background="@color/home_bar"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/qr_button_event_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/home_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
         android:id="@+id/home_button_event_page"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="#00FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/search_button_event_page"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
-        app:srcCompat="@drawable/homeicon" />
-
-    <ImageButton
-        android:id="@+id/search_button_event_page"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/browse_button_event_page"
-        app:layout_constraintStart_toEndOf="@+id/home_button_event_page"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
-        app:srcCompat="@drawable/searchicon" />
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
         android:id="@+id/browse_button_event_page"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/profile_button_event_page"
-        app:layout_constraintStart_toEndOf="@+id/search_button_event_page"
-        app:layout_constraintTop_toTopOf="@+id/home_bar"
-        app:srcCompat="@drawable/browseicon" />
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
         android:id="@+id/profile_button_event_page"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="6dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/browse_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageButton
+        android:id="@+id/new_event_button_event_page"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/qr_button_event_page"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
+
+    <ImageView
+        android:id="@+id/imageView18"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView22"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toEndOf="@+id/imageView20"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/homeicon" />
+
+    <ImageView
+        android:id="@+id/imageView19"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView20"
+        app:layout_constraintHorizontal_bias="0.333"
+        app:layout_constraintStart_toStartOf="@+id/home_bar"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/neweventicon" />
+
+    <ImageView
+        android:id="@+id/imageView20"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/home_button_event_page"
+        app:layout_constraintStart_toEndOf="@+id/new_event_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/qrcodebutton" />
+
+    <ImageView
+        android:id="@+id/imageView21"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/home_bar"
+        app:layout_constraintHorizontal_bias="0.652"
+        app:layout_constraintStart_toEndOf="@+id/imageView22"
         app:layout_constraintTop_toTopOf="@+id/home_bar"
         app:srcCompat="@drawable/profileicon" />
+
+    <ImageView
+        android:id="@+id/imageView22"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/profile_button_event_page"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toEndOf="@+id/home_button_event_page"
+        app:layout_constraintTop_toTopOf="@+id/home_bar"
+        app:srcCompat="@drawable/browseicon" />
+
+    <ImageView
+        android:id="@+id/imageView15"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/comment_button_entrant"
+        app:layout_constraintEnd_toEndOf="@+id/comment_button_entrant"
+        app:layout_constraintStart_toStartOf="@+id/comment_button_entrant"
+        app:layout_constraintTop_toTopOf="@+id/comment_button_entrant"
+        app:srcCompat="@drawable/commenticon"
+        tools:srcCompat="@drawable/commenticon" />
+
+    <Button
+        android:id="@+id/comment_button_entrant"
+        android:layout_width="59dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/imageView7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

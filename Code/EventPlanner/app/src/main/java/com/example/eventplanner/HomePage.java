@@ -33,7 +33,7 @@ public class HomePage extends AppCompatActivity {
             fragment.show(getSupportFragmentManager(), "NewEventFragment");
         });
 
-        findViewById(R.id.search_button_home).setOnClickListener(v -> {
+        findViewById(R.id.qr_button_home).setOnClickListener(v -> {
             startActivity(new Intent(HomePage.this, SearchScreen.class));
         });
 

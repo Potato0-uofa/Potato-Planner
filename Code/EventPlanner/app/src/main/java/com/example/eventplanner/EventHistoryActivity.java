@@ -67,7 +67,7 @@ public class EventHistoryActivity extends AppCompatActivity {
         findViewById(R.id.exit_button_event_history).setOnClickListener(v -> finish());
         findViewById(R.id.home_button_event_history).setOnClickListener(v ->
                 startActivity(new Intent(this, HomePage.class)));
-        findViewById(R.id.search_button_event_history).setOnClickListener(v ->
+        findViewById(R.id.qr_button_event_history).setOnClickListener(v ->
                 startActivity(new Intent(this, SearchScreen.class)));
         findViewById(R.id.browse_button_event_history).setOnClickListener(v ->
                 startActivity(new Intent(this, NonAdminBrowseEvents.class)));

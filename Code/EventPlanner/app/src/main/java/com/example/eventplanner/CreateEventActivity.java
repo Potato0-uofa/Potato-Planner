@@ -81,7 +81,7 @@ public class CreateEventActivity extends AppCompatActivity {
             // Do nothing since already on new event page
         });
 
-        findViewById(R.id.search_button_create_page).setOnClickListener(v -> {
+        findViewById(R.id.qr_button_create_page).setOnClickListener(v -> {
             startActivity(new Intent(CreateEventActivity.this, SearchScreen.class));
         });
 
