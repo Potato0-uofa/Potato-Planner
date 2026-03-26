@@ -207,8 +207,8 @@ public class EventDescriptionView extends AppCompatActivity {
         View homeBtn = findViewById(R.id.home_button_event_page);
         if (homeBtn != null) homeBtn.setOnClickListener(v -> startActivity(new Intent(this, HomePage.class)));
 
-        View searchBtn = findViewById(R.id.search_button_event_page);
-        if (searchBtn != null) searchBtn.setOnClickListener(v -> startActivity(new Intent(this, SearchScreen.class)));
+        // View searchBtn = findViewById(R.id.search_button_event_page);
+        // if (searchBtn != null) searchBtn.setOnClickListener(v -> startActivity(new Intent(this, SearchScreen.class)));
 
         View browseBtn = findViewById(R.id.browse_button_event_page);
         if (browseBtn != null) browseBtn.setOnClickListener(v -> startActivity(new Intent(this, NonAdminBrowseEvents.class)));

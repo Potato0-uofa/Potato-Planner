@@ -189,13 +189,13 @@
         android:layout_height="75dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/search_button_create_page_private"
+        app:layout_constraintEnd_toStartOf="@+id/qr_button_create_page_private"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
-        android:id="@+id/search_button_create_page_private"
+        android:id="@+id/qr_button_create_page_private"
         android:layout_width="76dp"
         android:layout_height="75dp"
         android:background="#00FFFFFF"
@@ -211,7 +211,7 @@
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/browse_button_create_page_private"
-        app:layout_constraintStart_toEndOf="@+id/search_button_create_page_private"
+        app:layout_constraintStart_toEndOf="@+id/qr_button_create_page_private"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
@@ -246,11 +246,11 @@
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
-        app:layout_constraintBottom_toBottomOf="@+id/search_button_create_page_private"
-        app:layout_constraintEnd_toEndOf="@+id/search_button_create_page_private"
-        app:layout_constraintStart_toStartOf="@+id/search_button_create_page_private"
-        app:layout_constraintTop_toTopOf="@+id/search_button_create_page_private"
-        app:srcCompat="@drawable/searchicon" />
+        app:layout_constraintBottom_toBottomOf="@+id/qr_button_create_page_private"
+        app:layout_constraintEnd_toEndOf="@+id/qr_button_create_page_private"
+        app:layout_constraintStart_toStartOf="@+id/qr_button_create_page_private"
+        app:layout_constraintTop_toTopOf="@+id/qr_button_create_page_private"
+        app:srcCompat="@drawable/qrcodebutton" />
 
     <ImageView
         android:layout_width="60dp"
@@ -279,51 +279,24 @@
         app:layout_constraintTop_toTopOf="@+id/profile_button_create_page_private"
         app:srcCompat="@drawable/profileicon" />
 
-    <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="151dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/input_background" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edit Event Details"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView8"
-        app:layout_constraintEnd_toEndOf="@+id/imageView8"
-        app:layout_constraintStart_toStartOf="@+id/imageView8"
-        app:layout_constraintTop_toTopOf="@+id/imageView8" />
-
     <Button
-        android:id="@+id/co_organizer_button"
+        android:id="@+id/invite_entrant_private"
         android:layout_width="59dp"
         android:layout_height="66dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="36dp"
         android:backgroundTint="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.212"
-        app:layout_constraintStart_toEndOf="@+id/imageView8"
+        app:layout_constraintEnd_toStartOf="@id/comment_button_private"
+        app:layout_constraintStart_toEndOf="@+id/settings_button_private"
         app:layout_constraintTop_toTopOf="@+id/scrollView2" />
 
     <Button
         android:id="@+id/map_view_button"
         android:layout_width="59dp"
         android:layout_height="66dp"
-        android:layout_marginStart="36dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
         android:backgroundTint="#FFFFFF"
-        app:layout_constraintEnd_toStartOf="@+id/imageView8"
+        app:layout_constraintEnd_toStartOf="@+id/co_organizer_button_private"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -331,10 +304,10 @@
         android:id="@+id/imageView9"
         android:layout_width="45dp"
         android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="@+id/co_organizer_button"
-        app:layout_constraintEnd_toEndOf="@+id/co_organizer_button"
-        app:layout_constraintStart_toStartOf="@+id/co_organizer_button"
-        app:layout_constraintTop_toTopOf="@+id/co_organizer_button"
+        app:layout_constraintBottom_toBottomOf="@+id/invite_entrant_private"
+        app:layout_constraintEnd_toEndOf="@+id/invite_entrant_private"
+        app:layout_constraintStart_toStartOf="@+id/invite_entrant_private"
+        app:layout_constraintTop_toTopOf="@+id/invite_entrant_private"
         app:srcCompat="@drawable/invite_entrant_icon" />
 
     <ImageView
@@ -364,9 +337,51 @@
         android:layout_height="66dp"
         android:layout_marginTop="20dp"
         android:backgroundTint="#00FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/imageView7"
+        app:layout_constraintBottom_toTopOf="@+id/imageView17"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/co_organizer_button"
+        app:layout_constraintStart_toEndOf="@+id/invite_entrant_private"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/co_organizer_button_private"
+        android:layout_width="59dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintEnd_toStartOf="@+id/settings_button_private"
+        app:layout_constraintStart_toEndOf="@+id/map_view_button"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/settings_button_private"
+        android:layout_width="59dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintEnd_toStartOf="@+id/invite_entrant_private"
+        app:layout_constraintStart_toEndOf="@+id/co_organizer_button_private"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView24"
+        android:layout_width="48dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/co_organizer_button_private"
+        app:layout_constraintEnd_toEndOf="@+id/co_organizer_button_private"
+        app:layout_constraintStart_toStartOf="@+id/co_organizer_button_private"
+        app:layout_constraintTop_toTopOf="@+id/co_organizer_button_private"
+        app:srcCompat="@drawable/invitecoorganizers" />
+
+    <ImageView
+        android:id="@+id/imageView25"
+        android:layout_width="52dp"
+        android:layout_height="56dp"
+        app:layout_constraintBottom_toBottomOf="@+id/settings_button_private"
+        app:layout_constraintEnd_toEndOf="@+id/settings_button_private"
+        app:layout_constraintStart_toStartOf="@+id/settings_button_private"
+        app:layout_constraintTop_toTopOf="@+id/settings_button_private"
+        app:srcCompat="@drawable/gearicon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

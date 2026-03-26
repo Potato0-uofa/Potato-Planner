@@ -101,8 +101,6 @@ public class CreateEventActivity extends AppCompatActivity {
 
         eventImageView = findViewById(R.id.event_image_icon);
 
-
-
         // Pre-fill fields for the setup fragment
         if (existingEventId != null) {
             eventRepository.fetchEventById(existingEventId, new EventRepository.EventCallback() {
@@ -246,7 +244,7 @@ public class CreateEventActivity extends AppCompatActivity {
             findViewById(R.id.new_event_button_create_page_private).setOnClickListener(v -> {
                 // Do nothing since already on new event page
             });
-            findViewById(R.id.search_button_create_page_private).setOnClickListener(v ->
+            findViewById(R.id.qr_button_create_page).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, SearchScreen.class)));
             findViewById(R.id.home_button_create_page_private).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, HomePage.class)));
@@ -258,7 +256,7 @@ public class CreateEventActivity extends AppCompatActivity {
             findViewById(R.id.new_event_button_create_page).setOnClickListener(v -> {
                 // Do nothing since already on new event page
             });
-            findViewById(R.id.search_button_create_page).setOnClickListener(v ->
+            findViewById(R.id.qr_button_create_page).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, SearchScreen.class)));
             findViewById(R.id.home_button_create_page).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, HomePage.class)));

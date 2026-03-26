@@ -48,7 +48,7 @@ public class Profile extends AppCompatActivity {
                 startActivity(new Intent(Profile.this, CreateEventActivity.class)));
 
         // Search (Spyglass) Button
-        findViewById(R.id.search_button_profile).setOnClickListener(v ->
+        findViewById(R.id.qr_button_profile).setOnClickListener(v ->
                 startActivity(new Intent(Profile.this, SearchScreen.class)));
 
         // Home Button

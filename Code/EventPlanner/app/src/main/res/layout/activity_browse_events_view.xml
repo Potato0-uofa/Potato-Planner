@@ -65,13 +65,13 @@
         android:layout_height="60dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/search_button_browse"
+        app:layout_constraintEnd_toStartOf="@+id/qr_button_browse"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/home_bar"
         app:srcCompat="@drawable/neweventicon" />
 
     <ImageButton
-        android:id="@+id/search_button_browse"
+        android:id="@+id/qr_button_browse"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="#00FFFFFF"
@@ -88,7 +88,7 @@
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/browse_button_browse"
-        app:layout_constraintStart_toEndOf="@+id/search_button_browse"
+        app:layout_constraintStart_toEndOf="@+id/qr_button_browse"
         app:layout_constraintTop_toTopOf="@+id/home_bar"
         app:srcCompat="@drawable/homeicon" />
 
