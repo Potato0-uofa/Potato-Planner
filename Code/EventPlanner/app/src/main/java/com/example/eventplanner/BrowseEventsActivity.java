@@ -16,8 +16,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import android.widget.EditText;
 
 public class BrowseEventsActivity extends AppCompatActivity {
 
@@ -47,7 +45,7 @@ public class BrowseEventsActivity extends AppCompatActivity {
             startActivity(new Intent(BrowseEventsActivity.this, CreateEventActivity.class));
         });
 
-        findViewById(R.id.search_button_browse).setOnClickListener(v -> {
+        findViewById(R.id.qr_button_browse).setOnClickListener(v -> {
             startActivity(new Intent(BrowseEventsActivity.this, SearchScreen.class));
         });
 
