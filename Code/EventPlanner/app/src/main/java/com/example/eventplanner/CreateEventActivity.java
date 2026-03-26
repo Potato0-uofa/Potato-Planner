@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -21,6 +23,8 @@ import com.google.firebase.storage.StorageReference;
  * an event's name, description, date, and a waitlist limit. Also supports selecting and uploading
  * an event image. When successfully created the event is persisted using the eventRepository and
  * the user is directed back to the home page. The view also has a navigation bar at the bottom.
+ * If launched from a setup fragment (public or private), it loads the correct layout and updates
+ * the already-created event rather than creating a new one.
  */
 public class CreateEventActivity extends AppCompatActivity {
 
@@ -46,6 +50,18 @@ public class CreateEventActivity extends AppCompatActivity {
     private ImageView eventImageView;
 
     /**
+     * The Firestore event ID passed in from the setup fragment, if any.
+     * If non-null, the activity will update this existing event instead of creating a new one.
+     */
+    private String existingEventId = null;
+
+    /**
+     * Whether this event is private. Determines which layout to inflate and which
+     * button IDs to use for navigation and event creation.
+     */
+    private boolean isPrivate = false;
+
+    /**
      * Launcher used to pick an image from device storage.
      */
     private final ActivityResultLauncher<String> imagePickerLauncher =
@@ -60,6 +76,9 @@ public class CreateEventActivity extends AppCompatActivity {
 
     /**
      * Sets up navigation, image selection, and event creation logic.
+     * If an eventId is passed via Intent extras, the activity loads the correct
+     * layout (public or private) and updates the existing event on confirmation.
+     * Otherwise, falls back to creating a brand new event.
      *
      * @param savedInstanceState If the activity is being re-initialized after previously being
      *                           shut down, this Bundle contains the data it most recently supplied
@@ -68,37 +87,101 @@ public class CreateEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_event_view);
+
+        // Check if we were launched from the setup fragment
+        existingEventId = getIntent().getStringExtra("eventId");
+        isPrivate = getIntent().getBooleanExtra("isPrivate", false);
+
+        // Load the correct layout based on public/private
+        if (isPrivate) {
+            setContentView(R.layout.activity_create_event_private_view);
+        } else {
+            setContentView(R.layout.activity_create_event_view);
+        }
 
         eventImageView = findViewById(R.id.event_image_icon);
+
+        // Make event description independently scrollable
+        EditText descriptionField = findViewById(R.id.event_description_main);
+        descriptionField.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
+
+        // Limit event_details to 20 words
+        EditText eventDetailsField = findViewById(R.id.event_details);
+        eventDetailsField.addTextChangedListener(new android.text.TextWatcher() {
+            private boolean isEditing = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                if (isEditing) return;
+                String text = s.toString().trim();
+                String[] words = text.isEmpty() ? new String[0] : text.split("\\s+");
+                if (words.length > 20) {
+                    isEditing = true;
+                    // Trim back to 20 words
+                    StringBuilder trimmed = new StringBuilder();
+                    for (int i = 0; i < 20; i++) {
+                        if (i > 0) trimmed.append(" ");
+                        trimmed.append(words[i]);
+                    }
+                    s.replace(0, s.length(), trimmed.toString());
+                    Toast.makeText(CreateEventActivity.this,
+                            "Event details limited to 20 words", Toast.LENGTH_SHORT).show();
+                    isEditing = false;
+                }
+            }
+        });
+
+        // Pre-fill fields for the setup fragment
+        if (existingEventId != null) {
+            eventRepository.fetchEventById(existingEventId, new EventRepository.EventCallback() {
+                @Override
+                public void onSuccess(Events event) {
+                    EditText closureDateInput = findViewById(R.id.event_closure_date);
+                    EditText waitlistLimitInput = findViewById(R.id.waitlist_limit_input);
+                    TextView waitlistCount = findViewById(R.id.waitlist_Count);
+
+                    if (event.getRegistrationEnd() != null) {
+                        closureDateInput.setText(event.getRegistrationEnd());
+                    }
+
+                    if (event.getWaitlistLimit() != -1) {
+                        waitlistLimitInput.setText(String.valueOf(event.getWaitlistLimit()));
+                    } else {
+                        // No limit was set — hide the input and show a label instead
+                        waitlistLimitInput.setVisibility(View.GONE);
+                        waitlistCount.setText("No Waitlist Limit");
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    // Silently fail, fields just stay blank
+                }
+            });
+        }
 
         //findViewById(R.id.add_poster_button).setOnClickListener(v ->
         //        imagePickerLauncher.launch("image/*")
         //);
 
-        // Home bar navigation
-        findViewById(R.id.new_event_button_create_page).setOnClickListener(v -> {
-            // Do nothing since already on new event page
-        });
+        setupNavigation();
 
-        findViewById(R.id.qr_button_create_page).setOnClickListener(v -> {
-            startActivity(new Intent(CreateEventActivity.this, SearchScreen.class));
-        });
-
-        findViewById(R.id.home_button_create_page).setOnClickListener(v -> {
-            startActivity(new Intent(CreateEventActivity.this, HomePage.class));
-        });
-
-        findViewById(R.id.browse_button_create_page).setOnClickListener(v -> {
-            startActivity(new Intent(CreateEventActivity.this, NonAdminBrowseEvents.class));
-        });
-
-        findViewById(R.id.profile_button_create_page).setOnClickListener(v -> {
-            startActivity(new Intent(CreateEventActivity.this, Profile.class));
-        });
+        // Get the correct create button ID based on layout
+        int createBtnId = isPrivate
+                ? R.id.create_button_create_page_private
+                : R.id.create_button_create_page;
 
         // Create event button
-        findViewById(R.id.create_button_create_page).setOnClickListener(v -> {
+        findViewById(createBtnId).setOnClickListener(v -> {
             EditText nameInput = findViewById(R.id.event_name);
             EditText descriptionInput = findViewById(R.id.event_description_main);
             EditText closureDateInput = findViewById(R.id.event_closure_date);
@@ -109,8 +192,29 @@ public class CreateEventActivity extends AppCompatActivity {
             String closureDate = closureDateInput.getText().toString().trim();
             String waitlistLimitStr = waitlistLimitInput.getText().toString().trim();
 
+
             if (name.isEmpty() || description.isEmpty() || closureDate.isEmpty()) {
                 Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Validate that closure date is not in the past
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+                java.util.Date closureDateParsed = sdf.parse(closureDate);
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+                cal.set(java.util.Calendar.MINUTE, 0);
+                cal.set(java.util.Calendar.SECOND, 0);
+                cal.set(java.util.Calendar.MILLISECOND, 0);
+                java.util.Date today = cal.getTime();
+
+                if (closureDateParsed != null && closureDateParsed.before(today)) {
+                    Toast.makeText(this, "Event date cannot be in the past", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (java.text.ParseException e) {
+                Toast.makeText(this, "Invalid date format. Please use YYYY-MM-DD", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -120,20 +224,86 @@ public class CreateEventActivity extends AppCompatActivity {
                     Settings.Secure.ANDROID_ID
             );
 
-            Events event = new Events(name, closureDate, description, "");
-            event.setOrganizerId(organizerId);
+            if (existingEventId != null) {
+                // Update the event already created by the setup fragment
+                eventRepository.fetchEventById(existingEventId, new EventRepository.EventCallback() {
+                    @Override
+                    public void onSuccess(Events event) {
+                        event.setName(name);
+                        event.setDescription(description);
+                        event.setDate(closureDate);
+                        if (!waitlistLimitStr.isEmpty()) {
+                            event.setWaitlistLimit(Integer.parseInt(waitlistLimitStr));
+                        }
+                        if (selectedImageUri != null) {
+                            uploadImageAndUpdateEvent(event);
+                        } else {
+                            updateEventInFirestore(event);
+                        }
+                    }
 
-            if (!waitlistLimitStr.isEmpty()) {
-                int limit = Integer.parseInt(waitlistLimitStr);
-                event.setWaitlistLimit(limit);
-            }
-
-            if (selectedImageUri != null) {
-                uploadImageAndCreateEvent(event);
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(CreateEventActivity.this,
+                                "Failed to load event: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
             } else {
-                createEventInFirestore(event);
+                // Fallback: create a brand new event (old flow)
+                Events event = new Events(name, closureDate, description, "");
+                event.setOrganizerId(organizerId);
+                event.setPrivate(isPrivate);
+
+                if (!waitlistLimitStr.isEmpty()) {
+                    int limit = Integer.parseInt(waitlistLimitStr);
+                    event.setWaitlistLimit(limit);
+                }
+
+                if (selectedImageUri != null) {
+                    uploadImageAndCreateEvent(event);
+                } else {
+                    createEventInFirestore(event);
+                }
             }
         });
+    }
+
+    /**
+     * Sets up the navigation bar and exit button click listeners.
+     * Uses different view IDs depending on whether the private or public layout is loaded.
+     */
+    private void setupNavigation() {
+        int exitBtnId = isPrivate
+                ? R.id.exit_button_create_page_private
+                : R.id.exit_button_create_page;
+        findViewById(exitBtnId).setOnClickListener(v -> finish());
+
+        if (isPrivate) {
+            findViewById(R.id.new_event_button_create_page_private).setOnClickListener(v -> {
+                // Do nothing since already on new event page
+            });
+            findViewById(R.id.search_button_create_page_private).setOnClickListener(v ->
+                    startActivity(new Intent(CreateEventActivity.this, SearchScreen.class)));
+            findViewById(R.id.home_button_create_page_private).setOnClickListener(v ->
+                    startActivity(new Intent(CreateEventActivity.this, HomePage.class)));
+            findViewById(R.id.browse_button_create_page_private).setOnClickListener(v ->
+                    startActivity(new Intent(CreateEventActivity.this, NonAdminBrowseEvents.class)));
+            findViewById(R.id.profile_button_create_page_private).setOnClickListener(v ->
+                    startActivity(new Intent(CreateEventActivity.this, Profile.class)));
+        } else {
+            findViewById(R.id.new_event_button_create_page).setOnClickListener(v -> {
+                // Do nothing since already on new event page
+            });
+            findViewById(R.id.search_button_create_page).setOnClickListener(v ->
+                    startActivity(new Intent(CreateEventActivity.this, SearchScreen.class)));
+            findViewById(R.id.home_button_create_page).setOnClickListener(v ->
+                    startActivity(new Intent(CreateEventActivity.this, HomePage.class)));
+            findViewById(R.id.browse_button_create_page).setOnClickListener(v ->
+                    startActivity(new Intent(CreateEventActivity.this, NonAdminBrowseEvents.class)));
+            findViewById(R.id.profile_button_create_page).setOnClickListener(v ->
+                    startActivity(new Intent(CreateEventActivity.this, Profile.class)));
+        }
     }
 
     /**
@@ -165,6 +335,34 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     /**
+     * Uploads the selected image to Firebase Storage, stores the download URL in the event,
+     * and then updates the existing event in Firestore.
+     *
+     * @param event the event being updated
+     */
+    private void uploadImageAndUpdateEvent(Events event) {
+        String fileName = "event_" + System.currentTimeMillis() + ".jpg";
+        StorageReference imageRef = storageReference.child(fileName);
+
+        imageRef.putFile(selectedImageUri)
+                .addOnSuccessListener(taskSnapshot ->
+                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            event.setImageUrl(uri.toString());
+                            updateEventInFirestore(event);
+                        }).addOnFailureListener(e ->
+                                Toast.makeText(CreateEventActivity.this,
+                                        "Failed to get image URL: " + e.getMessage(),
+                                        Toast.LENGTH_LONG).show()
+                        )
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(CreateEventActivity.this,
+                                "Image upload failed: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show()
+                );
+    }
+
+    /**
      * Persists the event in Firestore and navigates back to the home page on success.
      *
      * @param event the event to create
@@ -182,6 +380,30 @@ public class CreateEventActivity extends AppCompatActivity {
             public void onFailure(Exception e) {
                 Toast.makeText(CreateEventActivity.this,
                         "Failed to create event: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /**
+     * Updates the existing event in Firestore with the organizer's newly entered details,
+     * and navigates back to the home page on success.
+     *
+     * @param event the event to update
+     */
+    private void updateEventInFirestore(Events event) {
+        eventRepository.updateEvent(event, new EventRepository.SimpleCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(CreateEventActivity.this, "Event saved!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(CreateEventActivity.this, HomePage.class));
+                finish();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(CreateEventActivity.this,
+                        "Failed to save event: " + e.getMessage(),
                         Toast.LENGTH_LONG).show();
             }
         });

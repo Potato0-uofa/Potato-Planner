@@ -130,6 +130,18 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/registration_period_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:textColor="#555555"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/Waitlist_Count"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="@+id/imageView7" />
+
+    <TextView
         android:id="@+id/Waitlist_Count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
