@@ -42,7 +42,7 @@ public class NonAdminBrowseEvents extends AppCompatActivity {
             startActivity(new Intent(NonAdminBrowseEvents.this, CreateEventActivity.class));
         });
 
-        findViewById(R.id.search_button_browse).setOnClickListener(v -> {
+        findViewById(R.id.qr_button_browse).setOnClickListener(v -> {
             startActivity(new Intent(NonAdminBrowseEvents.this, SearchScreen.class));
         });
 

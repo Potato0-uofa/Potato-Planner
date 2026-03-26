@@ -53,7 +53,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/search_button_event_history"
+        android:id="@+id/qr_button_event_history"
         android:layout_width="76dp"
         android:layout_height="75dp"
         android:layout_marginTop="2dp"
@@ -104,7 +104,7 @@
         android:layout_marginTop="2dp"
         android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/search_button_event_history"
+        app:layout_constraintEnd_toStartOf="@+id/qr_button_event_history"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
@@ -147,7 +147,7 @@
         app:layout_constraintEnd_toStartOf="@+id/home_button_event_history"
         app:layout_constraintStart_toEndOf="@+id/new_event_button_event_history"
         app:layout_constraintTop_toTopOf="@+id/home_bar"
-        app:srcCompat="@drawable/searchicon" />
+        app:srcCompat="@drawable/qrcodebutton" />
 
     <ImageView
         android:id="@+id/imageView5"

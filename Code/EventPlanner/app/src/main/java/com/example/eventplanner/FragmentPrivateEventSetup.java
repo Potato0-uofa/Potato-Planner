@@ -30,6 +30,7 @@ public class FragmentPrivateEventSetup extends DialogFragment {
         CheckBox geolocationCheck = view.findViewById(R.id.geolocation_private_setup);
         CheckBox waitlistCheck = view.findViewById(R.id.max_capacity_check_private_setup);
         EditText waitlistCapacityInput = view.findViewById(R.id.waitlist_capacity_private_setup);
+        EditText attendeeCountInput = view.findViewById(R.id.attendee_count_private_setup);
 
         // Auto-fill registration start date with today's date
         String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
@@ -46,9 +47,26 @@ public class FragmentPrivateEventSetup extends DialogFragment {
         view.findViewById(R.id.private_event_create_button).setOnClickListener(v -> {
             String regStart = regStartInput.getText().toString().trim();
             String regEnd = regEndInput.getText().toString().trim();
+            String attendeeCountStr = attendeeCountInput.getText().toString().trim();
 
+
+            // User must enter registration dates (end registration date, start registration date
+            // is pre-filled, but user can choose to change if desired)
             if (regStart.isEmpty() || regEnd.isEmpty()) {
                 Toast.makeText(getContext(), "Please fill in registration dates", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // User must enter the number of attendees for the event
+            if (attendeeCountStr.isEmpty()) {
+                Toast.makeText(getContext(), "Please enter the number of attendees", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Checks to see that the number of attendees is greater than 0
+            int attendeeCount = Integer.parseInt(attendeeCountStr);
+            if (attendeeCount <= 0) {
+                Toast.makeText(getContext(), "Number of attendees must be greater than 0", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -69,6 +87,7 @@ public class FragmentPrivateEventSetup extends DialogFragment {
             event.setRegistrationEnd(regEnd);
             event.setGeolocationRequired(geolocationCheck.isChecked());
             event.setPrivate(true);
+            event.setCapacity(attendeeCount);
 
 
             if (waitlistCheck.isChecked()) {
@@ -88,23 +107,27 @@ public class FragmentPrivateEventSetup extends DialogFragment {
                 cal.set(java.util.Calendar.MILLISECOND, 0);
                 java.util.Date todayDate = cal.getTime();
 
+                // Checks to see if registration start date is in the past
                 java.util.Date startDate = sdf.parse(regStart);
                 if (startDate != null && startDate.before(todayDate)) {
                     Toast.makeText(getContext(), "Registration start date cannot be in the past", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                // Checks to see if registration end date is in the past
                 java.util.Date endDate = sdf.parse(regEnd);
                 if (endDate != null && endDate.before(todayDate)) {
                     Toast.makeText(getContext(), "Registration end date cannot be in the past", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                // Checks to see if the registration end date is before the start date
                 if (startDate != null && endDate != null && endDate.before(startDate)) {
                     Toast.makeText(getContext(), "Registration end date cannot be before start date", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                // Checks to see if the date format inputted by the user is correct
             } catch (java.text.ParseException e) {
                 Toast.makeText(getContext(), "Invalid date format. Please use YYYY-MM-DD", Toast.LENGTH_SHORT).show();
                 return;
