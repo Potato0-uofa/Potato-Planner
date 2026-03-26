@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Availability date filter -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <CheckBox
+            android:id="@+id/filter_date_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Available on date:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/filter_date_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="YYYY-MM-DD"
+        android:inputType="text"
+        android:enabled="false"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Capacity filter -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <CheckBox
+            android:id="@+id/filter_capacity_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Minimum capacity:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/filter_capacity_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="e.g. 50"
+        android:inputType="number"
+        android:enabled="false"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Clear filters button -->
+    <Button
+        android:id="@+id/filter_clear_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Clear All Filters"
+        android:textAllCaps="false"
+        android:backgroundTint="#C498D0"
+        android:textColor="#4C2162"
+        android:textStyle="bold" />
+
+</LinearLayout>
