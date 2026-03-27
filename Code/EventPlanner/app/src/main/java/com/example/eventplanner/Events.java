@@ -384,9 +384,4 @@ public class Events {
     public List<String> getCoOrganizerIds() { return coOrganizerIds; }
     public void setCoOrganizerIds(List<String> coOrganizerIds) { this.coOrganizerIds = coOrganizerIds; }
 
-    public String getRegistrationStart() { return registrationStart; }
-    public void setRegistrationStart(String registrationStart) { this.registrationStart = registrationStart; }
-
-    public String getRegistrationEnd() { return registrationEnd; }
-    public void setRegistrationEnd(String registrationEnd) { this.registrationEnd = registrationEnd; }
 }

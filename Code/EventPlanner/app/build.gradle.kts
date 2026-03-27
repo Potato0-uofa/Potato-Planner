@@ -47,4 +47,5 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
 }
