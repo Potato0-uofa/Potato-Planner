@@ -231,4 +231,15 @@ public class EventRepository {
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
+
+    public void updateGeolocationRequired(@NonNull String eventId,
+                                          boolean geolocationRequired,
+                                          @NonNull SimpleCallback cb) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("geolocationRequired", geolocationRequired);
+        db.collection(COLLECTION_EVENTS).document(eventId)
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
 }

@@ -383,4 +383,5 @@ public class Events {
 
     public List<String> getCoOrganizerIds() { return coOrganizerIds; }
     public void setCoOrganizerIds(List<String> coOrganizerIds) { this.coOrganizerIds = coOrganizerIds; }
+
 }

@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -61,6 +62,8 @@ public class CreateEventActivity extends AppCompatActivity {
      */
     private boolean isPrivate = false;
 
+    private SwitchMaterial geolocationToggle;
+
     /**
      * Launcher used to pick an image from device storage.
      */
@@ -100,6 +103,7 @@ public class CreateEventActivity extends AppCompatActivity {
         }
 
         eventImageView = findViewById(R.id.event_image_icon);
+        //geolocationToggle = findViewById(R.id.geolocation_toggle);
 
         // Pre-fill fields for the setup fragment
         if (existingEventId != null) {
@@ -109,6 +113,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     EditText closureDateInput = findViewById(R.id.event_closure_date);
                     EditText waitlistLimitInput = findViewById(R.id.waitlist_limit_input);
                     TextView waitlistCount = findViewById(R.id.waitlist_Count);
+                    geolocationToggle.setChecked(event.isGeolocationRequired());
 
                     if (event.getRegistrationEnd() != null) {
                         closureDateInput.setText(event.getRegistrationEnd());
@@ -191,6 +196,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Events event) {
                         event.setName(name);
+                        event.setGeolocationRequired(geolocationToggle.isChecked());
                         event.setDescription(description);
                         event.setDate(closureDate);
                         if (!waitlistLimitStr.isEmpty()) {
@@ -215,6 +221,7 @@ public class CreateEventActivity extends AppCompatActivity {
                 Events event = new Events(name, closureDate, description, "");
                 event.setOrganizerId(organizerId);
                 event.setPrivate(isPrivate);
+                event.setGeolocationRequired(geolocationToggle.isChecked());
 
                 if (!waitlistLimitStr.isEmpty()) {
                     int limit = Integer.parseInt(waitlistLimitStr);
