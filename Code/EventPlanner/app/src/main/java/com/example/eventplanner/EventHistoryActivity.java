@@ -99,6 +99,9 @@ public class EventHistoryActivity extends AppCompatActivity {
                         String status  = doc.getString("status");
                         com.google.firebase.Timestamp joinedAt = doc.getTimestamp("joinedAt");
 
+                        // Don't show waitlisted events in history — they haven't concluded yet
+                        if ("waitlisted".equals(status)) continue;
+
                         if (eventId != null) {
                             eventIds.add(eventId);
                             statuses.add(status != null ? status : "unknown");
@@ -107,6 +110,9 @@ public class EventHistoryActivity extends AppCompatActivity {
                                     : "Unknown date");
                         }
                     }
+
+                    // If all registrations were waitlisted, then show the empty state
+                    if (eventIds.isEmpty()) return;
 
                     fetchEventsAndDisplay(eventIds, statuses, timestamps);
                 })
