@@ -65,7 +65,7 @@ public class RegistrationRepository {
         Map<String, Object> payload = new HashMap<>();
         payload.put("eventId", eventId);
         payload.put("userId", userId);
-        payload.put("status", "pending"); // pending, accepted, waitlisted, rejected
+        payload.put("status", "waitlisted"); // waitlisted, accepted, declined, rejected
         payload.put("joinedAt", Timestamp.now());
 
         db.collection(COLLECTION_REGISTRATIONS)
