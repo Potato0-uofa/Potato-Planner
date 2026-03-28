@@ -371,5 +371,16 @@
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/btn_sign_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:text="SIGN OUT"
+            android:textStyle="bold" />
+
+
+
     </LinearLayout>
 </ScrollView>

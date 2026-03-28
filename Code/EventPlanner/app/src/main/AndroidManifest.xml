@@ -57,6 +57,7 @@
         <activity android:name=".SettingsView" />
         <activity android:name=".UserSettingsActivity" />
         <activity android:name=".EventHistoryActivity" />
+        <activity android:name=".AdminHubActivity" />
 
     </application>
 

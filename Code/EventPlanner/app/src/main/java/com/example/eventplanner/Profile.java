@@ -69,6 +69,9 @@ public class Profile extends AppCompatActivity {
         // View Event History Button
         findViewById(R.id.join_event_button).setOnClickListener(v ->
                 startActivity(new Intent(Profile.this, EventHistoryActivity.class)));
+
+        findViewById(R.id.admin_hub_button).setOnClickListener(v ->
+                startActivity(new Intent(Profile.this, AdminHubActivity.class)));
     }
 
     /**
@@ -127,6 +130,10 @@ public class Profile extends AppCompatActivity {
                     } else {
                         tvUsername.setVisibility(android.view.View.VISIBLE);
                         tvUsername.setText(user.getUsername());
+                    }
+
+                    if (user.isAdmin()) {
+                        findViewById(R.id.admin_hub_button).setVisibility(android.view.View.VISIBLE);
                     }
                 }
             }
