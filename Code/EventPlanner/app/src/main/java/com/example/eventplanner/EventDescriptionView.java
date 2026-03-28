@@ -177,6 +177,12 @@ public class EventDescriptionView extends AppCompatActivity {
             lotteryInfoBox.setOnClickListener(v -> showLotteryGuidelines());
         }
 
+        findViewById(R.id.comment_button_entrant).setOnClickListener(v -> {
+            Intent intent = new Intent(EventDescriptionView.this, CommentsActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
+        });
+
         checkWaitlistStatus();
         setupNavigation();
         startListeningToWaitlist();

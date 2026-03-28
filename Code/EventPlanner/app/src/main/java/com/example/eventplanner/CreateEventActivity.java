@@ -131,9 +131,8 @@ public class CreateEventActivity extends AppCompatActivity {
             });
         }
 
-        //findViewById(R.id.add_poster_button).setOnClickListener(v ->
-        //        imagePickerLauncher.launch("image/*")
-        //);
+        findViewById(R.id.edit_photo_create_page).setOnClickListener(v ->
+                        imagePickerLauncher.launch("image/*"));
 
         setupNavigation();
 
@@ -250,7 +249,7 @@ public class CreateEventActivity extends AppCompatActivity {
             findViewById(R.id.home_button_create_page_private).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, HomePage.class)));
             findViewById(R.id.browse_button_create_page_private).setOnClickListener(v ->
-                    startActivity(new Intent(CreateEventActivity.this, NonAdminBrowseEvents.class)));
+                    startActivity(new Intent(CreateEventActivity.this, BrowseEventsActivity.class)));
             findViewById(R.id.profile_button_create_page_private).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, Profile.class)));
         } else {
