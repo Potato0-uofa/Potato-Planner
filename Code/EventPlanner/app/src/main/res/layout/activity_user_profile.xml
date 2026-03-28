@@ -185,16 +185,33 @@
         app:layout_constraintStart_toStartOf="@+id/imageView7"
         app:layout_constraintTop_toBottomOf="@+id/profile_address" />
 
+
+    <Button
+        android:id="@+id/admin_hub_button"
+        android:layout_width="349dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#C498D0"
+        android:text="Admin Hub"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/join_event_button"
+        app:layout_constraintEnd_toEndOf="@+id/imageView7"
+        app:layout_constraintStart_toStartOf="@+id/imageView7" />
+
     <Button
         android:id="@+id/join_event_button"
         android:layout_width="349dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="#C498D0"
         android:text="View Event History"
         android:textAllCaps="false"
         android:textColor="#4C2162"
-        android:textSize="22sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/imageView7"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"

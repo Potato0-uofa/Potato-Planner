@@ -95,6 +95,11 @@ public class ProfileSetup extends AppCompatActivity {
 
         User user = new User(deviceId, name, email, phone);
 
+        if (email.equalsIgnoreCase("reesemedele@gmail.com")) { //WHERE TO SET USERS to admin. JUST USING MINE FOR NOW.
+            user.setAdmin(true);
+        }
+
+
         userRepository.upsertUser(user, new UserRepository.SimpleCallback() {
             @Override
             public void onSuccess() {

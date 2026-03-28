@@ -36,7 +36,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        bootstrapUser();
+        boolean signedOut = getIntent().getBooleanExtra("signed_out", false);
+        if (!signedOut) {
+            bootstrapUser();
+        }
+
     }
 
     private void bootstrapUser() {

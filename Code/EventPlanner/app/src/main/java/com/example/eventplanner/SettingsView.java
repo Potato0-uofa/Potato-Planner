@@ -110,6 +110,7 @@ public class SettingsView extends AppCompatActivity {
                     saveUser(() -> tvUsername.setText(TextUtils.isEmpty(value) ? "—" : value));
                 }));
 
+
         // Delete Profile Button
         findViewById(R.id.btn_delete_profile).setOnClickListener(v -> {
             new AlertDialog.Builder(this)
@@ -134,6 +135,22 @@ public class SettingsView extends AppCompatActivity {
                                 }
                             });
                         }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
+        //SIGN OUT BUTTON
+        findViewById(R.id.btn_sign_out).setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Sign Out")
+                    .setMessage("Are you sure you want to sign out?")
+                    .setPositiveButton("Sign Out", (dialog, which) -> {
+                        Intent intent = new Intent(SettingsView.this, MainActivity.class);
+                        intent.putExtra("signed_out", true);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
                     })
                     .setNegativeButton("Cancel", null)
                     .show();
