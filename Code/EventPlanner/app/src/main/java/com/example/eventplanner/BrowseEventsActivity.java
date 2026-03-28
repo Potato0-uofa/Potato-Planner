@@ -52,8 +52,10 @@ public class BrowseEventsActivity extends AppCompatActivity {
         btnFilter.setOnClickListener(v -> showFilterDialog());
 
         // Setup bottom navigation bar
-        findViewById(R.id.new_event_button_browse).setOnClickListener(v ->
-                startActivity(new Intent(BrowseEventsActivity.this, CreateEventActivity.class)));
+        findViewById(R.id.new_event_button_browse).setOnClickListener(v -> {
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
+        });
 
         findViewById(R.id.qr_button_browse).setOnClickListener(v ->
                 startActivity(new Intent(BrowseEventsActivity.this, SearchScreen.class)));

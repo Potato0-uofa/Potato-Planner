@@ -158,8 +158,6 @@ public class EventDescriptionView extends AppCompatActivity {
                         event.getCoOrganizerIds().contains(deviceId)) {
                     btnViewWaitlist.setVisibility(View.VISIBLE);
                 }
-
-                // Show registration period
                 TextView regPeriodText = findViewById(R.id.registration_period_text);
                 String start = event.getRegistrationStart();
                 String end = event.getRegistrationEnd();
@@ -169,11 +167,8 @@ public class EventDescriptionView extends AppCompatActivity {
                     regPeriodText.setText("Registration closes: " + end);
                 }
             }
-
             @Override
-            public void onFailure(Exception e) {
-                // keep button hidden
-            }
+            public void onFailure(Exception e) {}
         });
 
         // US 01.05.05 - Info box click listener for detailed lottery guidelines
@@ -292,13 +287,37 @@ public class EventDescriptionView extends AppCompatActivity {
         eventRepository.isOnWaitingList(eventId, deviceId, new EventRepository.WaitlistStatusCallback() {
             @Override
             public void onSuccess(boolean isOnWaitlist) {
-                updateButtonVisibility(isOnWaitlist);
+                eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
+                    @Override
+                    public void onSuccess(Events event) {
+                        if (deviceId.equals(event.getOrganizerId()) ||
+                                event.getCoOrganizerIds().contains(deviceId)) {
+                            btnJoinEvent.setVisibility(View.GONE);
+                            btnLeaveEvent.setVisibility(View.GONE);
+                        } else {
+                            updateButtonVisibility(isOnWaitlist);
+                            if (isOnWaitlist) {
+                                geolocationRequired = event.isGeolocationRequired();
+                                if (geolocationRequired &&
+                                        ContextCompat.checkSelfPermission(
+                                                EventDescriptionView.this,
+                                                Manifest.permission.ACCESS_FINE_LOCATION)
+                                                == PackageManager.PERMISSION_GRANTED) {
+                                    startLocationTracking();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        updateButtonVisibility(isOnWaitlist);
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Exception e) {
-                // Silently fail
-            }
+            public void onFailure(Exception e) { /* silent */ }
         });
     }
 
@@ -330,13 +349,19 @@ public class EventDescriptionView extends AppCompatActivity {
         // if (searchBtn != null) searchBtn.setOnClickListener(v -> startActivity(new Intent(this, SearchScreen.class)));
 
         View browseBtn = findViewById(R.id.browse_button_event_page);
-        if (browseBtn != null) browseBtn.setOnClickListener(v -> startActivity(new Intent(this, NonAdminBrowseEvents.class)));
+        if (browseBtn != null) browseBtn.setOnClickListener(v -> startActivity(new Intent(this, BrowseEventsActivity.class)));
 
         View profileBtn = findViewById(R.id.profile_button_event_page);
         if (profileBtn != null) profileBtn.setOnClickListener(v -> startActivity(new Intent(this, Profile.class)));
 
         View exitBtn = findViewById(R.id.exit_button_event_page);
         if (exitBtn != null) exitBtn.setOnClickListener(v -> finish());
+
+        findViewById(R.id.new_event_button_event_page).setOnClickListener(v -> {
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
+        });
+
     }
 
 }
