@@ -132,7 +132,16 @@ public class CommentsActivity extends AppCompatActivity {
             });
         });
 
-        // ── Start listening ───────────────────────────────────────────────────
+        new EventRepository().fetchEventById(eventId, new EventRepository.EventCallback() {
+            @Override
+            public void onSuccess(Events event) {
+                adapter.setOrganizerId(event.getOrganizerId());
+                adapter.setCoOrganizerIds(event.getCoOrganizerIds());
+            }
+            @Override
+            public void onFailure(Exception e) { /* organizer check just won't work, silent fail */ }
+        });
+
         startListeningToComments();
     }
 
@@ -181,6 +190,18 @@ public class CommentsActivity extends AppCompatActivity {
         private final List<Comment> comments;
         private final String currentDeviceId;
         private final OnDeleteClickListener deleteListener;
+        private String organizerId = "";
+        private List<String> coOrganizerIds = new ArrayList<>();
+
+        public void setOrganizerId(String organizerId) {
+            this.organizerId = organizerId;
+            notifyDataSetChanged();
+        }
+
+        public void setCoOrganizerIds(List<String> coOrganizerIds) {
+            this.coOrganizerIds = coOrganizerIds != null ? coOrganizerIds : new ArrayList<>();
+            notifyDataSetChanged();
+        }
 
         CommentAdapter(List<Comment> comments,
                        String currentDeviceId,
@@ -204,8 +225,9 @@ public class CommentsActivity extends AppCompatActivity {
             holder.authorText.setText(comment.getAuthorName());
             holder.bodyText.setText(comment.getText());
 
-            // Only show Delete button for the comment's author
-            if (currentDeviceId.equals(comment.getDeviceId())) {
+            //Only shows delete button for organizer
+            if (currentDeviceId.equals(comment.getDeviceId())||currentDeviceId.equals(organizerId)||
+                    coOrganizerIds.contains(currentDeviceId)) {
                 holder.deleteButton.setVisibility(View.VISIBLE);
                 holder.deleteButton.setOnClickListener(v -> deleteListener.onDelete(comment));
             } else {
