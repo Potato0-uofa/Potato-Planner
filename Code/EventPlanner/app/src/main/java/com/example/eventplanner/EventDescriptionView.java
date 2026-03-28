@@ -1,15 +1,28 @@
 package com.example.eventplanner;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.ListenerRegistration;
 
@@ -20,6 +33,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 public class EventDescriptionView extends AppCompatActivity {
 
     private EventRepository eventRepository;
+    private LocationRepository locationRepository;
     private WaitingList waitingList;
     private ListenerRegistration waitlistListener;
     private TextView tvWaitlistCount;
@@ -28,6 +42,23 @@ public class EventDescriptionView extends AppCompatActivity {
     private Button btnJoinEvent;
     private Button btnLeaveEvent;
     private Button btnViewWaitlist;
+    private boolean geolocationRequired = false;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
+    private boolean isTrackingLocation = false;
+
+    private final ActivityResultLauncher<String> locationPermissionLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                        if (isGranted) {
+                            joinWaitlistAndTrack();
+                        } else {
+                            Toast.makeText(this,
+                                    "Location permission is required to join this event.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +66,9 @@ public class EventDescriptionView extends AppCompatActivity {
         setContentView(R.layout.activity_event_view);
 
         eventRepository = new EventRepository();
+        locationRepository = new LocationRepository();
         waitingList = new WaitingList();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -52,51 +85,46 @@ public class EventDescriptionView extends AppCompatActivity {
         btnLeaveEvent = findViewById(R.id.leave_event_button);
         btnViewWaitlist = findViewById(R.id.view_waitlist_button);
 
-        ((TextView) findViewById(R.id.event_name)).setText(eventName != null ? eventName : "Demo Event");
-        ((TextView) findViewById(R.id.event_details)).setText(eventDescription != null ? eventDescription : "This is a demo event description.");
+        buildLocationCallback();
 
-        btnJoinEvent.setOnClickListener(v -> {
-            eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
-                @Override
-                public void onSuccess(Events event) {
-                    String regStart = event.getRegistrationStart();
-                    if (regStart != null && !regStart.isEmpty()) {
-                        try {
-                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-                            java.util.Date startDate = sdf.parse(regStart);
-                            java.util.Date today = new java.util.Date();
-                            if (startDate != null && today.before(startDate)) {
-                                Toast.makeText(EventDescriptionView.this,
-                                        "Registration opens on " + regStart,
-                                        Toast.LENGTH_LONG).show();
-                                return;
-                            }
-                        } catch (java.text.ParseException e) {
-                            // If date can't be parsed, allow joining
+        btnJoinEvent.setOnClickListener(v ->
+                eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
+                    @Override
+                    public void onSuccess(Events event) {
+                        // Registration window check — UNCHANGED from original
+                        String regStart = event.getRegistrationStart();
+                        if (regStart != null && !regStart.isEmpty()) {
+                            try {
+                                java.text.SimpleDateFormat sdf =
+                                        new java.text.SimpleDateFormat("yyyy-MM-dd",
+                                                java.util.Locale.getDefault());
+                                java.util.Date startDate = sdf.parse(regStart);
+                                java.util.Date today = new java.util.Date();
+                                if (startDate != null && today.before(startDate)) {
+                                    Toast.makeText(EventDescriptionView.this,
+                                            "Registration opens on " + regStart,
+                                            Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            } catch (java.text.ParseException ignored) {}
+                        }
+
+                        // ✅ NEW — cache the flag and route accordingly
+                        geolocationRequired = event.isGeolocationRequired();
+                        if (geolocationRequired) {
+                            handleGeolocationJoin();
+                        } else {
+                            joinWaitlistAndTrack(); // no tracking needed
                         }
                     }
-                    // Date check passed, join the waitlist
-                    eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
-                        @Override
-                        public void onSuccess() {
-                            Toast.makeText(EventDescriptionView.this, "Joined Waitlist!", Toast.LENGTH_SHORT).show();
-                            updateButtonVisibility(true);
-                        }
 
-                        @Override
-                        public void onFailure(Exception e) {
-                            Toast.makeText(EventDescriptionView.this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    Toast.makeText(EventDescriptionView.this,
-                            "Could not verify registration period", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(EventDescriptionView.this,
+                                "Could not verify registration period", Toast.LENGTH_SHORT).show();
+                    }
+                })
+        );
 
         btnLeaveEvent.setOnClickListener(v -> {
             eventRepository.leaveWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
@@ -104,6 +132,7 @@ public class EventDescriptionView extends AppCompatActivity {
                 public void onSuccess() {
                     Toast.makeText(EventDescriptionView.this, "Left Waitlist!", Toast.LENGTH_SHORT).show();
                     updateButtonVisibility(false);
+                    stopLocationTracking();
                 }
 
                 @Override
@@ -156,6 +185,96 @@ public class EventDescriptionView extends AppCompatActivity {
         checkWaitlistStatus();
         setupNavigation();
         startListeningToWaitlist();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (waitlistListener != null) waitlistListener.remove();
+        stopLocationTracking(); // ✅ NEW — clean up when activity closes
+    }
+
+    private void handleGeolocationJoin() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            joinWaitlistAndTrack();
+        } else {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Location Required")
+                    .setMessage("This event requires your location to be shared with the organiser " +
+                            "while you are on the waitlist. Please grant location permission to continue.")
+                    .setPositiveButton("Grant Permission",
+                            (dialog, which) -> locationPermissionLauncher.launch(
+                                    Manifest.permission.ACCESS_FINE_LOCATION))
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        }
+    }
+
+    private void joinWaitlistAndTrack() {
+        eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(EventDescriptionView.this,
+                        "Joined Waitlist!", Toast.LENGTH_SHORT).show(); // same as original
+                updateButtonVisibility(true);                           // same as original
+                if (geolocationRequired) {
+                    startLocationTracking();                            // ✅ new addition
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(EventDescriptionView.this,
+                        "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void buildLocationCallback() {
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult result) {
+                if (result == null) return;
+                android.location.Location loc = result.getLastLocation();
+                if (loc == null) return;
+
+                locationRepository.updateLocation(
+                        eventId, deviceId,
+                        loc.getLatitude(), loc.getLongitude(),
+                        new LocationRepository.SimpleCallback() {
+                            @Override public void onSuccess() {}
+                            @Override public void onFailure(Exception e) {}
+                        });
+            }
+        };
+    }
+
+    @SuppressLint("MissingPermission") // permission is verified before this is called
+    private void startLocationTracking() {
+        if (isTrackingLocation) return;
+
+        LocationRequest request = new LocationRequest.Builder(
+                Priority.PRIORITY_HIGH_ACCURACY, 10_000L)
+                .setMinUpdateIntervalMillis(5_000L)
+                .build();
+
+        fusedLocationClient.requestLocationUpdates(
+                request, locationCallback, Looper.getMainLooper());
+
+        isTrackingLocation = true;
+    }
+
+    private void stopLocationTracking() {
+        if (!isTrackingLocation) return;
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+        isTrackingLocation = false;
+
+        locationRepository.removeLocation(eventId, deviceId,
+                new LocationRepository.SimpleCallback() {
+                    @Override public void onSuccess() {}
+                    @Override public void onFailure(Exception e) {}
+                });
     }
 
     private void showLotteryGuidelines() {
@@ -220,11 +339,4 @@ public class EventDescriptionView extends AppCompatActivity {
         if (exitBtn != null) exitBtn.setOnClickListener(v -> finish());
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (waitlistListener != null) {
-            waitlistListener.remove();
-        }
-    }
 }
