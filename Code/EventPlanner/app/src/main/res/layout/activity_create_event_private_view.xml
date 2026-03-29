@@ -31,7 +31,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.836"
-        app:srcCompat="@drawable/input_background" />
+        app:srcCompat="@drawable/input_background" >
+
+    </ScrollView>
 
     <ImageButton
         android:id="@+id/exit_button_create_page_private"
@@ -114,15 +116,23 @@
         app:layout_constraintTop_toTopOf="@+id/imageView17"
         app:srcCompat="@drawable/button_purple" />
 
-    <ImageView
-        android:id="@+id/event_image_icon"
-        android:layout_width="124dp"
-        android:layout_height="223dp"
-        app:layout_constraintBottom_toBottomOf="@+id/event_image_background"
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:cardBackgroundColor="@color/home_bar"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/edit_photo_create_page_private"
         app:layout_constraintEnd_toEndOf="@+id/event_image_background"
         app:layout_constraintStart_toStartOf="@+id/event_image_background"
-        app:layout_constraintTop_toTopOf="@+id/event_image_background"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
+        app:layout_constraintTop_toTopOf="@+id/event_image_background">
+
+        <ImageView
+            android:id="@+id/event_image_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_launcher_foreground" />
+    </androidx.cardview.widget.CardView>
 
     <EditText
         android:id="@+id/event_name"
@@ -192,6 +202,22 @@
         app:layout_constraintEnd_toEndOf="@+id/imageView17"
         app:layout_constraintStart_toEndOf="@+id/waitlist_Count"
         app:layout_constraintTop_toTopOf="@+id/waitlist_Count" />
+
+    <Button
+        android:id="@+id/final_waitlist_button_private"
+        android:layout_width="180dp"
+        android:layout_height="60dp"
+        android:backgroundTint="#C498D0"
+        android:text="View Entrants"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/event_closure_date"
+        app:layout_constraintEnd_toEndOf="@+id/event_description_main"
+        app:layout_constraintStart_toStartOf="@+id/event_description_main"
+        app:layout_constraintTop_toBottomOf="@+id/event_description_main" />
 
     <EditText
         android:id="@+id/event_closure_date"

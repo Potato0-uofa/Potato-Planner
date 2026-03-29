@@ -44,15 +44,23 @@
         app:layout_constraintTop_toTopOf="@+id/imageView7"
         app:srcCompat="@drawable/button_purple" />
 
-    <ImageView
-        android:id="@+id/event_image_icon"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:cardBackgroundColor="@color/home_bar"
+        app:cardCornerRadius="50dp"
         app:layout_constraintBottom_toBottomOf="@+id/event_image_background"
         app:layout_constraintEnd_toEndOf="@+id/event_image_background"
         app:layout_constraintStart_toStartOf="@+id/event_image_background"
-        app:layout_constraintTop_toTopOf="@+id/event_image_background"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
+        app:layout_constraintTop_toTopOf="@+id/event_image_background" >
+
+        <ImageView
+            android:id="@+id/event_image_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_launcher_foreground" />
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/event_name"
@@ -98,6 +106,7 @@
         app:layout_constraintTop_toBottomOf="@+id/event_image_background" />
 
     <!-- Lottery Info Box -->
+
     <LinearLayout
         android:id="@+id/lottery_info_box"
         android:layout_width="0dp"
