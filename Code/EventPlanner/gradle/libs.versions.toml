@@ -10,6 +10,7 @@ constraintlayout = "2.2.1"
 firebaseBom = "33.12.0"
 googleServices = "4.4.2"
 recyclerview = "1.4.0"
+playServicesMaps = "20.0.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -23,6 +24,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 
 
 
