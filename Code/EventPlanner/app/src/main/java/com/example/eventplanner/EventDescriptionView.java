@@ -152,8 +152,14 @@ public class EventDescriptionView extends AppCompatActivity {
         btnViewWaitlist.setVisibility(View.GONE); // hidden by default
 
         eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
+
             @Override
             public void onSuccess(Events event) {
+
+                ((TextView) findViewById(R.id.event_name)).setText(event.getName() != null ? event.getName() : "");
+                ((TextView) findViewById(R.id.event_details)).setText(event.getDetails() != null ? event.getDetails() : "");
+                ((TextView) findViewById(R.id.event_description_main)).setText(event.getDescription() != null ? event.getDescription() : "");
+
                 if (deviceId.equals(event.getOrganizerId()) ||
                         event.getCoOrganizerIds().contains(deviceId)) {
                     btnViewWaitlist.setVisibility(View.VISIBLE);
