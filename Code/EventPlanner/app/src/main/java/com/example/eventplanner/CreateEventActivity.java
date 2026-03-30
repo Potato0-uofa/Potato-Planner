@@ -131,8 +131,11 @@ public class CreateEventActivity extends AppCompatActivity {
             });
         }
 
-        findViewById(R.id.edit_photo_create_page).setOnClickListener(v ->
-                        imagePickerLauncher.launch("image/*"));
+        int editPhotoBtnId = isPrivate
+                ? R.id.edit_photo_create_page_private
+                : R.id.edit_photo_create_page;
+        findViewById(editPhotoBtnId).setOnClickListener(v ->
+                imagePickerLauncher.launch("image/*"));
 
         setupNavigation();
 
@@ -244,8 +247,6 @@ public class CreateEventActivity extends AppCompatActivity {
             findViewById(R.id.new_event_button_create_page_private).setOnClickListener(v -> {
                 // Do nothing since already on new event page
             });
-            findViewById(R.id.qr_button_create_page).setOnClickListener(v ->
-                    startActivity(new Intent(CreateEventActivity.this, SearchScreen.class)));
             findViewById(R.id.home_button_create_page_private).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, HomePage.class)));
             findViewById(R.id.browse_button_create_page_private).setOnClickListener(v ->
@@ -333,7 +334,13 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(CreateEventActivity.this, "Event created!", Toast.LENGTH_SHORT).show();
-                showQrDialog(event.getEventId());
+                if (isPrivate) {
+                    Toast.makeText(CreateEventActivity.this, "Private event created!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(CreateEventActivity.this, HomePage.class));
+                    finish();
+                } else {
+                    showQrDialog(event.getEventId());
+                }
             }
 
             @Override
@@ -356,7 +363,13 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(CreateEventActivity.this, "Event saved!", Toast.LENGTH_SHORT).show();
-                showQrDialog(event.getEventId());
+                if (isPrivate) {
+                    Toast.makeText(CreateEventActivity.this, "Private event created!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(CreateEventActivity.this, HomePage.class));
+                    finish();
+                } else {
+                    showQrDialog(event.getEventId());
+                }
             }
 
             @Override

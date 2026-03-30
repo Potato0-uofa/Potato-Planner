@@ -46,6 +46,8 @@ public class MyCreatedEventsActivity extends AppCompatActivity {
             Events selectedEvent = createdEvents.get(position);
             Intent intent = new Intent(MyCreatedEventsActivity.this, EventDescriptionView.class);
             intent.putExtra("eventId", selectedEvent.getEventId());
+            intent.putExtra("eventName", selectedEvent.getName());
+            intent.putExtra("eventDescription", selectedEvent.getDescription());
             startActivity(intent);
         });
 
