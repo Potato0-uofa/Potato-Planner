@@ -195,6 +195,9 @@ public class BrowseEventsActivity extends AppCompatActivity {
         eventList.clear();
         for (Events event : allEventsList) {
 
+            // Hide private events from the search function
+            if (event.isPrivate()) continue;
+
             // Availability filter: checks registration is open on the requested date
             if (filterDate != null) {
                 try {
@@ -253,6 +256,10 @@ public class BrowseEventsActivity extends AppCompatActivity {
         }
 
         for (Events event : allEventsList) {
+
+            // Hide private events from the search function
+            if (event.isPrivate()) continue;
+
             // Apply the search query
             if (event.getName() == null ||
                     !event.getName().toLowerCase().contains(lowerQuery)) continue;
