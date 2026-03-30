@@ -333,8 +333,7 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(CreateEventActivity.this, "Event created!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(CreateEventActivity.this, HomePage.class));
-                finish();
+                showQrDialog(event.getEventId());
             }
 
             @Override
@@ -357,8 +356,7 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(CreateEventActivity.this, "Event saved!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(CreateEventActivity.this, HomePage.class));
-                finish();
+                showQrDialog(event.getEventId());
             }
 
             @Override
@@ -369,4 +367,53 @@ public class CreateEventActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    //FOR QR CODE
+    private android.graphics.Bitmap generateQrBitmap(String text) throws com.google.zxing.WriterException {
+        com.google.zxing.qrcode.QRCodeWriter writer = new com.google.zxing.qrcode.QRCodeWriter();
+        com.google.zxing.common.BitMatrix bitMatrix = writer.encode(text, com.google.zxing.BarcodeFormat.QR_CODE, 600, 600);
+
+        int width = bitMatrix.getWidth();
+        int height = bitMatrix.getHeight();
+        android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.RGB_565);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                bitmap.setPixel(x, y, bitMatrix.get(x, y) ? android.graphics.Color.BLACK : android.graphics.Color.WHITE);
+            }
+        }
+        return bitmap;
+    }
+
+    private void showQrDialog(String eventId) {
+        try {
+            android.graphics.Bitmap bitmap = generateQrBitmap(eventId);
+
+            android.widget.ImageView imageView = new android.widget.ImageView(this);
+            imageView.setImageBitmap(bitmap);
+            imageView.setPadding(32, 32, 32, 32);
+
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Event QR Code")
+                    .setMessage("Scan this QR code to open the event.")
+                    .setView(imageView)
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        startActivity(new Intent(CreateEventActivity.this, HomePage.class));
+                        finish();
+                    })
+                    .show();
+
+        } catch (com.google.zxing.WriterException e) {
+            android.widget.Toast.makeText(this, "Failed to generate QR code", android.widget.Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(CreateEventActivity.this, HomePage.class));
+            finish();
+        }
+    }
 }
+
+
+
+
+
+

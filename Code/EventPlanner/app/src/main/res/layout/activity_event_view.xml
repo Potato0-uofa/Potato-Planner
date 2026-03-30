@@ -89,6 +89,20 @@
         app:layout_constraintStart_toStartOf="@+id/event_name"
         app:layout_constraintTop_toBottomOf="@+id/event_name" />
 
+    <Button
+        android:id="@+id/view_qr_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="View QR Code"
+        android:textAllCaps="false"
+        android:backgroundTint="#C498D0"
+        android:textColor="#4C2162"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/event_details"
+        app:layout_constraintStart_toStartOf="@+id/event_name" />
+
     <TextView
         android:id="@+id/event_description_main"
         android:layout_width="0dp"

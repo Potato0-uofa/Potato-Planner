@@ -59,6 +59,7 @@
         <activity android:name=".UserSettingsActivity" />
         <activity android:name=".EventHistoryActivity" />
         <activity android:name=".AdminHubActivity" />
+        <activity android:name=".MyCreatedEventsActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

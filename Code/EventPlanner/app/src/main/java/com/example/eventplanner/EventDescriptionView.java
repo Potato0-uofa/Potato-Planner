@@ -47,6 +47,10 @@ public class EventDescriptionView extends AppCompatActivity {
     private LocationCallback locationCallback;
     private boolean isTrackingLocation = false;
 
+    private boolean isOrganizer = false;
+
+    private Button btnViewQr;
+
     private final ActivityResultLauncher<String> locationPermissionLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(),
@@ -62,8 +66,14 @@ public class EventDescriptionView extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_view);
+
+        btnViewQr = findViewById(R.id.view_qr_button);
+        btnViewQr.setOnClickListener(v -> showQrDialog(eventId));
+        btnViewQr.setVisibility(View.GONE);
 
         eventRepository = new EventRepository();
         locationRepository = new LocationRepository();
@@ -76,6 +86,7 @@ public class EventDescriptionView extends AppCompatActivity {
         if (eventId == null || eventId.isEmpty()) {
             eventId = "test_event_1";
         }
+
 
         String eventName = getIntent().getStringExtra("eventName");
         String eventDescription = getIntent().getStringExtra("eventDescription");
@@ -109,7 +120,7 @@ public class EventDescriptionView extends AppCompatActivity {
                             } catch (java.text.ParseException ignored) {}
                         }
 
-                        // ✅ NEW — cache the flag and route accordingly
+                        //  NEW — cache the flag and route accordingly
                         geolocationRequired = event.isGeolocationRequired();
                         if (geolocationRequired) {
                             handleGeolocationJoin();
@@ -155,6 +166,7 @@ public class EventDescriptionView extends AppCompatActivity {
 
             @Override
             public void onSuccess(Events event) {
+// Show organizer controls if applicable
 
                 ((TextView) findViewById(R.id.event_name)).setText(event.getName() != null ? event.getName() : "");
                 ((TextView) findViewById(R.id.event_details)).setText(event.getDetails() != null ? event.getDetails() : "");
@@ -164,6 +176,8 @@ public class EventDescriptionView extends AppCompatActivity {
                         event.getCoOrganizerIds().contains(deviceId)) {
                     btnViewWaitlist.setVisibility(View.VISIBLE);
                 }
+
+// Show registration period
                 TextView regPeriodText = findViewById(R.id.registration_period_text);
                 String start = event.getRegistrationStart();
                 String end = event.getRegistrationEnd();
@@ -172,10 +186,35 @@ public class EventDescriptionView extends AppCompatActivity {
                 } else if (end != null && !end.isEmpty()) {
                     regPeriodText.setText("Registration closes: " + end);
                 }
+
+// Fill event info
+                TextView eventNameText = findViewById(R.id.event_name);
+                TextView eventDetailsText = findViewById(R.id.event_details);
+                TextView eventDescriptionText = findViewById(R.id.event_description_main);
+
+                eventNameText.setText(event.getName() != null ? event.getName() : "Unnamed Event");
+                eventDetailsText.setText(event.getDate() != null ? event.getDate() : "No event details");
+                eventDescriptionText.setText(event.getDescription() != null ? event.getDescription() : "No description available");
+
+// Set organizer flag
+                isOrganizer = deviceId.equals(event.getOrganizerId()) ||
+                        event.getCoOrganizerIds().contains(deviceId);
+                if (isOrganizer) {
+                    btnJoinEvent.setVisibility(View.GONE);
+                    btnLeaveEvent.setVisibility(View.GONE);
+                    btnViewWaitlist.setVisibility(View.VISIBLE);
+                    btnViewQr.setVisibility(View.VISIBLE);
+                }
+
+                checkWaitlistStatus();
             }
             @Override
+            public void onFailure(Exception e) {
+// keep button hidden
+            }
             public void onFailure(Exception e) {}
         });
+
 
         // US 01.05.05 - Info box click listener for detailed lottery guidelines
         View lotteryInfoBox = findViewById(R.id.lottery_info_box);
@@ -198,7 +237,7 @@ public class EventDescriptionView extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (waitlistListener != null) waitlistListener.remove();
-        stopLocationTracking(); // ✅ NEW — clean up when activity closes
+        stopLocationTracking(); //  NEW — clean up when activity closes
     }
 
     private void handleGeolocationJoin() {
@@ -296,6 +335,14 @@ public class EventDescriptionView extends AppCompatActivity {
     }
 
     private void checkWaitlistStatus() {
+        if (isOrganizer) {
+            btnJoinEvent.setVisibility(View.GONE);
+            btnLeaveEvent.setVisibility(View.GONE);
+            btnViewWaitlist.setVisibility(View.VISIBLE);
+            btnViewQr.setVisibility(View.VISIBLE);
+            return;
+        }
+
         eventRepository.isOnWaitingList(eventId, deviceId, new EventRepository.WaitlistStatusCallback() {
             @Override
             public void onSuccess(boolean isOnWaitlist) {
@@ -327,11 +374,12 @@ public class EventDescriptionView extends AppCompatActivity {
                     }
                 });
             }
-
             @Override
             public void onFailure(Exception e) { /* silent */ }
         });
     }
+
+
 
     private void updateButtonVisibility(boolean isOnWaitlist) {
         btnJoinEvent.setVisibility(isOnWaitlist ? View.GONE : View.VISIBLE);
@@ -375,5 +423,40 @@ public class EventDescriptionView extends AppCompatActivity {
         });
 
     }
+
+    private android.graphics.Bitmap generateQrBitmap(String text) throws com.google.zxing.WriterException {
+        com.google.zxing.qrcode.QRCodeWriter writer = new com.google.zxing.qrcode.QRCodeWriter();
+        com.google.zxing.common.BitMatrix bitMatrix = writer.encode(text, com.google.zxing.BarcodeFormat.QR_CODE, 600, 600);
+        int width = bitMatrix.getWidth();
+        int height = bitMatrix.getHeight();
+        android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.RGB_565);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                bitmap.setPixel(x, y, bitMatrix.get(x, y) ? android.graphics.Color.BLACK : android.graphics.Color.WHITE);
+            }
+        }
+        return bitmap;
+    }
+
+    private void showQrDialog(String eventId) {
+        try {
+            android.graphics.Bitmap bitmap = generateQrBitmap(eventId);
+            android.widget.ImageView imageView = new android.widget.ImageView(this);
+            imageView.setImageBitmap(bitmap);
+            imageView.setPadding(32, 32, 32, 32);
+
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Event QR Code")
+                    .setMessage("Scan this QR code to open the event.")
+                    .setView(imageView)
+                    .setPositiveButton("OK", null)
+                    .show();
+
+        } catch (com.google.zxing.WriterException e) {
+            android.widget.Toast.makeText(this, "Failed to generate QR code", android.widget.Toast.LENGTH_SHORT).show();
+        }
+        }
+
 
 }
