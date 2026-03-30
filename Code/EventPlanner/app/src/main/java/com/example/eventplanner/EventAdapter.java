@@ -35,11 +35,34 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.tvStatus.setText(event.getStatus() != null ? event.getStatus() : "Open");
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), EventDescriptionView.class);
-            intent.putExtra("eventId", event.getEventId());
-            intent.putExtra("eventName", event.getName());
-            intent.putExtra("eventDescription", event.getDescription());
-            v.getContext().startActivity(intent);
+            String deviceId = android.provider.Settings.Secure.getString(
+                    v.getContext().getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID);
+
+            boolean isOrganizer = deviceId.equals(event.getOrganizerId());
+            boolean isCoOrganizer = event.getCoOrganizerIds() != null &&
+                    event.getCoOrganizerIds().contains(deviceId);
+
+            if (isOrganizer) {
+                Intent intent = new Intent(v.getContext(), CreateEventActivity.class);
+                intent.putExtra("eventId", event.getEventId());
+                intent.putExtra("isPrivate", event.isPrivate());
+                v.getContext().startActivity(intent);
+
+            } else if (isCoOrganizer) {
+                Intent intent = new Intent(v.getContext(), EventDescriptionView.class);
+                intent.putExtra("eventId", event.getEventId());
+                intent.putExtra("eventName", event.getName());
+                intent.putExtra("eventDescription", event.getDescription());
+                v.getContext().startActivity(intent);
+
+            } else {
+                Intent intent = new Intent(v.getContext(), EventDescriptionView.class);
+                intent.putExtra("eventId", event.getEventId());
+                intent.putExtra("eventName", event.getName());
+                intent.putExtra("eventDescription", event.getDescription());
+                v.getContext().startActivity(intent);
+            }
         });
     }
 
