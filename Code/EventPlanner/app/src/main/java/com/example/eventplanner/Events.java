@@ -71,6 +71,9 @@ public class Events {
     /** Whether the event requires geolocation */
     private boolean geolocationRequired;
 
+    /** Details for the events */
+    private String details;
+
     /**
      * No-argument constructor required for Firestore deserialization.
      * Initializes an empty waiting list and sets waitlist limit to -1 (unlimited).
@@ -383,5 +386,11 @@ public class Events {
 
     public List<String> getCoOrganizerIds() { return coOrganizerIds; }
     public void setCoOrganizerIds(List<String> coOrganizerIds) { this.coOrganizerIds = coOrganizerIds; }
+
+    /** @return getDetails details for an event */
+    public String getDetails() { return details; }
+
+    /** @param details the details for the event */
+    public void setDetails(String details) { this.details = details; }
 
 }
