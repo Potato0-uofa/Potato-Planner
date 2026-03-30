@@ -163,9 +163,15 @@ public class EventDescriptionView extends AppCompatActivity {
         btnViewWaitlist.setVisibility(View.GONE); // hidden by default
 
         eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
+
             @Override
             public void onSuccess(Events event) {
 // Show organizer controls if applicable
+
+                ((TextView) findViewById(R.id.event_name)).setText(event.getName() != null ? event.getName() : "");
+                ((TextView) findViewById(R.id.event_details)).setText(event.getDetails() != null ? event.getDetails() : "");
+                ((TextView) findViewById(R.id.event_description_main)).setText(event.getDescription() != null ? event.getDescription() : "");
+
                 if (deviceId.equals(event.getOrganizerId()) ||
                         event.getCoOrganizerIds().contains(deviceId)) {
                     btnViewWaitlist.setVisibility(View.VISIBLE);
@@ -202,11 +208,11 @@ public class EventDescriptionView extends AppCompatActivity {
 
                 checkWaitlistStatus();
             }
-
             @Override
             public void onFailure(Exception e) {
 // keep button hidden
             }
+            public void onFailure(Exception e) {}
         });
 
 
@@ -216,6 +222,13 @@ public class EventDescriptionView extends AppCompatActivity {
             lotteryInfoBox.setOnClickListener(v -> showLotteryGuidelines());
         }
 
+        findViewById(R.id.comment_button_entrant).setOnClickListener(v -> {
+            Intent intent = new Intent(EventDescriptionView.this, CommentsActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
+        });
+
+        checkWaitlistStatus();
         setupNavigation();
         startListeningToWaitlist();
     }
@@ -333,12 +346,36 @@ public class EventDescriptionView extends AppCompatActivity {
         eventRepository.isOnWaitingList(eventId, deviceId, new EventRepository.WaitlistStatusCallback() {
             @Override
             public void onSuccess(boolean isOnWaitlist) {
-                updateButtonVisibility(isOnWaitlist);
+                eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
+                    @Override
+                    public void onSuccess(Events event) {
+                        if (deviceId.equals(event.getOrganizerId()) ||
+                                event.getCoOrganizerIds().contains(deviceId)) {
+                            btnJoinEvent.setVisibility(View.GONE);
+                            btnLeaveEvent.setVisibility(View.GONE);
+                        } else {
+                            updateButtonVisibility(isOnWaitlist);
+                            if (isOnWaitlist) {
+                                geolocationRequired = event.isGeolocationRequired();
+                                if (geolocationRequired &&
+                                        ContextCompat.checkSelfPermission(
+                                                EventDescriptionView.this,
+                                                Manifest.permission.ACCESS_FINE_LOCATION)
+                                                == PackageManager.PERMISSION_GRANTED) {
+                                    startLocationTracking();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        updateButtonVisibility(isOnWaitlist);
+                    }
+                });
             }
             @Override
-            public void onFailure(Exception e) {
-                // Silently fail
-            }
+            public void onFailure(Exception e) { /* silent */ }
         });
     }
 
@@ -372,13 +409,19 @@ public class EventDescriptionView extends AppCompatActivity {
         // if (searchBtn != null) searchBtn.setOnClickListener(v -> startActivity(new Intent(this, SearchScreen.class)));
 
         View browseBtn = findViewById(R.id.browse_button_event_page);
-        if (browseBtn != null) browseBtn.setOnClickListener(v -> startActivity(new Intent(this, NonAdminBrowseEvents.class)));
+        if (browseBtn != null) browseBtn.setOnClickListener(v -> startActivity(new Intent(this, BrowseEventsActivity.class)));
 
         View profileBtn = findViewById(R.id.profile_button_event_page);
         if (profileBtn != null) profileBtn.setOnClickListener(v -> startActivity(new Intent(this, Profile.class)));
 
         View exitBtn = findViewById(R.id.exit_button_event_page);
         if (exitBtn != null) exitBtn.setOnClickListener(v -> finish());
+
+        findViewById(R.id.new_event_button_event_page).setOnClickListener(v -> {
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
+        });
+
     }
 
     private android.graphics.Bitmap generateQrBitmap(String text) throws com.google.zxing.WriterException {

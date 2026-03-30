@@ -6,12 +6,12 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/draw_entrants_button"
+        android:id="@+id/redraw_entrants_button"
         android:layout_width="349dp"
         android:layout_height="56dp"
         android:layout_marginTop="8dp"
         android:backgroundTint="@color/regular_button_bg"
-        android:text="Draw Entrants"
+        android:text="Redraw Entrants"
         android:textAllCaps="false"
         android:textColor="@color/regular_button_text"
         android:textSize="26sp"
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
 
     <ImageView
-        android:id="@+id/notification_button_waitlist_bg"
+        android:id="@+id/notification_button_canceled_waitlist_bg"
         android:layout_width="43dp"
         android:layout_height="43dp"
         android:layout_marginTop="8dp"
@@ -34,20 +34,20 @@
         app:srcCompat="@drawable/button_purple" />
 
     <ImageButton
-        android:id="@+id/notification_button_waitlist"
+        android:id="@+id/notification_button_canceled_waitlist"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="#00FFFFFF"
         android:rotation="27"
-        app:layout_constraintBottom_toBottomOf="@+id/notification_button_waitlist_bg"
-        app:layout_constraintEnd_toEndOf="@+id/notification_button_waitlist_bg"
+        app:layout_constraintBottom_toBottomOf="@+id/notification_button_canceled_waitlist_bg"
+        app:layout_constraintEnd_toEndOf="@+id/notification_button_canceled_waitlist_bg"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/notification_button_waitlist_bg"
-        app:layout_constraintTop_toTopOf="@+id/notification_button_waitlist_bg"
+        app:layout_constraintStart_toStartOf="@+id/notification_button_canceled_waitlist_bg"
+        app:layout_constraintTop_toTopOf="@+id/notification_button_canceled_waitlist_bg"
         app:srcCompat="@android:drawable/ic_popup_reminder" />
 
     <ImageButton
-        android:id="@+id/exit_button_waitlist"
+        android:id="@+id/exit_button_canceled_waitlist"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="4dp"
@@ -65,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Waiting List"
+        android:text="Canceled Entrants"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

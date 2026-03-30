@@ -37,6 +37,8 @@
         <activity android:name=".CreateEventActivity" />
         <activity android:name=".SearchScreen" />
         <activity android:name=".BrowseEventsActivity" />
+        <activity android:name=".CommentsActivity" />
+        <activity android:name=".MapViewActivity" />
 
         <activity
             android:name=".EventDescriptionView"
@@ -58,6 +60,10 @@
         <activity android:name=".EventHistoryActivity" />
         <activity android:name=".AdminHubActivity" />
         <activity android:name=".MyCreatedEventsActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="YOUR_API_KEY_HERE" />
 
     </application>
 

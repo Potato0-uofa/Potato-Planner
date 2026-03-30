@@ -44,8 +44,10 @@ public class Profile extends AppCompatActivity {
         // Home bar navigation
 
         // Create Event Button
-        findViewById(R.id.new_event_button_profile).setOnClickListener(v ->
-                startActivity(new Intent(Profile.this, CreateEventActivity.class)));
+        findViewById(R.id.new_event_button_profile).setOnClickListener(v -> {
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
+        });
 
         // Search (Spyglass) Button
         findViewById(R.id.qr_button_profile).setOnClickListener(v ->
@@ -57,7 +59,7 @@ public class Profile extends AppCompatActivity {
 
         // Browse Events Button
         findViewById(R.id.browse_button_profile).setOnClickListener(v ->
-                startActivity(new Intent(Profile.this, NonAdminBrowseEvents.class)));
+                startActivity(new Intent(Profile.this, BrowseEventsActivity.class)));
 
         // Profile View Button
         findViewById(R.id.profile_button_profile).setOnClickListener(v -> {

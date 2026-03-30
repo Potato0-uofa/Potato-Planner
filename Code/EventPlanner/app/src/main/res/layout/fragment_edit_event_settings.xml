@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,6 +11,7 @@
         android:paddingBottom="32dp">
 
         <!-- ── Title ── -->
+
         <ImageButton
             android:id="@+id/exit_button_edit_event"
             android:layout_width="40dp"
@@ -127,6 +129,30 @@
 
         <!-- ── Waiting List Capacity label ── -->
         <TextView
+            android:id="@+id/textView_attendee_label"
+            android:layout_width="196dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Number of Attendees:"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+        <EditText
+            android:id="@+id/attendee_count"
+            android:layout_width="110dp"
+            android:layout_height="41dp"
+            android:hint="e.g. 50"
+            android:inputType="number"
+            app:layout_constraintBottom_toBottomOf="@+id/textView_attendee_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toEndOf="@+id/textView_attendee_label"
+            app:layout_constraintTop_toTopOf="@+id/textView_attendee_label" />
+
+        <TextView
             android:id="@+id/textView10"
             android:layout_width="196dp"
             android:layout_height="wrap_content"
@@ -136,9 +162,10 @@
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView9" />
+            app:layout_constraintTop_toBottomOf="@+id/textView_attendee_label" />
 
         <!-- ── Waitlist limit CheckBox ── -->
+
         <CheckBox
             android:id="@+id/max_capacity_check_edit"
             android:layout_width="40dp"
@@ -157,11 +184,12 @@
             android:layout_width="110dp"
             android:layout_height="41dp"
             android:ems="10"
+            android:hint="e.g. 100"
             android:inputType="number"
+            app:layout_constraintBottom_toBottomOf="@+id/textView10"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/max_capacity_check_edit"
-            app:layout_constraintTop_toTopOf="@+id/textView10"
-            app:layout_constraintBottom_toBottomOf="@+id/textView10" />
+            app:layout_constraintTop_toTopOf="@+id/textView10" />
 
         <!-- ── Create Event button ── -->
         <Button

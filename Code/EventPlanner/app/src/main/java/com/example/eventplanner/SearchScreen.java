@@ -46,5 +46,8 @@ public class SearchScreen extends AppCompatActivity {
             options.setOrientationLocked(true);
             barcodeLauncher.launch(options);
         });
+        Intent intent = new Intent(this, BrowseEventsActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

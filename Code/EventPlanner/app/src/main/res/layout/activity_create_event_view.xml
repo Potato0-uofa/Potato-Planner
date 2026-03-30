@@ -74,6 +74,23 @@
         app:layout_constraintStart_toStartOf="@+id/imageView17"
         app:layout_constraintTop_toBottomOf="@+id/event_closure_date" />
 
+    <Button
+        android:id="@+id/confirm_changes_organizer_event_public"
+        android:layout_width="349dp"
+        android:layout_height="56dp"
+        android:backgroundTint="@color/regular_button_bg"
+        android:text="Confirm Changes"
+        android:textAllCaps="false"
+        android:textColor="@color/regular_button_text"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView17"
+        app:layout_constraintEnd_toEndOf="@+id/imageView17"
+        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintStart_toStartOf="@+id/imageView17"
+        app:layout_constraintTop_toBottomOf="@+id/event_closure_date"
+        android:visibility="gone" />
+
     <EditText
         android:id="@+id/event_details"
         android:layout_width="217dp"
@@ -97,15 +114,23 @@
         app:layout_constraintTop_toTopOf="@+id/imageView17"
         app:srcCompat="@drawable/button_purple" />
 
-    <ImageView
-        android:id="@+id/event_image_icon"
-        android:layout_width="124dp"
-        android:layout_height="223dp"
-        app:layout_constraintBottom_toBottomOf="@+id/event_image_background"
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:cardBackgroundColor="@color/home_bar"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/edit_photo_create_page"
         app:layout_constraintEnd_toEndOf="@+id/event_image_background"
         app:layout_constraintStart_toStartOf="@+id/event_image_background"
-        app:layout_constraintTop_toTopOf="@+id/event_image_background"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
+        app:layout_constraintTop_toTopOf="@+id/event_image_background">
+
+        <ImageView
+            android:id="@+id/event_image_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_launcher_foreground" />
+    </androidx.cardview.widget.CardView>
 
     <EditText
         android:id="@+id/event_name"
@@ -135,7 +160,7 @@
 
     <TextView
         android:id="@+id/waitlist_Count"
-        android:layout_width="382dp"
+        android:layout_width="250dp"
         android:layout_height="30dp"
         android:layout_marginTop="16dp"
         android:text="Waitlist Limit"
@@ -144,21 +169,37 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/waitlist_limit_input"
         app:layout_constraintEnd_toEndOf="@+id/imageView17"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="@+id/imageView17"
         app:layout_constraintTop_toBottomOf="@+id/event_description_main" />
 
     <EditText
         android:id="@+id/waitlist_limit_input"
-        android:layout_width="382dp"
+        android:layout_width="250dp"
         android:layout_height="46dp"
         android:layout_marginTop="24dp"
         android:hint="Enter waitlist limit (leave blank for no limit)"
         android:inputType="number"
         android:textAlignment="center"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/imageView17"
-        app:layout_constraintStart_toStartOf="@+id/imageView17"
+        app:layout_constraintEnd_toEndOf="@+id/waitlist_Count"
+        app:layout_constraintStart_toStartOf="@+id/waitlist_Count"
         app:layout_constraintTop_toBottomOf="@+id/event_description_main" />
+
+    <Button
+        android:id="@+id/view_waitlist_button_public"
+        android:layout_width="105dp"
+        android:layout_height="60dp"
+        android:backgroundTint="#C498D0"
+        android:text="View Waitlist"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/waitlist_limit_input"
+        app:layout_constraintEnd_toEndOf="@+id/imageView17"
+        app:layout_constraintStart_toEndOf="@+id/waitlist_Count"
+        app:layout_constraintTop_toTopOf="@+id/waitlist_Count" />
 
     <EditText
         android:id="@+id/event_closure_date"

@@ -40,6 +40,8 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.recyclerview)
+    implementation(libs.play.services.maps)
+    implementation(libs.cardview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -51,4 +53,5 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0") //ZXING USED FOR QR CODE.
     implementation("com.google.zxing:core:3.5.1")
 
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 }
