@@ -70,6 +70,9 @@ public class Profile extends AppCompatActivity {
 
         findViewById(R.id.admin_hub_button).setOnClickListener(v ->
                 startActivity(new Intent(Profile.this, AdminHubActivity.class)));
+
+        findViewById(R.id.my_created_events_button).setOnClickListener(v ->
+                startActivity(new Intent(Profile.this, MyCreatedEventsActivity.class)));
     }
 
     /**
