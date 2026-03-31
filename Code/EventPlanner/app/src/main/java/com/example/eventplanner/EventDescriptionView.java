@@ -148,6 +148,13 @@ public class EventDescriptionView extends AppCompatActivity {
             startActivity(intent);
         });
 
+
+        findViewById(R.id.map_view_button).setOnClickListener(v -> {
+            Intent intent = new Intent(EventDescriptionView.this, MapViewActivity.class);
+            intent.putExtra("eventId", eventId);
+            startActivity(intent);
+        });
+
         // Force visible so you can see the button immediately when running the app
         btnViewWaitlist.setVisibility(View.GONE); // hidden by default
 
