@@ -32,7 +32,8 @@ public class AdminNotificationLogsActivity extends AppCompatActivity {
     private void loadLogs() {
 
         // 🔥 get all notifications
-        List<Notification> notifications = CustomLogs.getNotificationLogs();
+        CustomLogs logs = new CustomLogs() {};
+        List<Notification> notifications = logs.getNotificationLogs();
 
         logList.clear();
         logList.addAll(notifications);

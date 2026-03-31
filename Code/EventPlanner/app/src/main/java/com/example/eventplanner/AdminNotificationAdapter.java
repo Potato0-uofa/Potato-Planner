@@ -30,8 +30,8 @@ public class AdminNotificationAdapter extends RecyclerView.Adapter<AdminNotifica
     public void onBindViewHolder(@NonNull LogViewHolder holder, int position) {
         Notification log = logList.get(position);
 
-        holder.txtSender.setText("From: " + log.getSender());
-        holder.txtReceiver.setText("To: " + log.getReceiver());
+        holder.txtSender.setText("From: " + log.getSenderName());
+        holder.txtReceiver.setText("To: " + log.getReceiverName());
         holder.txtEvent.setText("Event: " + log.getEventName());
         holder.txtMessage.setText(log.getMessage());
     }
