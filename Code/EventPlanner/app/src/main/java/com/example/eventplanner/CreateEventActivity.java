@@ -145,6 +145,12 @@ public class CreateEventActivity extends AppCompatActivity {
 
         setupNavigation();
 
+        findViewById(R.id.comment_button_entrant).setOnClickListener(v -> {
+            Intent intent = new Intent(CreateEventActivity.this, CommentsActivity.class);
+            intent.putExtra("eventId", existingEventId);
+            startActivity(intent);
+        });
+
         // Get the correct create button ID based on layout
         int createBtnId = isPrivate
                 ? R.id.create_button_create_page_private
@@ -273,6 +279,8 @@ public class CreateEventActivity extends AppCompatActivity {
                     startActivity(new Intent(CreateEventActivity.this, Profile.class)));
         }
     }
+
+
 
     /**
      * Uploads the selected image to Firebase Storage, stores the download URL in the event,

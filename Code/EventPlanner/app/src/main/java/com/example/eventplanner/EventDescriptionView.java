@@ -164,12 +164,12 @@ public class EventDescriptionView extends AppCompatActivity {
             startActivity(intent);
         });
 
-
-        findViewById(R.id.map_view_button).setOnClickListener(v -> {
-            Intent intent = new Intent(EventDescriptionView.this, MapViewActivity.class);
+        findViewById(R.id.comment_button_entrant).setOnClickListener(v -> {
+            Intent intent = new Intent(EventDescriptionView.this, CommentsActivity.class);
             intent.putExtra("eventId", eventId);
             startActivity(intent);
         });
+
 
         // Force visible so you can see the button immediately when running the app
         btnViewWaitlist.setVisibility(View.GONE); // hidden by default
@@ -199,6 +199,8 @@ public class EventDescriptionView extends AppCompatActivity {
                         editPhotoButton.setVisibility(View.GONE);
                     }
                 }
+
+
 
                 // Load the existing event image (if there is one)
                 if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
