@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,48 @@ public class EventDescriptionView extends AppCompatActivity {
     private Button btnJoinEvent;
     private Button btnLeaveEvent;
     private Button btnViewWaitlist;
+
+    private final androidx.activity.result.ActivityResultLauncher<String> imagePickerLauncher =
+            registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    // Show local preview immediately, just like CreateEventActivity
+                    ImageView eventImageView = findViewById(R.id.event_image_icon);
+                    if (eventImageView != null) {
+                        eventImageView.setImageURI(uri);
+                    }
+                    // Then upload in the background
+                    uploadEventImage(uri);
+                }
+            });
+
+    /**
+     * Uploads a new event image to Firebase Storage and updates the imageUrl in Firestore.
+     * Similar implementation to CreateEventActivity.
+     *
+     * @param uri the URI of the image to upload
+     */
+    private void uploadEventImage(android.net.Uri uri) {
+        com.google.firebase.storage.StorageReference storageRef = com.google.firebase.storage.FirebaseStorage
+                .getInstance().getReference("event_images")
+                .child("event_" + eventId + "_" + System.currentTimeMillis() + ".jpg");
+
+        storageRef.putFile(uri)
+                .addOnSuccessListener(taskSnapshot ->
+                        storageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                            // Update imageUrl in Firestore
+                            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                    .collection("events")
+                                    .document(eventId)
+                                    .update("imageUrl", downloadUri.toString())
+                                    .addOnSuccessListener(unused -> {
+                                        Toast.makeText(EventDescriptionView.this, "Photo updated!", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e ->
+                                            Toast.makeText(this, "Failed to update photo", Toast.LENGTH_SHORT).show());
+                        }))
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +180,25 @@ public class EventDescriptionView extends AppCompatActivity {
                     isOrganizer = true;
                     btnJoinEvent.setVisibility(View.GONE);
                     btnLeaveEvent.setVisibility(View.GONE);
+                }
+
+                // Show edit photo button, but only for organizer of the event
+                Button editPhotoButton = findViewById(R.id.edit_photo_button);
+                if (editPhotoButton != null) {
+                    if (deviceId.equals(event.getOrganizerId())) {
+                        editPhotoButton.setVisibility(View.VISIBLE);
+                        editPhotoButton.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
+                    } else {
+                        editPhotoButton.setVisibility(View.GONE);
+                    }
+                }
+
+                // Load the existing event image (if there is one)
+                if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
+                    ImageView eventImageView = findViewById(R.id.event_image_icon);
+                    if (eventImageView != null) {
+                        eventImageView.setImageURI(android.net.Uri.parse(event.getImageUrl()));
+                    }
                 }
 
                 // Show QR button only for organizer of non-private events

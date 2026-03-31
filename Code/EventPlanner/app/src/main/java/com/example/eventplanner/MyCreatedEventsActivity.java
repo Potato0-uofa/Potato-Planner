@@ -51,6 +51,21 @@ public class MyCreatedEventsActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // Exit button
+        findViewById(R.id.exit_button_created_events).setOnClickListener(v -> finish());
+
+        // Navigation bar
+        findViewById(R.id.new_event_button_created).setOnClickListener(v ->
+                startActivity(new Intent(this, CreateEventActivity.class)));
+        findViewById(R.id.qr_button_created).setOnClickListener(v ->
+                startActivity(new Intent(this, SearchScreen.class)));
+        findViewById(R.id.home_button_created).setOnClickListener(v ->
+                startActivity(new Intent(this, HomePage.class)));
+        findViewById(R.id.browse_button_created).setOnClickListener(v ->
+                startActivity(new Intent(this, BrowseEventsActivity.class)));
+        findViewById(R.id.profile_button_created).setOnClickListener(v ->
+                startActivity(new Intent(this, Profile.class)));
+
         loadCreatedEvents();
     }
 
