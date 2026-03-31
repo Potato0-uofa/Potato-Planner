@@ -102,6 +102,12 @@ public class CreateEventActivity extends AppCompatActivity {
 
         eventImageView = findViewById(R.id.event_image_icon);
 
+        findViewById(R.id.map_view_button).setOnClickListener(v -> {
+            Intent intent = new Intent(CreateEventActivity.this, MapViewActivity.class);
+            intent.putExtra("eventId", existingEventId);
+            startActivity(intent);
+        });
+
         // Pre-fill fields for the setup fragment
         if (existingEventId != null) {
             eventRepository.fetchEventById(existingEventId, new EventRepository.EventCallback() {
