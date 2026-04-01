@@ -50,7 +50,24 @@
             android:textColor="@color/regular_button_text"
             android:textSize="16sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/private_event_tags_button"
+            app:layout_constraintHorizontal_bias="0.25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+        <Button
+            android:id="@+id/private_event_tags_button"
+            android:layout_width="154dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/regular_button_bg"
+            android:text="Edit Tags"
+            android:textAllCaps="false"
+            android:textColor="@color/regular_button_text"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.93"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
