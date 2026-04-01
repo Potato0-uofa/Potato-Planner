@@ -145,16 +145,22 @@ public class CreateEventActivity extends AppCompatActivity {
 
         setupNavigation();
 
-        findViewById(R.id.comment_button_entrant).setOnClickListener(v -> {
-            Intent intent = new Intent(CreateEventActivity.this, CommentsActivity.class);
-            intent.putExtra("eventId", existingEventId);
-            startActivity(intent);
-        });
+        // Check if the button exists in the current layout before setting the listener
+        View commentButton = findViewById(R.id.comment_button_entrant);
+        if (commentButton != null) {
+            commentButton.setOnClickListener(v -> {
+                Intent intent = new Intent(CreateEventActivity.this, CommentsActivity.class);
+                intent.putExtra("eventId", existingEventId);
+                startActivity(intent);
+            });
+        }
 
         // Get the correct create button ID based on layout
         int createBtnId = isPrivate
-                ? R.id.create_button_create_page_private
-                : R.id.create_button_create_page;
+                ? R.id.confirm_changes_organizer_event_private
+                : R.id.confirm_changes_organizer_event_public;
+
+        findViewById(createBtnId).setVisibility(View.VISIBLE);
 
         // Create event button
         findViewById(createBtnId).setOnClickListener(v -> {
