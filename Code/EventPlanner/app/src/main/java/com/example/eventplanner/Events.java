@@ -75,6 +75,9 @@ public class Events {
     /** Details for the events */
     private String details;
 
+    /** Tags for the events */
+    private List<String> tags = new ArrayList<>();
+
     /**
      * No-argument constructor required for Firestore deserialization.
      * Initializes an empty waiting list and sets waitlist limit to -1 (unlimited).
@@ -387,7 +390,10 @@ public class Events {
         this.registrationEnd = registrationEnd;
     }
 
+    /** @return getCoOrganizerIds coOrganizerIds for an event */
     public List<String> getCoOrganizerIds() { return coOrganizerIds; }
+
+    /** @param coOrganizerIds the coOrganizerIds for the event */
     public void setCoOrganizerIds(List<String> coOrganizerIds) { this.coOrganizerIds = coOrganizerIds; }
 
     /** @return getDetails details for an event */
@@ -395,5 +401,11 @@ public class Events {
 
     /** @param details the details for the event */
     public void setDetails(String details) { this.details = details; }
+
+    /** @return getTags tags for an event */
+    public List<String> getTags() { return tags; }
+
+    /** @param tags the tags for the event */
+    public void setTags(List<String> tags) { this.tags = tags != null ? tags : new ArrayList<>(); }
 
 }

@@ -132,7 +132,7 @@
         app:layout_constraintBottom_toTopOf="@+id/lottery_info_box"
         app:layout_constraintEnd_toEndOf="@+id/imageView7"
         app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/edit_photo_button" />
+        app:layout_constraintTop_toBottomOf="@+id/view_qr_button" />
 
     <!-- Lottery Info Box -->
 

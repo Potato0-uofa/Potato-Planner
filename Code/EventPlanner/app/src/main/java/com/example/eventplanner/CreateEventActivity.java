@@ -10,6 +10,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.widget.CheckBox;
+import java.util.List;
+import java.util.ArrayList;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -93,6 +97,15 @@ public class CreateEventActivity extends AppCompatActivity {
         existingEventId = getIntent().getStringExtra("eventId");
         isPrivate = getIntent().getBooleanExtra("isPrivate", false);
 
+        // Pick up image URI passed from setup fragment if any
+        String imageUriStr = getIntent().getStringExtra("imageUri");
+        if (imageUriStr != null) {
+            selectedImageUri = Uri.parse(imageUriStr);
+            if (eventImageView != null) {
+                eventImageView.setImageURI(selectedImageUri);
+            }
+        }
+
         // Load the correct layout based on public/private
         if (isPrivate) {
             setContentView(R.layout.activity_create_event_private_view);
@@ -166,11 +179,13 @@ public class CreateEventActivity extends AppCompatActivity {
         findViewById(createBtnId).setOnClickListener(v -> {
             EditText nameInput = findViewById(R.id.event_name);
             EditText descriptionInput = findViewById(R.id.event_description_main);
+            EditText detailsInput = findViewById(R.id.event_details);
             EditText closureDateInput = findViewById(R.id.event_closure_date);
             EditText waitlistLimitInput = findViewById(R.id.waitlist_limit_input);
 
             String name = nameInput.getText().toString().trim();
             String description = descriptionInput.getText().toString().trim();
+            String details = detailsInput.getText().toString().trim();
             String closureDate = closureDateInput.getText().toString().trim();
             String waitlistLimitStr = waitlistLimitInput.getText().toString().trim();
 
@@ -200,6 +215,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 return;
             }
 
+            // Show tag picker before saving
+            proceedWithSave(name, details, description, closureDate, waitlistLimitStr, new ArrayList<>());
+
             @SuppressLint("HardwareIds")
             String organizerId = Settings.Secure.getString(
                     getContentResolver(),
@@ -212,6 +230,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Events event) {
                         event.setName(name);
+                        event.setDetails(details);
                         event.setDescription(description);
                         event.setDate(closureDate);
                         if (!waitlistLimitStr.isEmpty()) {
@@ -287,6 +306,59 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Handles the final save — either updating an existing event or creating a new one,
+     * with the selected tags applied.
+     */
+    private void proceedWithSave(String name, String details, String description, String closureDate,
+                                 String waitlistLimitStr, List<String> selectedTags) {
+        @SuppressLint("HardwareIds")
+        String organizerId = Settings.Secure.getString(
+                getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        if (existingEventId != null) {
+            eventRepository.fetchEventById(existingEventId, new EventRepository.EventCallback() {
+                @Override
+                public void onSuccess(Events event) {
+                    event.setName(name);
+                    event.setDetails(details);
+                    event.setDescription(description);
+                    event.setDate(closureDate);
+                    event.setTags(selectedTags);
+                    if (!waitlistLimitStr.isEmpty()) {
+                        event.setWaitlistLimit(Integer.parseInt(waitlistLimitStr));
+                    }
+                    if (selectedImageUri != null) {
+                        uploadImageAndUpdateEvent(event);
+                    } else {
+                        updateEventInFirestore(event);
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(CreateEventActivity.this,
+                            "Failed to load event: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            // Fallback: brand new event
+            Events event = new Events(name, closureDate, description, "");
+            event.setDetails(details);
+            event.setOrganizerId(organizerId);
+            event.setPrivate(isPrivate);
+            event.setTags(selectedTags);
+            if (!waitlistLimitStr.isEmpty()) {
+                event.setWaitlistLimit(Integer.parseInt(waitlistLimitStr));
+            }
+            if (selectedImageUri != null) {
+                uploadImageAndCreateEvent(event);
+            } else {
+                createEventInFirestore(event);
+            }
+        }
+    }
 
     /**
      * Uploads the selected image to Firebase Storage, stores the download URL in the event,
