@@ -2,6 +2,7 @@ package com.example.eventplanner;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -11,13 +12,30 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class FragmentPrivateEventSetup extends DialogFragment {
 
     private final EventRepository eventRepository = new EventRepository();
+    private final List<String> selectedTags = new ArrayList<>();
+
+    private Uri selectedImageUri = null;
+
+    private final ActivityResultLauncher<String> imagePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    selectedImageUri = uri;
+                }
+            });
 
     @Nullable
     @Override
@@ -32,38 +50,38 @@ public class FragmentPrivateEventSetup extends DialogFragment {
         EditText waitlistCapacityInput = view.findViewById(R.id.waitlist_capacity_private_setup);
         EditText attendeeCountInput = view.findViewById(R.id.attendee_count_private_setup);
 
-        // Auto-fill registration start date with today's date
         String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
                 .format(new java.util.Date());
         regStartInput.setText(today);
 
-        // Only enable capacity input when checkbox is checked
         waitlistCapacityInput.setEnabled(false);
         waitlistCheck.setOnCheckedChangeListener((btn, isChecked) ->
                 waitlistCapacityInput.setEnabled(isChecked));
 
         view.findViewById(R.id.exit_button_new_private_event).setOnClickListener(v -> dismiss());
 
+        // Edit Tags button
+        view.findViewById(R.id.private_event_tags_button).setOnClickListener(v ->
+                showTagPickerDialog());
+
+        view.findViewById(R.id.private_event_photo_upload_button).setOnClickListener(v ->
+                imagePickerLauncher.launch("image/*"));
+
         view.findViewById(R.id.private_event_create_button).setOnClickListener(v -> {
             String regStart = regStartInput.getText().toString().trim();
             String regEnd = regEndInput.getText().toString().trim();
             String attendeeCountStr = attendeeCountInput.getText().toString().trim();
 
-
-            // User must enter registration dates (end registration date, start registration date
-            // is pre-filled, but user can choose to change if desired)
             if (regStart.isEmpty() || regEnd.isEmpty()) {
                 Toast.makeText(getContext(), "Please fill in registration dates", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // User must enter the number of attendees for the event
             if (attendeeCountStr.isEmpty()) {
                 Toast.makeText(getContext(), "Please enter the number of attendees", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Checks to see that the number of attendees is greater than 0
             int attendeeCount = Integer.parseInt(attendeeCountStr);
             if (attendeeCount <= 0) {
                 Toast.makeText(getContext(), "Number of attendees must be greater than 0", Toast.LENGTH_SHORT).show();
@@ -76,19 +94,14 @@ public class FragmentPrivateEventSetup extends DialogFragment {
                     Settings.Secure.ANDROID_ID
             );
 
-            Events event = new Events(
-                    "New Event",
-                    regEnd,
-                    "Add a description...",
-                    ""
-            );
+            Events event = new Events("New Event", regEnd, "Add a description...", "");
             event.setOrganizerId(organizerId);
             event.setRegistrationStart(regStart);
             event.setRegistrationEnd(regEnd);
             event.setGeolocationRequired(geolocationCheck.isChecked());
             event.setPrivate(true);
             event.setCapacity(attendeeCount);
-
+            event.setTags(new ArrayList<>(selectedTags));
 
             if (waitlistCheck.isChecked()) {
                 String capStr = waitlistCapacityInput.getText().toString().trim();
@@ -97,7 +110,6 @@ public class FragmentPrivateEventSetup extends DialogFragment {
                 }
             }
 
-            // Validate registration dates
             try {
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
                 java.util.Calendar cal = java.util.Calendar.getInstance();
@@ -107,27 +119,23 @@ public class FragmentPrivateEventSetup extends DialogFragment {
                 cal.set(java.util.Calendar.MILLISECOND, 0);
                 java.util.Date todayDate = cal.getTime();
 
-                // Checks to see if registration start date is in the past
                 java.util.Date startDate = sdf.parse(regStart);
                 if (startDate != null && startDate.before(todayDate)) {
                     Toast.makeText(getContext(), "Registration start date cannot be in the past", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Checks to see if registration end date is in the past
                 java.util.Date endDate = sdf.parse(regEnd);
                 if (endDate != null && endDate.before(todayDate)) {
                     Toast.makeText(getContext(), "Registration end date cannot be in the past", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Checks to see if the registration end date is before the start date
                 if (startDate != null && endDate != null && endDate.before(startDate)) {
                     Toast.makeText(getContext(), "Registration end date cannot be before start date", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Checks to see if the date format inputted by the user is correct
             } catch (java.text.ParseException e) {
                 Toast.makeText(getContext(), "Invalid date format. Please use YYYY-MM-DD", Toast.LENGTH_SHORT).show();
                 return;
@@ -140,6 +148,9 @@ public class FragmentPrivateEventSetup extends DialogFragment {
                     Intent intent = new Intent(getActivity(), CreateEventActivity.class);
                     intent.putExtra("eventId", event.getEventId());
                     intent.putExtra("isPrivate", true);
+                    if (selectedImageUri != null) {
+                        intent.putExtra("imageUri", selectedImageUri.toString());
+                    }
                     startActivity(intent);
                 }
 
@@ -152,6 +163,39 @@ public class FragmentPrivateEventSetup extends DialogFragment {
         });
 
         return view;
+    }
+
+    private void showTagPickerDialog() {
+        View tagView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.fragment_event_tags, null);
+
+        tagView.findViewById(R.id.exit_button_edit_event).setVisibility(View.GONE);
+        tagView.findViewById(R.id.textView6).setVisibility(View.GONE);
+
+        String[] tagNames = {"Entertainment", "Sports", "Cooking", "Outdoors", "Gaming", "Music", "Active", "Art"};
+        int[] checkboxIds = {
+                R.id.entertainment_check, R.id.sports_check, R.id.cooking_check2,
+                R.id.outdoors_check, R.id.gaming_check, R.id.music_check,
+                R.id.active_check, R.id.art_check
+        };
+
+        for (int i = 0; i < tagNames.length; i++) {
+            CheckBox cb = tagView.findViewById(checkboxIds[i]);
+            cb.setChecked(selectedTags.contains(tagNames[i]));
+        }
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Edit Event Tags")
+                .setView(tagView)
+                .setPositiveButton("Done", (dialog, which) -> {
+                    selectedTags.clear();
+                    for (int i = 0; i < tagNames.length; i++) {
+                        CheckBox cb = tagView.findViewById(checkboxIds[i]);
+                        if (cb.isChecked()) selectedTags.add(tagNames[i]);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override

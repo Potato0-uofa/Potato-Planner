@@ -97,8 +97,6 @@ public class EventDescriptionView extends AppCompatActivity {
         btnLeaveEvent = findViewById(R.id.leave_event_button);
         btnViewWaitlist = findViewById(R.id.view_waitlist_button);
 
-        ((TextView) findViewById(R.id.event_name)).setText(eventName != null ? eventName : "Demo Event");
-        ((TextView) findViewById(R.id.event_details)).setText(eventDescription != null ? eventDescription : "This is a demo event description.");
 
         btnJoinEvent.setOnClickListener(v -> {
             eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
@@ -120,6 +118,7 @@ public class EventDescriptionView extends AppCompatActivity {
                             // If date can't be parsed, allow joining
                         }
                     }
+
                     // Date check passed, join the waitlist
                     eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
                         @Override
@@ -177,6 +176,8 @@ public class EventDescriptionView extends AppCompatActivity {
         eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
             @Override
             public void onSuccess(Events event) {
+                ((TextView) findViewById(R.id.event_name)).setText(event.getName());
+
                 if (deviceId.equals(event.getOrganizerId()) ||
                         event.getCoOrganizerIds().contains(deviceId)) {
                     btnViewWaitlist.setVisibility(View.VISIBLE);
@@ -199,8 +200,6 @@ public class EventDescriptionView extends AppCompatActivity {
                         editPhotoButton.setVisibility(View.GONE);
                     }
                 }
-
-
 
                 // Load the existing event image (if there is one)
                 if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
@@ -227,6 +226,18 @@ public class EventDescriptionView extends AppCompatActivity {
                 } else if (end != null && !end.isEmpty()) {
                     regPeriodText.setText("Registration closes: " + end);
                 }
+
+                // Set description and details from Firestore
+                TextView descriptionView = findViewById(R.id.event_description_main);
+                if (descriptionView != null && event.getDescription() != null) {
+                    descriptionView.setText(event.getDescription());
+                }
+
+                TextView detailsView = findViewById(R.id.event_details);
+                if (detailsView != null && event.getDetails() != null) {
+                    detailsView.setText(event.getDetails());
+                }
+
             }
 
             @Override
