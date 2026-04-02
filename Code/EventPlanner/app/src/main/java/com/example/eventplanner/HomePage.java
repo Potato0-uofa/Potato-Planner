@@ -74,12 +74,6 @@ public class HomePage extends AppCompatActivity {
                 if (user != null) {
                     if (user.isNotificationsEnabled()) {
                         // Schedule notification appearance in 5 seconds (faster for demo)
-                        notificationRunnable = () -> {
-                            if (!isFinishing()) {
-                                notificationButton.setVisibility(View.VISIBLE);
-                                Snackbar.make(findViewById(R.id.homepage), "Demo: New Notification Received!", Snackbar.LENGTH_LONG).show();
-                            }
-                        };
                         handler.postDelayed(notificationRunnable, 5000);
                     } else {
                         Toast.makeText(HomePage.this, "Notifications are disabled in settings", Toast.LENGTH_SHORT).show();
