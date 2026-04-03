@@ -62,6 +62,8 @@
         <activity android:name=".AdminHubActivity" />
         <activity android:name=".MyCreatedEventsActivity" />
         <activity android:name=".AdminBrowseCommentsActivity" />
+        <activity android:name=".FinalRegisteredEntrantsActivity" />
+        <activity android:name=".InvitationsActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

@@ -42,11 +42,28 @@
         app:layout_constraintStart_toEndOf="@+id/event_image_background"
         app:layout_constraintTop_toBottomOf="@+id/event_description" />
 
+
+    <Button
+        android:id="@+id/accept_notification_button"
+        android:layout_width="227dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/confirm_bg"
+        android:text="Accept"
+        android:textAllCaps="false"
+        android:textColor="@color/confirm_text"
+        android:textSize="13.90sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/event_image_background"
+        app:layout_constraintTop_toBottomOf="@+id/event_description" />
+
     <Button
         android:id="@+id/decline_notification_button"
         android:layout_width="227dp"
         android:layout_height="41dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="52dp"
         android:layout_marginEnd="8dp"
         android:backgroundTint="@color/decline_bg"
         android:text="Decline?"

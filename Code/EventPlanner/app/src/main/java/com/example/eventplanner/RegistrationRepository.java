@@ -118,4 +118,23 @@ public class RegistrationRepository {
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
+
+
+    public void acceptInvitation(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
+        String docId = eventId + "_" + userId;
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("eventId", eventId);
+        payload.put("userId", userId);
+        payload.put("status", "accepted");
+        payload.put("updatedAt", Timestamp.now());
+
+        db.collection(COLLECTION_REGISTRATIONS)
+                .document(docId)
+                .set(payload, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+
 }
