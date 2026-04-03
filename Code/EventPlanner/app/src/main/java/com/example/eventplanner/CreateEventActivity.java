@@ -126,26 +126,52 @@ public class CreateEventActivity extends AppCompatActivity {
             eventRepository.fetchEventById(existingEventId, new EventRepository.EventCallback() {
                 @Override
                 public void onSuccess(Events event) {
-                    EditText closureDateInput = findViewById(R.id.event_closure_date);
+                    EditText nameInput         = findViewById(R.id.event_name);
+                    EditText descriptionInput  = findViewById(R.id.event_description_main);
+                    EditText detailsInput      = findViewById(R.id.event_details);
+                    EditText closureDateInput  = findViewById(R.id.event_closure_date);
                     EditText waitlistLimitInput = findViewById(R.id.waitlist_limit_input);
-                    TextView waitlistCount = findViewById(R.id.waitlist_Count);
+                    TextView waitlistCount     = findViewById(R.id.waitlist_Count);
 
+                    // Pre-fill name
+                    if (event.getName() != null && !event.getName().equals("New Event")) {
+                        nameInput.setText(event.getName());
+                    }
+
+                    // Pre-fill description
+                    if (event.getDescription() != null && !event.getDescription().equals("Add a description...")) {
+                        descriptionInput.setText(event.getDescription());
+                    }
+
+                    // Pre-fill details
+                    if (event.getDetails() != null) {
+                        detailsInput.setText(event.getDetails());
+                    }
+
+                    // Pre-fill closure date
                     if (event.getRegistrationEnd() != null) {
                         closureDateInput.setText(event.getRegistrationEnd());
                     }
 
+                    // Pre-fill waitlist limit
                     if (event.getWaitlistLimit() != -1) {
                         waitlistLimitInput.setText(String.valueOf(event.getWaitlistLimit()));
                     } else {
-                        // No limit was set — hide the input and show a label instead
                         waitlistLimitInput.setVisibility(View.GONE);
                         waitlistCount.setText("No Waitlist Limit");
+                    }
+
+                    // Pre-fill image if one was saved
+                    if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
+                        com.bumptech.glide.Glide.with(CreateEventActivity.this)
+                                .load(event.getImageUrl())
+                                .into(eventImageView);
                     }
                 }
 
                 @Override
                 public void onFailure(Exception e) {
-                    // Silently fail, fields just stay blank
+                    // Silently fail, fields stay as default
                 }
             });
         }
