@@ -26,7 +26,7 @@ public class HomePage extends AppCompatActivity {
         setContentView(R.layout.activity_home_page);
 
         notificationButton = findViewById(R.id.notification_button_home);
-        notificationButton.setVisibility(View.GONE);
+        notificationButton.setVisibility(View.VISIBLE);
 
         findViewById(R.id.new_event_button_home).setOnClickListener(v -> {
             EventTypeFragment fragment = new EventTypeFragment();
@@ -41,6 +41,7 @@ public class HomePage extends AppCompatActivity {
             // Do nothing since already on home page
         });
 
+
         findViewById(R.id.browse_button_home).setOnClickListener(v -> {
             startActivity(new Intent(HomePage.this, BrowseEventsActivity.class));
         });
@@ -50,8 +51,7 @@ public class HomePage extends AppCompatActivity {
         });
 
         notificationButton.setOnClickListener(v -> {
-            notificationButton.setVisibility(View.GONE);
-            startActivity(new Intent(HomePage.this, NotificationLogs.class));
+            startActivity(new Intent(HomePage.this, InvitationsActivity.class));
         });
     }
 
@@ -59,7 +59,7 @@ public class HomePage extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // Reset state when coming back to the page
-        notificationButton.setVisibility(View.GONE);
+        notificationButton.setVisibility(View.VISIBLE);
         if (notificationRunnable != null) {
             handler.removeCallbacks(notificationRunnable);
         }

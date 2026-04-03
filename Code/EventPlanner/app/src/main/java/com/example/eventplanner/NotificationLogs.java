@@ -34,10 +34,13 @@ public class NotificationLogs extends AppCompatActivity {
         registrationRepository = new RegistrationRepository();
 
         Button declineBtn = findViewById(R.id.decline_notification_button);
+        Button acceptBtn = findViewById(R.id.accept_notification_button);
 
         String eventId = getIntent().getStringExtra("eventId");
         if (eventId == null || eventId.trim().isEmpty()) {
-            eventId = "TEST_EVENT_ID"; // replace with real id in test
+            Toast.makeText(this, "Missing event ID", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
         String userId = Settings.Secure.getString(
@@ -46,7 +49,38 @@ public class NotificationLogs extends AppCompatActivity {
         );
 
         String finalEventId = eventId;
+
+        acceptBtn.setOnClickListener(v -> {
+            registrationRepository.acceptInvitation(
+                    finalEventId,
+                    userId,
+                    new RegistrationRepository.SimpleCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(
+                                    NotificationLogs.this,
+                                    "Invitation accepted",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                            acceptBtn.setEnabled(false);
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(
+                                    NotificationLogs.this,
+                                    "Accept failed: " + e.getMessage(),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        }
+                    }
+            );
+        });
+
+
+
         declineBtn.setOnClickListener(v -> {
+
             registrationRepository.declineInvitation(
                     finalEventId,
                     userId,
