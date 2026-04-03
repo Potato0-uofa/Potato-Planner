@@ -212,7 +212,6 @@ public class EventDescriptionView extends AppCompatActivity {
             public void onFailure(Exception e) {
 // keep button hidden
             }
-            public void onFailure(Exception e) {}
         });
 
 
