@@ -1,6 +1,8 @@
 package com.example.eventplanner;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,8 +49,19 @@ public class EventWaitlistActivity extends AppCompatActivity {
         // Hide the join button as it's not part of US 01.05.04 implementation task
         findViewById(R.id.btn_join_waitlist).setEnabled(false);
 
+        findViewById(R.id.exit_button_waitlist).setOnClickListener(v -> finish());
+
         startListening();
         loadEntrants();
+
+        Button btnViewChosen = findViewById(R.id.btn_view_chosen);
+        if (btnViewChosen != null) {
+            btnViewChosen.setOnClickListener(v -> {
+                Intent intent = new Intent(EventWaitlistActivity.this, ChosenEntrantsActivity.class);
+                intent.putExtra("eventId", eventId);
+                startActivity(intent);
+            });
+        }
     }
 
     private void startListening() {

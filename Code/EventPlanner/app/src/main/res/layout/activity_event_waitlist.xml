@@ -5,6 +5,17 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <ImageButton
+        android:id="@+id/exit_button_waitlist"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
     <TextView
         android:id="@+id/tv_waitlist_title"
         android:layout_width="wrap_content"
@@ -16,7 +27,8 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exit_button_waitlist"/>
 
     <TextView
         android:id="@+id/tv_waitlist_count"
@@ -40,6 +52,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_waitlist_count" />
+
+    <Button
+        android:id="@+id/btn_view_chosen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#C498D0"
+        android:text="View Chosen Entrants"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btn_join_waitlist"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btn_join_waitlist"

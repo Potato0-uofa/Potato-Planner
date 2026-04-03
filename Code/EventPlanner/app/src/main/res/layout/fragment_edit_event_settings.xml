@@ -191,21 +191,22 @@
             app:layout_constraintStart_toEndOf="@+id/max_capacity_check_edit"
             app:layout_constraintTop_toTopOf="@+id/textView10" />
 
-        <!-- ── Create Event button ── -->
         <Button
-            android:id="@+id/confirm_edits_button"
-            android:layout_width="269dp"
-            android:layout_height="64dp"
-            android:layout_marginTop="32dp"
+            android:id="@+id/settings_event_tags_button"
+            android:layout_width="154dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="20dp"
             android:backgroundTint="@color/regular_button_bg"
-            android:text="Confirm Edits"
+            android:text="Edit Tags"
             android:textAllCaps="false"
             android:textColor="@color/regular_button_text"
-            android:textSize="30sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+        <!-- ── Create Event button ── -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

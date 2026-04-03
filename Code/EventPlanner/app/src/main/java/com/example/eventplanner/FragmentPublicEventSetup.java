@@ -2,6 +2,7 @@ package com.example.eventplanner;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -11,13 +12,32 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class FragmentPublicEventSetup extends DialogFragment {
 
     private final EventRepository eventRepository = new EventRepository();
+
+    // Holds the tags the user selected via the Edit Tags dialog
+    private final List<String> selectedTags = new ArrayList<>();
+
+    private Uri selectedImageUri = null;
+
+    private final ActivityResultLauncher<String> imagePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    selectedImageUri = uri;
+                }
+            });
 
     @Nullable
     @Override
@@ -44,25 +64,28 @@ public class FragmentPublicEventSetup extends DialogFragment {
 
         view.findViewById(R.id.exit_button_new_public_event).setOnClickListener(v -> dismiss());
 
+        // Edit Tags button — shows tag picker dialog, stores result in selectedTags
+        view.findViewById(R.id.public_event_tags_button).setOnClickListener(v ->
+                showTagPickerDialog());
+
+        view.findViewById(R.id.public_event_photo_upload_button).setOnClickListener(v ->
+                imagePickerLauncher.launch("image/*"));
+
         view.findViewById(R.id.public_event_create_button).setOnClickListener(v -> {
             String regStart = regStartInput.getText().toString().trim();
             String regEnd = regEndInput.getText().toString().trim();
             String attendeeCountStr = attendeeCountInput.getText().toString().trim();
 
-            // User must enter registration dates (end registration date, start registration date
-            // is pre-filled, but user can choose to change if desired)
             if (regStart.isEmpty() || regEnd.isEmpty()) {
                 Toast.makeText(getContext(), "Please fill in registration dates", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // User must enter the number of attendees for the event
             if (attendeeCountStr.isEmpty()) {
                 Toast.makeText(getContext(), "Please enter the number of attendees", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Checks to see that the number of attendees is greater than 0
             int attendeeCount = Integer.parseInt(attendeeCountStr);
             if (attendeeCount <= 0) {
                 Toast.makeText(getContext(), "Number of attendees must be greater than 0", Toast.LENGTH_SHORT).show();
@@ -75,20 +98,14 @@ public class FragmentPublicEventSetup extends DialogFragment {
                     Settings.Secure.ANDROID_ID
             );
 
-            // Create a basic event with placeholder name/description
-            // The organizer will fill these in on the next screen
-            Events event = new Events(
-                    "New Event",
-                    regEnd,
-                    "Add a description...",
-                    ""
-            );
+            Events event = new Events("New Event", regEnd, "Add a description...", "");
             event.setOrganizerId(organizerId);
             event.setRegistrationStart(regStart);
             event.setRegistrationEnd(regEnd);
             event.setGeolocationRequired(geolocationCheck.isChecked());
             event.setPrivate(false);
             event.setCapacity(attendeeCount);
+            event.setTags(new ArrayList<>(selectedTags));
 
             if (waitlistCheck.isChecked()) {
                 String capStr = waitlistCapacityInput.getText().toString().trim();
@@ -107,27 +124,23 @@ public class FragmentPublicEventSetup extends DialogFragment {
                 cal.set(java.util.Calendar.MILLISECOND, 0);
                 java.util.Date todayDate = cal.getTime();
 
-                // Checks to see if registration start date is in the past
                 java.util.Date startDate = sdf.parse(regStart);
                 if (startDate != null && startDate.before(todayDate)) {
                     Toast.makeText(getContext(), "Registration start date cannot be in the past", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Checks to see if registration end date is in the past
                 java.util.Date endDate = sdf.parse(regEnd);
                 if (endDate != null && endDate.before(todayDate)) {
                     Toast.makeText(getContext(), "Registration end date cannot be in the past", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Checks to see if the registration end date is before the start date
                 if (startDate != null && endDate != null && endDate.before(startDate)) {
                     Toast.makeText(getContext(), "Registration end date cannot be before start date", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Checks to see if the date format inputted by the user is correct
             } catch (java.text.ParseException e) {
                 Toast.makeText(getContext(), "Invalid date format. Please use YYYY-MM-DD", Toast.LENGTH_SHORT).show();
                 return;
@@ -140,6 +153,9 @@ public class FragmentPublicEventSetup extends DialogFragment {
                     Intent intent = new Intent(getActivity(), CreateEventActivity.class);
                     intent.putExtra("eventId", event.getEventId());
                     intent.putExtra("isPrivate", false);
+                    if (selectedImageUri != null) {
+                        intent.putExtra("imageUri", selectedImageUri.toString());
+                    }
                     startActivity(intent);
                 }
 
@@ -154,10 +170,51 @@ public class FragmentPublicEventSetup extends DialogFragment {
         return view;
     }
 
+    /**
+     * Shows the tag picker dialog using fragment_event_tags.xml.
+     * Selections are saved to selectedTags and persist if the user
+     * opens the dialog again (checkboxes will be pre-checked).
+     */
+    private void showTagPickerDialog() {
+        View tagView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.fragment_event_tags, null);
+
+        // Hide the title and exit button — not needed inside a dialog
+        tagView.findViewById(R.id.exit_button_edit_event).setVisibility(View.GONE);
+        tagView.findViewById(R.id.textView6).setVisibility(View.GONE);
+
+        // Map tag names to their checkbox IDs
+        String[] tagNames = {"Entertainment", "Sports", "Cooking", "Outdoors", "Gaming", "Music", "Active", "Art"};
+        int[] checkboxIds = {
+                R.id.entertainment_check, R.id.sports_check, R.id.cooking_check2,
+                R.id.outdoors_check, R.id.gaming_check, R.id.music_check,
+                R.id.active_check, R.id.art_check
+        };
+
+        // Pre-check any tags already selected
+        for (int i = 0; i < tagNames.length; i++) {
+            CheckBox cb = tagView.findViewById(checkboxIds[i]);
+            cb.setChecked(selectedTags.contains(tagNames[i]));
+        }
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Edit Event Tags")
+                .setView(tagView)
+                .setPositiveButton("Done", (dialog, which) -> {
+                    // Save selections back to selectedTags
+                    selectedTags.clear();
+                    for (int i = 0; i < tagNames.length; i++) {
+                        CheckBox cb = tagView.findViewById(checkboxIds[i]);
+                        if (cb.isChecked()) selectedTags.add(tagNames[i]);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        // Make the dialog full width
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setLayout(
                     ViewGroup.LayoutParams.MATCH_PARENT,

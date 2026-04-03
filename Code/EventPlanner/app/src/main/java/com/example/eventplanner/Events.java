@@ -66,6 +66,7 @@ public class Events {
     private String registrationEnd;
 
     /** Whether the event is private or not */
+    @com.google.firebase.firestore.PropertyName("private")
     private boolean isPrivate;
 
     /** Whether the event requires geolocation */
@@ -73,6 +74,9 @@ public class Events {
 
     /** Details for the events */
     private String details;
+
+    /** Tags for the events */
+    private List<String> tags = new ArrayList<>();
 
     /**
      * No-argument constructor required for Firestore deserialization.
@@ -355,9 +359,11 @@ public class Events {
     }
 
     /** @return isPrivate whether the event is private or not */
+    @com.google.firebase.firestore.PropertyName("private")
     public boolean isPrivate() { return isPrivate; }
 
     /** @param isPrivate the private notation to assign to an event */
+    @com.google.firebase.firestore.PropertyName("private")
     public void setPrivate(boolean isPrivate) { this.isPrivate = isPrivate; }
 
     /** @return geolocationRequired whether the event needs geolocation */
@@ -384,7 +390,10 @@ public class Events {
         this.registrationEnd = registrationEnd;
     }
 
+    /** @return getCoOrganizerIds coOrganizerIds for an event */
     public List<String> getCoOrganizerIds() { return coOrganizerIds; }
+
+    /** @param coOrganizerIds the coOrganizerIds for the event */
     public void setCoOrganizerIds(List<String> coOrganizerIds) { this.coOrganizerIds = coOrganizerIds; }
 
     /** @return getDetails details for an event */
@@ -392,5 +401,11 @@ public class Events {
 
     /** @param details the details for the event */
     public void setDetails(String details) { this.details = details; }
+
+    /** @return getTags tags for an event */
+    public List<String> getTags() { return tags; }
+
+    /** @param tags the tags for the event */
+    public void setTags(List<String> tags) { this.tags = tags != null ? tags : new ArrayList<>(); }
 
 }

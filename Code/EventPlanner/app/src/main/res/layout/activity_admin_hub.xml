@@ -24,4 +24,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Remove Organizers" />
+
+    <Button
+        android:id="@+id/btn_browse_comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Browse Comments"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

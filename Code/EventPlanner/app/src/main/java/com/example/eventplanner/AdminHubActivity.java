@@ -18,5 +18,7 @@ public class AdminHubActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_remove_organizers).setOnClickListener(v ->
                 startActivity(new Intent(AdminHubActivity.this, AdminRemoveOrganizersActivity.class)));
+        findViewById(R.id.btn_browse_comments).setOnClickListener(v ->
+                startActivity(new Intent(AdminHubActivity.this, AdminBrowseCommentsActivity.class)));
     }
 }

@@ -10,6 +10,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.widget.CheckBox;
+import java.util.List;
+import java.util.ArrayList;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -93,6 +97,15 @@ public class CreateEventActivity extends AppCompatActivity {
         existingEventId = getIntent().getStringExtra("eventId");
         isPrivate = getIntent().getBooleanExtra("isPrivate", false);
 
+        // Pick up image URI passed from setup fragment if any
+        String imageUriStr = getIntent().getStringExtra("imageUri");
+        if (imageUriStr != null) {
+            selectedImageUri = Uri.parse(imageUriStr);
+            if (eventImageView != null) {
+                eventImageView.setImageURI(selectedImageUri);
+            }
+        }
+
         // Load the correct layout based on public/private
         if (isPrivate) {
             setContentView(R.layout.activity_create_event_private_view);
@@ -101,6 +114,12 @@ public class CreateEventActivity extends AppCompatActivity {
         }
 
         eventImageView = findViewById(R.id.event_image_icon);
+
+        findViewById(R.id.map_view_button).setOnClickListener(v -> {
+            Intent intent = new Intent(CreateEventActivity.this, MapViewActivity.class);
+            intent.putExtra("eventId", existingEventId);
+            startActivity(intent);
+        });
 
         // Pre-fill fields for the setup fragment
         if (existingEventId != null) {
@@ -131,25 +150,42 @@ public class CreateEventActivity extends AppCompatActivity {
             });
         }
 
-        findViewById(R.id.edit_photo_create_page).setOnClickListener(v ->
-                        imagePickerLauncher.launch("image/*"));
+        int editPhotoBtnId = isPrivate
+                ? R.id.edit_photo_create_page_private
+                : R.id.edit_photo_create_page;
+        findViewById(editPhotoBtnId).setOnClickListener(v ->
+                imagePickerLauncher.launch("image/*"));
 
         setupNavigation();
 
+        // Check if the button exists in the current layout before setting the listener
+        View commentButton = findViewById(R.id.comment_button_entrant);
+        if (commentButton != null) {
+            commentButton.setOnClickListener(v -> {
+                Intent intent = new Intent(CreateEventActivity.this, CommentsActivity.class);
+                intent.putExtra("eventId", existingEventId);
+                startActivity(intent);
+            });
+        }
+
         // Get the correct create button ID based on layout
         int createBtnId = isPrivate
-                ? R.id.create_button_create_page_private
-                : R.id.create_button_create_page;
+                ? R.id.confirm_changes_organizer_event_private
+                : R.id.confirm_changes_organizer_event_public;
+
+        findViewById(createBtnId).setVisibility(View.VISIBLE);
 
         // Create event button
         findViewById(createBtnId).setOnClickListener(v -> {
             EditText nameInput = findViewById(R.id.event_name);
             EditText descriptionInput = findViewById(R.id.event_description_main);
+            EditText detailsInput = findViewById(R.id.event_details);
             EditText closureDateInput = findViewById(R.id.event_closure_date);
             EditText waitlistLimitInput = findViewById(R.id.waitlist_limit_input);
 
             String name = nameInput.getText().toString().trim();
             String description = descriptionInput.getText().toString().trim();
+            String details = detailsInput.getText().toString().trim();
             String closureDate = closureDateInput.getText().toString().trim();
             String waitlistLimitStr = waitlistLimitInput.getText().toString().trim();
 
@@ -179,6 +215,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 return;
             }
 
+            // Show tag picker before saving
+            proceedWithSave(name, details, description, closureDate, waitlistLimitStr, new ArrayList<>());
+
             @SuppressLint("HardwareIds")
             String organizerId = Settings.Secure.getString(
                     getContentResolver(),
@@ -191,6 +230,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Events event) {
                         event.setName(name);
+                        event.setDetails(details);
                         event.setDescription(description);
                         event.setDate(closureDate);
                         if (!waitlistLimitStr.isEmpty()) {
@@ -244,8 +284,6 @@ public class CreateEventActivity extends AppCompatActivity {
             findViewById(R.id.new_event_button_create_page_private).setOnClickListener(v -> {
                 // Do nothing since already on new event page
             });
-            findViewById(R.id.qr_button_create_page).setOnClickListener(v ->
-                    startActivity(new Intent(CreateEventActivity.this, SearchScreen.class)));
             findViewById(R.id.home_button_create_page_private).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, HomePage.class)));
             findViewById(R.id.browse_button_create_page_private).setOnClickListener(v ->
@@ -264,6 +302,61 @@ public class CreateEventActivity extends AppCompatActivity {
                     startActivity(new Intent(CreateEventActivity.this, NonAdminBrowseEvents.class)));
             findViewById(R.id.profile_button_create_page).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, Profile.class)));
+        }
+    }
+
+
+    /**
+     * Handles the final save — either updating an existing event or creating a new one,
+     * with the selected tags applied.
+     */
+    private void proceedWithSave(String name, String details, String description, String closureDate,
+                                 String waitlistLimitStr, List<String> selectedTags) {
+        @SuppressLint("HardwareIds")
+        String organizerId = Settings.Secure.getString(
+                getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        if (existingEventId != null) {
+            eventRepository.fetchEventById(existingEventId, new EventRepository.EventCallback() {
+                @Override
+                public void onSuccess(Events event) {
+                    event.setName(name);
+                    event.setDetails(details);
+                    event.setDescription(description);
+                    event.setDate(closureDate);
+                    event.setTags(selectedTags);
+                    if (!waitlistLimitStr.isEmpty()) {
+                        event.setWaitlistLimit(Integer.parseInt(waitlistLimitStr));
+                    }
+                    if (selectedImageUri != null) {
+                        uploadImageAndUpdateEvent(event);
+                    } else {
+                        updateEventInFirestore(event);
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(CreateEventActivity.this,
+                            "Failed to load event: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            // Fallback: brand new event
+            Events event = new Events(name, closureDate, description, "");
+            event.setDetails(details);
+            event.setOrganizerId(organizerId);
+            event.setPrivate(isPrivate);
+            event.setTags(selectedTags);
+            if (!waitlistLimitStr.isEmpty()) {
+                event.setWaitlistLimit(Integer.parseInt(waitlistLimitStr));
+            }
+            if (selectedImageUri != null) {
+                uploadImageAndCreateEvent(event);
+            } else {
+                createEventInFirestore(event);
+            }
         }
     }
 
@@ -333,7 +426,13 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(CreateEventActivity.this, "Event created!", Toast.LENGTH_SHORT).show();
-                showQrDialog(event.getEventId());
+                if (isPrivate) {
+                    Toast.makeText(CreateEventActivity.this, "Private event created!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(CreateEventActivity.this, HomePage.class));
+                    finish();
+                } else {
+                    showQrDialog(event.getEventId());
+                }
             }
 
             @Override
@@ -356,7 +455,13 @@ public class CreateEventActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 Toast.makeText(CreateEventActivity.this, "Event saved!", Toast.LENGTH_SHORT).show();
-                showQrDialog(event.getEventId());
+                if (isPrivate) {
+                    Toast.makeText(CreateEventActivity.this, "Private event created!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(CreateEventActivity.this, HomePage.class));
+                    finish();
+                } else {
+                    showQrDialog(event.getEventId());
+                }
             }
 
             @Override
