@@ -36,32 +36,31 @@ public class EventWaitlistActivity extends AppCompatActivity {
 
         eventId = getIntent().getStringExtra("eventId");
         if (eventId == null || eventId.isEmpty()) {
-            eventId = "test_event_1"; // Fallback
+            eventId = "test_event_1";
         }
-        
+
         tvWaitlistCount = findViewById(R.id.tv_waitlist_count);
         recyclerView = findViewById(R.id.recycler_waitlist);
-        
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new WaitlistAdapter(entrantList);
         recyclerView.setAdapter(adapter);
 
-        // Hide the join button as it's not part of US 01.05.04 implementation task
         findViewById(R.id.btn_join_waitlist).setEnabled(false);
-
         findViewById(R.id.exit_button_waitlist).setOnClickListener(v -> finish());
+
+        findViewById(R.id.btn_view_chosen).setOnClickListener(v -> {
+            FragmentFinalEntrantList fragment = FragmentFinalEntrantList.newInstance(eventId);
+            fragment.show(getSupportFragmentManager(), "FinalEntrantList");
+        });
+
+        findViewById(R.id.btn_view_cancelled).setOnClickListener(v -> {
+            FragmentPostDrawWaitlist fragment = FragmentPostDrawWaitlist.newInstance(eventId);
+            fragment.show(getSupportFragmentManager(), "PostDrawWaitlist");
+        });
 
         startListening();
         loadEntrants();
-
-        Button btnViewChosen = findViewById(R.id.btn_view_chosen);
-        if (btnViewChosen != null) {
-            btnViewChosen.setOnClickListener(v -> {
-                Intent intent = new Intent(EventWaitlistActivity.this, ChosenEntrantsActivity.class);
-                intent.putExtra("eventId", eventId);
-                startActivity(intent);
-            });
-        }
     }
 
     private void startListening() {
