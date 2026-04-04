@@ -184,6 +184,18 @@ public class CreateEventActivity extends AppCompatActivity {
 
         setupNavigation();
 
+        int viewWaitlistBtnId = isPrivate
+                ? R.id.view_waitlist_button_private
+                : R.id.view_waitlist_button_public;
+
+        View viewWaitlistBtn = findViewById(viewWaitlistBtnId);
+        if (viewWaitlistBtn != null) {
+            viewWaitlistBtn.setOnClickListener(v -> {
+                FragmentFinalEntrantList fragment = FragmentFinalEntrantList.newInstance(existingEventId);
+                fragment.show(getSupportFragmentManager(), "FinalEntrantList");
+            });
+        }
+
         // Check if the button exists in the current layout before setting the listener
         View commentButton = findViewById(R.id.comment_button_entrant);
         if (commentButton != null) {
