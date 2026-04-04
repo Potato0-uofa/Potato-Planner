@@ -158,9 +158,8 @@ public class EventDescriptionView extends AppCompatActivity {
         });
 
         btnViewWaitlist.setOnClickListener(v -> {
-            Intent intent = new Intent(EventDescriptionView.this, EventWaitlistActivity.class);
-            intent.putExtra("eventId", eventId);
-            startActivity(intent);
+            FragmentFinalEntrantList fragment = FragmentFinalEntrantList.newInstance(eventId);
+            fragment.show(getSupportFragmentManager(), "FinalEntrantList");
         });
 
         findViewById(R.id.comment_button_entrant).setOnClickListener(v -> {
