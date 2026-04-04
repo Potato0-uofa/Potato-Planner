@@ -35,7 +35,7 @@ public class FragmentFinalEntrantList extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_selected_entrants, container, false);
+        View view = inflater.inflate(R.layout.fragment_final_entrant_list, container, false);
 
         if (getArguments() != null) {
             eventId = getArguments().getString("eventId");
@@ -46,31 +46,54 @@ public class FragmentFinalEntrantList extends DialogFragment {
         adapter = new WaitlistAdapter(entrantList);
         recyclerView.setAdapter(adapter);
 
-        view.findViewById(R.id.exit_button_selected).setOnClickListener(v -> dismiss());
+        // Exit button
+        view.findViewById(R.id.exit_button_entrant_list).setOnClickListener(v -> dismiss());
 
-        view.findViewById(R.id.notification_button_selected).setOnClickListener(v ->
+        // Notification button
+        view.findViewById(R.id.notification_button_entrants).setOnClickListener(v ->
                 Toast.makeText(getContext(), "Notifications coming soon", Toast.LENGTH_SHORT).show());
 
-        loadEntrants();
+        // View Pending button
+        view.findViewById(R.id.view_pending_button).setOnClickListener(v -> {
+            FragmentPendingInvites fragment = FragmentPendingInvites.newInstance(eventId);
+            fragment.show(getParentFragmentManager(), "PendingInvites");
+        });
+
+        // Selected Entrants button — load chosen entrants into the recycler
+        view.findViewById(R.id.selected_entrants_button).setOnClickListener(v -> {
+            FragmentSelectedEntrants fragment = FragmentSelectedEntrants.newInstance(eventId);
+            fragment.show(getParentFragmentManager(), "SelectedEntrants");
+        });
+
+        // Cancelled Entrants button
+        view.findViewById(R.id.canceled_entrants_button).setOnClickListener(v -> {
+            FragmentPostDrawWaitlist fragment = FragmentPostDrawWaitlist.newInstance(eventId);
+            fragment.show(getParentFragmentManager(), "CancelledEntrants");
+        });
+
+        // Export CSV button
+        view.findViewById(R.id.export_csv_button).setOnClickListener(v -> exportAsCsv());
+
+        loadWaitlistEntrants();
 
         return view;
     }
 
-    private void loadEntrants() {
+    private void loadWaitlistEntrants() {
         FirebaseFirestore.getInstance()
                 .collection("events")
                 .document(eventId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    List<String> chosenIds = (List<String>) documentSnapshot.get("chosenEntrants");
-                    if (chosenIds == null || chosenIds.isEmpty()) {
-                        Toast.makeText(getContext(), "No entrants have been chosen yet",
+                    List<String> waitlistIds = (List<String>) documentSnapshot.get("waitlist");
+                    if (waitlistIds == null || waitlistIds.isEmpty()) {
+                        Toast.makeText(getContext(), "No entrants on waitlist",
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     entrantList.clear();
-                    for (String userId : chosenIds) {
+                    for (String userId : waitlistIds) {
                         FirebaseFirestore.getInstance()
                                 .collection("users")
                                 .document(userId)
@@ -93,6 +116,58 @@ public class FragmentFinalEntrantList extends DialogFragment {
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Error loading event",
                                 Toast.LENGTH_SHORT).show());
+    }
+
+    private void exportAsCsv() {
+        if (entrantList.isEmpty()) {
+            Toast.makeText(getContext(), "No entrants to export", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StringBuilder csv = new StringBuilder();
+        csv.append("Name,Username,Email,Phone,Country,Address\n");
+        for (Entrant entrant : entrantList) {
+            String name     = entrant.getName()     != null ? entrant.getName()     : "";
+            String username = entrant.getUsername() != null ? entrant.getUsername() : "";
+            String email    = entrant.getEmail()    != null ? entrant.getEmail()    : "";
+            String phone    = entrant.getPhone()    != null ? entrant.getPhone()    : "";
+            String country  = entrant.getCountry()  != null ? entrant.getCountry()  : "";
+            String address  = entrant.getAddress()  != null ? entrant.getAddress()  : "";
+
+            csv.append("\"").append(name).append("\",")
+                    .append("\"").append(username).append("\",")
+                    .append("\"").append(email).append("\",")
+                    .append("\"").append(phone).append("\",")
+                    .append("\"").append(country).append("\",")
+                    .append("\"").append(address).append("\"\n");
+        }
+
+        try {
+            String fileName = "entrants_" + eventId + ".csv";
+            java.io.File file = new java.io.File(
+                    requireContext().getExternalFilesDir(null), fileName);
+
+            java.io.FileWriter writer = new java.io.FileWriter(file);
+            writer.write(csv.toString());
+            writer.flush();
+            writer.close();
+
+            android.net.Uri uri = androidx.core.content.FileProvider.getUriForFile(
+                    requireContext(),
+                    requireContext().getPackageName() + ".fileprovider",
+                    file);
+
+            android.content.Intent shareIntent = new android.content.Intent(
+                    android.content.Intent.ACTION_SEND);
+            shareIntent.setType("text/csv");
+            shareIntent.putExtra(android.content.Intent.EXTRA_STREAM, uri);
+            shareIntent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(android.content.Intent.createChooser(shareIntent, "Export CSV via..."));
+
+        } catch (java.io.IOException e) {
+            Toast.makeText(getContext(), "Failed to export: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
