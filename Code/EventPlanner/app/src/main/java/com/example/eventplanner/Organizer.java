@@ -26,7 +26,9 @@ public class Organizer extends User {
                     timestamp,
                     type
             );
-            logs.addNotificationLog(notification);
+            if (logs != null) {
+                logs.addNotificationLog(notification);
+            }
         }
     }
 }

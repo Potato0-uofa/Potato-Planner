@@ -41,6 +41,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_waitlist_title" />
 
+    <Button
+        android:id="@+id/btn_notify_all_waiting_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#C498D0"
+        android:text="Notify All Waiting List"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_waitlist_count" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_waitlist"
         android:layout_width="0dp"
@@ -50,7 +64,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_view_chosen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_waitlist_count" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_notify_all_waiting_list" />
 
     <Button
         android:id="@+id/btn_view_chosen"

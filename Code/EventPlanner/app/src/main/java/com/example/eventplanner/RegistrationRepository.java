@@ -5,8 +5,10 @@ import androidx.annotation.NonNull;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -137,17 +139,119 @@ public class RegistrationRepository {
     }
 
 
+    /**
+     * Updates the status of an event registration/invitation for a specific user.
+     */
+    public void updateInvitationStatus(@NonNull String eventId,
+                                       @NonNull String userId,
+                                       @NonNull String status,
+                                       @NonNull SimpleCallback cb) {
+        String docId = eventId + "_" + userId;
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("eventId", eventId);
+        payload.put("userId", userId);
+        payload.put("status", status);
+        payload.put("updatedAt", Timestamp.now());
+
+        db.collection(COLLECTION_REGISTRATIONS)
+                .document(docId)
+                .set(payload, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+
     public void inviteUserToEvent(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
         String docId = eventId + "_" + userId;
         Map<String, Object> payload = new HashMap<>();
         payload.put("eventId", eventId);
         payload.put("userId", userId);
         payload.put("status", "invited");
+        payload.put("lastNoticeType", "lottery_win");
+        payload.put("lastNoticeMessage", "You won the lottery and were invited to sign up.");
         payload.put("updatedAt", Timestamp.now());
 
         db.collection(COLLECTION_REGISTRATIONS)
                 .document(docId)
                 .set(payload, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    /** Invites a user to join a private event waiting list. */
+    public void inviteUserToPrivateWaitlist(@NonNull String eventId,
+                                            @NonNull String userId,
+                                            @NonNull SimpleCallback cb) {
+        String docId = eventId + "_" + userId;
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("eventId", eventId);
+        payload.put("userId", userId);
+        payload.put("status", "private_waitlist_invited");
+        payload.put("lastNoticeType", "private_waitlist_invite");
+        payload.put("lastNoticeMessage", "You were invited to join the waiting list for this private event.");
+        payload.put("updatedAt", Timestamp.now());
+
+        db.collection(COLLECTION_REGISTRATIONS)
+                .document(docId)
+                .set(payload, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    /** Invites a user to be a co-organizer for an event. */
+    public void inviteUserToCoOrganizer(@NonNull String eventId,
+                                        @NonNull String userId,
+                                        @NonNull SimpleCallback cb) {
+        String docId = eventId + "_" + userId;
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("eventId", eventId);
+        payload.put("userId", userId);
+        payload.put("status", "coorganizer_invited");
+        payload.put("lastNoticeType", "coorganizer_invite");
+        payload.put("lastNoticeMessage", "You were invited to be a co-organizer for this event.");
+        payload.put("updatedAt", Timestamp.now());
+
+        db.collection(COLLECTION_REGISTRATIONS)
+                .document(docId)
+                .set(payload, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    /**
+     * Sends the same in-app notice to a list of users while preserving their current status.
+     */
+    public void sendNoticeToUsers(@NonNull String eventId,
+                                  @NonNull List<String> userIds,
+                                  @NonNull String noticeType,
+                                  @NonNull String message,
+                                  @NonNull SimpleCallback cb) {
+        if (userIds.isEmpty()) {
+            cb.onSuccess();
+            return;
+        }
+
+        WriteBatch batch = db.batch();
+        Timestamp now = Timestamp.now();
+        for (String userId : userIds) {
+            if (userId == null || userId.trim().isEmpty()) continue;
+
+            String docId = eventId + "_" + userId;
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("eventId", eventId);
+            payload.put("userId", userId);
+            payload.put("lastNoticeType", noticeType);
+            payload.put("lastNoticeMessage", message);
+            payload.put("updatedAt", now);
+
+            batch.set(
+                    db.collection(COLLECTION_REGISTRATIONS).document(docId),
+                    payload,
+                    SetOptions.merge()
+            );
+        }
+
+        batch.commit()
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }

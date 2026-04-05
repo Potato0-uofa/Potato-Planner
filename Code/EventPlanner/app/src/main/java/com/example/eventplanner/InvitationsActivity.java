@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** Activity displaying pending invitations for the current user with event name and organizer. */
@@ -29,12 +30,21 @@ public class InvitationsActivity extends AppCompatActivity {
     private final List<InvitationItem> invitations = new ArrayList<>();
     private FirebaseFirestore db;
     private String userId;
+    private static final List<String> ACTIONABLE_STATUSES = Arrays.asList(
+            "invited",
+            "private_waitlist_invited",
+            "coorganizer_invited"
+    );
 
     /** Simple holder for one invitation row. */
     private static class InvitationItem {
         String eventId;
         String eventName;
         String organizerName;
+        String status;
+        String noticeType;
+        String noticeMessage;
+        boolean actionable;
     }
 
     @Override
@@ -59,7 +69,11 @@ public class InvitationsActivity extends AppCompatActivity {
                     TextView tvName = convertView.findViewById(R.id.tv_created_event_name);
                     TextView tvOrg = convertView.findViewById(R.id.tv_invitation_organizer);
                     tvName.setText(item.eventName);
-                    tvOrg.setText("From: " + item.organizerName);
+                    String statusLabel = item.status != null ? item.status.replace('_', ' ') : "notification";
+                    String subtext = item.noticeMessage != null && !item.noticeMessage.isEmpty()
+                            ? item.noticeMessage
+                            : ("From: " + item.organizerName + " (" + statusLabel + ")");
+                    tvOrg.setText(subtext);
                 }
                 return convertView;
             }
@@ -67,8 +81,13 @@ public class InvitationsActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
+            InvitationItem selected = invitations.get(position);
             Intent intent = new Intent(InvitationsActivity.this, NotificationLogs.class);
-            intent.putExtra("eventId", invitations.get(position).eventId);
+            intent.putExtra("eventId", selected.eventId);
+            intent.putExtra("status", selected.status);
+            intent.putExtra("noticeType", selected.noticeType);
+            intent.putExtra("noticeMessage", selected.noticeMessage);
+            intent.putExtra("actionable", selected.actionable);
             startActivity(intent);
         });
     }
@@ -82,7 +101,6 @@ public class InvitationsActivity extends AppCompatActivity {
     private void loadInvitations() {
         db.collection("registrations")
                 .whereEqualTo("userId", userId)
-                .whereEqualTo("status", "invited")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     invitations.clear();
@@ -93,12 +111,38 @@ public class InvitationsActivity extends AppCompatActivity {
                         return;
                     }
 
-                    int total = queryDocumentSnapshots.size();
+                    List<QueryDocumentSnapshot> relevantDocs = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        String status = doc.getString("status");
+                        String noticeMessage = doc.getString("lastNoticeMessage");
+                        boolean actionable = status != null && ACTIONABLE_STATUSES.contains(status);
+                        boolean hasNotice = noticeMessage != null && !noticeMessage.trim().isEmpty();
+                        if (actionable || hasNotice) {
+                            relevantDocs.add(doc);
+                        }
+                    }
+
+                    if (relevantDocs.isEmpty()) {
+                        Toast.makeText(this, "No invitations found", Toast.LENGTH_SHORT).show();
+                        adapter.notifyDataSetChanged();
+                        return;
+                    }
+
+                    int total = relevantDocs.size();
                     final int[] loaded = {0};
 
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    for (QueryDocumentSnapshot doc : relevantDocs) {
                         String eventId = doc.getString("eventId");
-                        if (eventId == null) continue;
+                        if (eventId == null || eventId.trim().isEmpty()) {
+                            loaded[0]++;
+                            if (loaded[0] >= total) adapter.notifyDataSetChanged();
+                            continue;
+                        }
+
+                        String status = doc.getString("status");
+                        String noticeType = doc.getString("lastNoticeType");
+                        String noticeMessage = doc.getString("lastNoticeMessage");
+                        boolean actionable = status != null && ACTIONABLE_STATUSES.contains(status);
 
                         db.collection("events").document(eventId).get()
                                 .addOnSuccessListener(eventDoc -> {
@@ -116,16 +160,24 @@ public class InvitationsActivity extends AppCompatActivity {
                                                     if (orgName == null || orgName.isEmpty()) {
                                                         orgName = "Unknown Organizer";
                                                     }
-                                                    addItem(eventId, finalEventName, orgName, loaded, total);
+                                                    addItem(eventId, finalEventName, orgName, status,
+                                                            noticeType, noticeMessage, actionable,
+                                                            loaded, total);
                                                 })
                                                 .addOnFailureListener(e2 ->
-                                                        addItem(eventId, finalEventName, "Unknown Organizer", loaded, total));
+                                                        addItem(eventId, finalEventName, "Unknown Organizer",
+                                                                status, noticeType, noticeMessage, actionable,
+                                                                loaded, total));
                                     } else {
-                                        addItem(eventId, finalEventName, "Unknown Organizer", loaded, total);
+                                        addItem(eventId, finalEventName, "Unknown Organizer",
+                                                status, noticeType, noticeMessage, actionable,
+                                                loaded, total);
                                     }
                                 })
                                 .addOnFailureListener(e ->
-                                        addItem(eventId, "Unknown Event", "Unknown Organizer", loaded, total));
+                                        addItem(eventId, "Unknown Event", "Unknown Organizer",
+                                                status, noticeType, noticeMessage, actionable,
+                                                loaded, total));
                     }
                 })
                 .addOnFailureListener(e ->
@@ -133,11 +185,16 @@ public class InvitationsActivity extends AppCompatActivity {
     }
 
     private void addItem(String eventId, String eventName, String organizerName,
+                         String status, String noticeType, String noticeMessage, boolean actionable,
                          int[] loaded, int total) {
         InvitationItem item = new InvitationItem();
         item.eventId = eventId;
         item.eventName = eventName;
         item.organizerName = organizerName;
+        item.status = status;
+        item.noticeType = noticeType;
+        item.noticeMessage = noticeMessage;
+        item.actionable = actionable;
         invitations.add(item);
         loaded[0]++;
         if (loaded[0] >= total) {

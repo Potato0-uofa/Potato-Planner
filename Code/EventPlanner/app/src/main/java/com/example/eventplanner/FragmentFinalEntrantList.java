@@ -1,9 +1,12 @@
 package com.example.eventplanner;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -50,9 +53,8 @@ public class FragmentFinalEntrantList extends DialogFragment {
         // Exit button
         view.findViewById(R.id.exit_button_entrant_list).setOnClickListener(v -> dismiss());
 
-        // Notification button
-        view.findViewById(R.id.notification_button_entrants).setOnClickListener(v ->
-                Toast.makeText(getContext(), "Notifications coming soon", Toast.LENGTH_SHORT).show());
+        // Notify all entrants currently on the waiting list.
+        view.findViewById(R.id.notification_button_entrants).setOnClickListener(v -> showNotifyWaitlistDialog());
 
         // View Pending button
         view.findViewById(R.id.view_pending_button).setOnClickListener(v -> {
@@ -86,7 +88,10 @@ public class FragmentFinalEntrantList extends DialogFragment {
                 .document(eventId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    List<String> waitlistIds = (List<String>) documentSnapshot.get("waitlist");
+                    List<String> waitlistIds = (List<String>) documentSnapshot.get("waitingList");
+                    if (waitlistIds == null || waitlistIds.isEmpty()) {
+                        waitlistIds = (List<String>) documentSnapshot.get("waitlist");
+                    }
                     if (waitlistIds == null || waitlistIds.isEmpty()) {
                         Toast.makeText(getContext(), "No entrants on waitlist",
                                 Toast.LENGTH_SHORT).show();
@@ -117,6 +122,75 @@ public class FragmentFinalEntrantList extends DialogFragment {
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Error loading event",
                                 Toast.LENGTH_SHORT).show());
+    }
+
+    private void showNotifyWaitlistDialog() {
+        if (getContext() == null) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Notify Waiting List");
+        final EditText input = new EditText(getContext());
+        input.setHint("Enter message for all waiting-list entrants");
+        builder.setView(input);
+        builder.setPositiveButton("Send", (dialog, which) -> {
+            String message = input.getText().toString().trim();
+            if (TextUtils.isEmpty(message)) {
+                Toast.makeText(getContext(), "Message cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            sendNoticeToWaitlist(message);
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
+
+    private void sendNoticeToWaitlist(String message) {
+        FirebaseFirestore.getInstance()
+                .collection("events")
+                .document(eventId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    List<String> waitingListIds = (List<String>) snapshot.get("waitingList");
+                    if (waitingListIds == null || waitingListIds.isEmpty()) {
+                        waitingListIds = (List<String>) snapshot.get("waitlist");
+                    }
+                    if (waitingListIds == null || waitingListIds.isEmpty()) {
+                        Toast.makeText(getContext(), "No entrants on waitlist", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    RegistrationRepository registrationRepository = new RegistrationRepository();
+                    registrationRepository.sendNoticeToUsers(
+                            eventId,
+                            waitingListIds,
+                            "waitlist_notice",
+                            message,
+                            new RegistrationRepository.SimpleCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(
+                                            getContext(),
+                                            "Notification sent to waiting list",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Toast.makeText(
+                                            getContext(),
+                                            "Failed to notify waiting list: " + e.getMessage(),
+                                            Toast.LENGTH_LONG
+                                    ).show();
+                                }
+                            }
+                    );
+                })
+                .addOnFailureListener(e -> Toast.makeText(
+                        getContext(),
+                        "Failed to load event",
+                        Toast.LENGTH_SHORT
+                ).show());
     }
 
     private void exportAsCsv() {
