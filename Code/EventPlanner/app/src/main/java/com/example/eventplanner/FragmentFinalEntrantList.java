@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Dialog showing the event waitlist with navigation to pending, selected, and cancelled entrant views. */
 public class FragmentFinalEntrantList extends DialogFragment {
 
     private final List<Entrant> entrantList = new ArrayList<>();

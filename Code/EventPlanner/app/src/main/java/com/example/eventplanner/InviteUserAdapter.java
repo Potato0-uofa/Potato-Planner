@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/** RecyclerView adapter displaying users with an invite button for organizer use. */
 public class InviteUserAdapter extends RecyclerView.Adapter<InviteUserAdapter.UserViewHolder> {
 
     public interface OnInviteClickListener {

@@ -3,6 +3,7 @@ package com.example.eventplanner;
 import com.google.firebase.Timestamp;
 
 
+/** Model storing an entrant's geographic coordinates for geolocation-required events. */
 public class EntrantLocation{
 
     private String deviceId;

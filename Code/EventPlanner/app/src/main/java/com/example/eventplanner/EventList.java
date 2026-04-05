@@ -2,6 +2,7 @@ package com.example.eventplanner;
 
 import java.util.List;
 
+/** Displays a list of events using a custom log-based layout. */
 public class EventList extends CustomLogs {
 
     private List<Events> events;

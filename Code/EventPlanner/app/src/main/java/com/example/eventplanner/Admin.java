@@ -2,6 +2,7 @@ package com.example.eventplanner;
 
 import java.util.ArrayList;
 
+/** Represents an admin user with elevated privileges for managing events, users, and content. */
 public class Admin extends User {
 
     public Admin() {} // Required for Firestore

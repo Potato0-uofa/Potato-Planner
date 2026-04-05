@@ -95,7 +95,7 @@ public class ProfileSetup extends AppCompatActivity {
 
         User user = new User(deviceId, name, email, phone);
 
-        if (email.equalsIgnoreCase("ibaldo@ualberta.ca")) { //WHERE TO SET USERS to admin. JUST USING MINE FOR NOW.
+        if (email.equalsIgnoreCase("ibaldo@ualberta.ca") || email.equalsIgnoreCase("reesemedele@gmail.com")) {
             user.setAdmin(true);
         }
 

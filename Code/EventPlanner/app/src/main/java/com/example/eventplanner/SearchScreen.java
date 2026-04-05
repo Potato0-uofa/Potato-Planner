@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
+/** Activity for scanning QR codes to quickly navigate to an event page. */
 public class SearchScreen extends AppCompatActivity {
 
     private final ActivityResultLauncher<ScanOptions> barcodeLauncher =
@@ -23,8 +24,10 @@ public class SearchScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_screen);
-        findViewById(R.id.new_event_button_search).setOnClickListener(v ->
-                startActivity(new Intent(SearchScreen.this, CreateEventActivity.class)));
+        findViewById(R.id.new_event_button_search).setOnClickListener(v -> {
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
+        });
 
         findViewById(R.id.qr_button_search).setOnClickListener(v -> {
 // Already on QR page

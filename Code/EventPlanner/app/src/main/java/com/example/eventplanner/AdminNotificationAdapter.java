@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/** RecyclerView adapter for displaying notification log entries in the admin view. */
 public class AdminNotificationAdapter extends RecyclerView.Adapter<AdminNotificationAdapter.LogViewHolder> {
 
     private final List<Notification> logList;

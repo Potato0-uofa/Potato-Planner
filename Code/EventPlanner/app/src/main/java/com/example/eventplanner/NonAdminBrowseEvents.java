@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/** Browse screen for non-admin users to discover and filter public events. */
 public class NonAdminBrowseEvents extends AppCompatActivity {
 
     private final EventRepository eventRepository = new EventRepository();

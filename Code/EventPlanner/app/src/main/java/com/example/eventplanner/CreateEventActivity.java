@@ -116,6 +116,10 @@ public class CreateEventActivity extends AppCompatActivity {
         eventImageView = findViewById(R.id.event_image_icon);
 
         findViewById(R.id.map_view_button).setOnClickListener(v -> {
+            if (existingEventId == null) {
+                Toast.makeText(this, "Please save the event first", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Intent intent = new Intent(CreateEventActivity.this, MapViewActivity.class);
             intent.putExtra("eventId", existingEventId);
             startActivity(intent);
@@ -191,6 +195,10 @@ public class CreateEventActivity extends AppCompatActivity {
         View viewWaitlistBtn = findViewById(viewWaitlistBtnId);
         if (viewWaitlistBtn != null) {
             viewWaitlistBtn.setOnClickListener(v -> {
+                if (existingEventId == null) {
+                    Toast.makeText(this, "Please save the event first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 FragmentFinalEntrantList fragment = FragmentFinalEntrantList.newInstance(existingEventId);
                 fragment.show(getSupportFragmentManager(), "FinalEntrantList");
             });
@@ -200,6 +208,10 @@ public class CreateEventActivity extends AppCompatActivity {
         View commentButton = findViewById(R.id.comment_button_entrant);
         if (commentButton != null) {
             commentButton.setOnClickListener(v -> {
+                if (existingEventId == null) {
+                    Toast.makeText(this, "Please save the event first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(CreateEventActivity.this, CommentsActivity.class);
                 intent.putExtra("eventId", existingEventId);
                 startActivity(intent);
@@ -253,58 +265,8 @@ public class CreateEventActivity extends AppCompatActivity {
                 return;
             }
 
-            // Show tag picker before saving
+            // Save the event (update existing or create new)
             proceedWithSave(name, details, description, closureDate, waitlistLimitStr, new ArrayList<>());
-
-            @SuppressLint("HardwareIds")
-            String organizerId = Settings.Secure.getString(
-                    getContentResolver(),
-                    Settings.Secure.ANDROID_ID
-            );
-
-            if (existingEventId != null) {
-                // Update the event already created by the setup fragment
-                eventRepository.fetchEventById(existingEventId, new EventRepository.EventCallback() {
-                    @Override
-                    public void onSuccess(Events event) {
-                        event.setName(name);
-                        event.setDetails(details);
-                        event.setDescription(description);
-                        event.setDate(closureDate);
-                        if (!waitlistLimitStr.isEmpty()) {
-                            event.setWaitlistLimit(Integer.parseInt(waitlistLimitStr));
-                        }
-                        if (selectedImageUri != null) {
-                            uploadImageAndUpdateEvent(event);
-                        } else {
-                            updateEventInFirestore(event);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        Toast.makeText(CreateEventActivity.this,
-                                "Failed to load event: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                // Fallback: create a brand new event (old flow)
-                Events event = new Events(name, closureDate, description, "");
-                event.setOrganizerId(organizerId);
-                event.setPrivate(isPrivate);
-
-                if (!waitlistLimitStr.isEmpty()) {
-                    int limit = Integer.parseInt(waitlistLimitStr);
-                    event.setWaitlistLimit(limit);
-                }
-
-                if (selectedImageUri != null) {
-                    uploadImageAndCreateEvent(event);
-                } else {
-                    createEventInFirestore(event);
-                }
-            }
         });
     }
 
