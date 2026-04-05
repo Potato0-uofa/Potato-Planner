@@ -13,6 +13,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Activity displaying the waitlist for a specific event with real-time updates. */
 public class WaitlistActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;

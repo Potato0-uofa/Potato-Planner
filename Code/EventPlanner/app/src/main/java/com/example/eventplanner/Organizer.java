@@ -2,6 +2,7 @@ package com.example.eventplanner;
 
 import java.util.ArrayList;
 
+/** Represents an organizer who can create and manage events. */
 public class Organizer extends User {
 
     public Organizer() {} // Required for Firestore

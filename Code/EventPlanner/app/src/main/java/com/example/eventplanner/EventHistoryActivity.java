@@ -67,8 +67,10 @@ public class EventHistoryActivity extends AppCompatActivity {
                 startActivity(new Intent(this, NonAdminBrowseEvents.class)));
         findViewById(R.id.profile_button_event_history).setOnClickListener(v ->
                 startActivity(new Intent(this, Profile.class)));
-        findViewById(R.id.new_event_button_event_history).setOnClickListener(v ->
-                startActivity(new Intent(this, CreateEventActivity.class)));
+        findViewById(R.id.new_event_button_event_history).setOnClickListener(v -> {
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
+        });
 
         loadHistory();
     }

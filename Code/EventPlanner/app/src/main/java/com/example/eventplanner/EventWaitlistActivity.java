@@ -15,6 +15,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Activity showing the waitlist for an event with join and leave functionality. */
 public class EventWaitlistActivity extends AppCompatActivity {
 
     private EventRepository eventRepository;

@@ -10,9 +10,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/** Activity allowing organizers to search for users and send event invitations. */
 public class InviteEntrantActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -45,7 +51,6 @@ public class InviteEntrantActivity extends AppCompatActivity {
 
         loadUsers();
 
-        // 🔥 SEARCH LISTENER (correct place)
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -79,60 +84,57 @@ public class InviteEntrantActivity extends AppCompatActivity {
     }
 
     private void inviteUser(User user) {
+        if (user == null || user.getDeviceId() == null || user.getDeviceId().trim().isEmpty()) {
+            Toast.makeText(InviteEntrantActivity.this,
+                    "User does not exist",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
+        if (eventId == null || eventId.trim().isEmpty()) {
+            Toast.makeText(InviteEntrantActivity.this,
+                    "Missing event ID",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        RegistrationRepository registrationRepository = new RegistrationRepository();
+        registrationRepository.inviteUserToEvent(eventId, user.getDeviceId(), new RegistrationRepository.SimpleCallback() {
             @Override
-            public void onSuccess(Events event) {
-
-                if (event.getWaitingList() == null) {
-                    event.setWaitingList(new WaitingList());
-                }
-
-                Entrant entrant = new Entrant(
-                        user.getDeviceId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getPhone()
-                );
-
-                event.getWaitingList().addEntrant(entrant);
-
-                eventRepository.updateEvent(event, new EventRepository.SimpleCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(InviteEntrantActivity.this,
-                                "User invited successfully",
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        Toast.makeText(InviteEntrantActivity.this,
-                                "Failed to invite user",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+            public void onSuccess() {
+                // Also add user to pendingEntrants array on the event doc
+                Map<String, Object> data = new HashMap<>();
+                data.put("pendingEntrants", FieldValue.arrayUnion(user.getDeviceId()));
+                FirebaseFirestore.getInstance()
+                        .collection("events")
+                        .document(eventId)
+                        .update(data)
+                        .addOnSuccessListener(unused ->
+                                Toast.makeText(InviteEntrantActivity.this,
+                                        "User invited successfully",
+                                        Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e ->
+                                Toast.makeText(InviteEntrantActivity.this,
+                                        "Invited but failed to update event",
+                                        Toast.LENGTH_SHORT).show());
             }
 
             @Override
             public void onFailure(Exception e) {
                 Toast.makeText(InviteEntrantActivity.this,
-                        "Failed to load event",
+                        "Failed to invite user",
                         Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void filterUsers(String query) {
-
         List<User> filteredList = new ArrayList<>();
 
         for (User user : userList) {
-
             if ((user.getName() != null && user.getName().toLowerCase().contains(query.toLowerCase())) ||
                     (user.getEmail() != null && user.getEmail().toLowerCase().contains(query.toLowerCase())) ||
                     (user.getPhone() != null && user.getPhone().toLowerCase().contains(query.toLowerCase()))) {
-
                 filteredList.add(user);
             }
         }

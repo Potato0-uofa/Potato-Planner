@@ -23,6 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Setup dialog for creating a public event with registration dates, capacity, and tags. */
 public class FragmentPublicEventSetup extends DialogFragment {
 
     private final EventRepository eventRepository = new EventRepository();

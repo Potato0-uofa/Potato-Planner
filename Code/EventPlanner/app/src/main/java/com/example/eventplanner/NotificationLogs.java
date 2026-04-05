@@ -3,35 +3,31 @@ package com.example.eventplanner;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
 /**
  * Notification screen controller for entrant invitation actions.
- * Current implementation wires decline action to Firestore registration status updates.
+ * Handles accept and decline flows with proper Firestore array updates.
  *
- * User story covered:
- * - US 01.05.03: Entrant declines invitation
+ * User stories covered:
+ * - US 01.05.02: Entrant accepts invitation
+ * - US 01.05.01 / US 01.05.03: Entrant declines invitation, replacement drawn
  */
 public class NotificationLogs extends AppCompatActivity {
 
-    /** Repository used to update registration records for invitation actions. */
     private RegistrationRepository registrationRepository;
+    private EventRepository eventRepository;
 
-    /**
-     * Initializes the notification action UI and binds the decline button handler.
-     * <p>
-     * This screen expects an {@code eventId} extra in the launching intent. If no event ID
-     * is provided, a fallback test value is used by the current implementation.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_notifications_content);
 
         registrationRepository = new RegistrationRepository();
+        eventRepository = new EventRepository();
 
         Button declineBtn = findViewById(R.id.decline_notification_button);
         Button acceptBtn = findViewById(R.id.accept_notification_button);
@@ -48,70 +44,111 @@ public class NotificationLogs extends AppCompatActivity {
                 Settings.Secure.ANDROID_ID
         );
 
-        String finalEventId = eventId;
+        // Load event name and description into the UI
+        eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
+            @Override
+            public void onSuccess(Events event) {
+                TextView nameView = findViewById(R.id.event_name);
+                TextView descView = findViewById(R.id.event_description);
+                if (nameView != null && event.getName() != null) {
+                    nameView.setText(event.getName());
+                }
+                if (descView != null && event.getDescription() != null) {
+                    descView.setText(event.getDescription());
+                }
+            }
 
-        acceptBtn.setOnClickListener(v -> {
-            registrationRepository.acceptInvitation(
-                    finalEventId,
-                    userId,
-                    new RegistrationRepository.SimpleCallback() {
-                        @Override
-                        public void onSuccess() {
-                            Toast.makeText(
-                                    NotificationLogs.this,
-                                    "Invitation accepted",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-                            acceptBtn.setEnabled(false);
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            Toast.makeText(
-                                    NotificationLogs.this,
-                                    "Accept failed: " + e.getMessage(),
-                                    Toast.LENGTH_LONG
-                            ).show();
-                        }
-                    }
-            );
+            @Override
+            public void onFailure(Exception e) { }
         });
 
-
-
-        declineBtn.setOnClickListener(v -> {
-
-            registrationRepository.declineInvitation(
-                    finalEventId,
-                    userId,
+        // US 01.05.02 - Accept invitation: update registration + move to chosenEntrants
+        acceptBtn.setOnClickListener(v -> {
+            registrationRepository.acceptInvitation(eventId, userId,
                     new RegistrationRepository.SimpleCallback() {
-                        /**
-                         * Displays a confirmation message after the invitation is declined.
-                         */
                         @Override
                         public void onSuccess() {
-                            Toast.makeText(
-                                    NotificationLogs.this,
-                                    "Invitation declined",
-                                    Toast.LENGTH_SHORT
-                            ).show();
+                            // Move from pendingEntrants to chosenEntrants on the event doc
+                            eventRepository.acceptEntrant(eventId, userId,
+                                    new EventRepository.SimpleCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Toast.makeText(NotificationLogs.this,
+                                                    "Invitation accepted! You are registered.",
+                                                    Toast.LENGTH_SHORT).show();
+                                            acceptBtn.setEnabled(false);
+                                            declineBtn.setEnabled(false);
+                                            finish();
+                                        }
+
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            Toast.makeText(NotificationLogs.this,
+                                                    "Accepted but failed to update event: " + e.getMessage(),
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    });
                         }
 
-                        /**
-                         * Displays an error message if declining the invitation fails.
-                         *
-                         * @param e exception describing the failure
-                         */
                         @Override
                         public void onFailure(Exception e) {
-                            Toast.makeText(
-                                    NotificationLogs.this,
-                                    "Decline failed: " + e.getMessage(),
-                                    Toast.LENGTH_LONG
-                            ).show();
+                            Toast.makeText(NotificationLogs.this,
+                                    "Accept failed: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
                         }
-                    }
-            );
+                    });
+        });
+
+        // US 01.05.01 / US 01.05.03 - Decline invitation:
+        // update registration + move to cancelledEntrants + auto-draw replacement
+        declineBtn.setOnClickListener(v -> {
+            registrationRepository.declineInvitation(eventId, userId,
+                    new RegistrationRepository.SimpleCallback() {
+                        @Override
+                        public void onSuccess() {
+                            // Move from pendingEntrants to cancelledEntrants
+                            eventRepository.cancelEntrant(eventId, userId,
+                                    new EventRepository.SimpleCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Toast.makeText(NotificationLogs.this,
+                                                    "Invitation declined",
+                                                    Toast.LENGTH_SHORT).show();
+                                            acceptBtn.setEnabled(false);
+                                            declineBtn.setEnabled(false);
+
+                                            // Auto-draw a replacement from the waitlist
+                                            eventRepository.drawFromWaitlist(eventId, 1,
+                                                    new EventRepository.SimpleCallback() {
+                                                        @Override
+                                                        public void onSuccess() {
+                                                            // Replacement drawn silently
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(Exception e) {
+                                                            // No one left on waitlist, that's OK
+                                                        }
+                                                    });
+                                            finish();
+                                        }
+
+                                        @Override
+                                        public void onFailure(Exception e) {
+                                            Toast.makeText(NotificationLogs.this,
+                                                    "Declined but failed to update event: " + e.getMessage(),
+                                                    Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(NotificationLogs.this,
+                                    "Decline failed: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
     }
 }

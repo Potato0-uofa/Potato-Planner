@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/** Activity for browsing and filtering events with search, sort, and tag filtering. */
 public class BrowseEventsActivity extends AppCompatActivity {
 
     private final List<Events> allEventsList = new ArrayList<>();

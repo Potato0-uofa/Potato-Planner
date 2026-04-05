@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 
+/** Main home screen with navigation bar and upcoming event notifications. */
 public class HomePage extends AppCompatActivity {
 
     private final UserRepository userRepository = new UserRepository();

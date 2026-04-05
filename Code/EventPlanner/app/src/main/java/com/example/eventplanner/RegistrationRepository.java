@@ -137,4 +137,37 @@ public class RegistrationRepository {
     }
 
 
+    public void inviteUserToEvent(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
+        String docId = eventId + "_" + userId;
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("eventId", eventId);
+        payload.put("userId", userId);
+        payload.put("status", "invited");
+        payload.put("updatedAt", Timestamp.now());
+
+        db.collection(COLLECTION_REGISTRATIONS)
+                .document(docId)
+                .set(payload, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    /**
+     * Marks a registration as cancelled by the organizer (entrant did not sign up).
+     */
+    public void cancelRegistration(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
+        String docId = eventId + "_" + userId;
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("eventId", eventId);
+        payload.put("userId", userId);
+        payload.put("status", "cancelled");
+        payload.put("updatedAt", Timestamp.now());
+
+        db.collection(COLLECTION_REGISTRATIONS)
+                .document(docId)
+                .set(payload, SetOptions.merge())
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
 }
