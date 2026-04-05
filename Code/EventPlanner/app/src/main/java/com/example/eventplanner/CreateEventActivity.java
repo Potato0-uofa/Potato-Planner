@@ -1,10 +1,12 @@
 package com.example.eventplanner;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -187,6 +189,8 @@ public class CreateEventActivity extends AppCompatActivity {
                 imagePickerLauncher.launch("image/*"));
 
         setupNavigation();
+        setupInviteActions();
+        setupDrawAction();
 
         int viewWaitlistBtnId = isPrivate
                 ? R.id.view_waitlist_button_private
@@ -268,6 +272,98 @@ public class CreateEventActivity extends AppCompatActivity {
             // Save the event (update existing or create new)
             proceedWithSave(name, details, description, closureDate, waitlistLimitStr, new ArrayList<>());
         });
+    }
+
+    private void setupInviteActions() {
+        View privateInviteBtn = findViewById(R.id.invite_entrant_private);
+        if (privateInviteBtn != null) {
+            privateInviteBtn.setOnClickListener(v -> openInviteScreen(InviteEntrantActivity.INVITE_TYPE_WAITLIST));
+        }
+
+        View coOrganizerPublicBtn = findViewById(R.id.co_organizer_button_public);
+        if (coOrganizerPublicBtn != null) {
+            coOrganizerPublicBtn.setOnClickListener(v -> openInviteScreen(InviteEntrantActivity.INVITE_TYPE_COORGANIZER));
+        }
+
+        View coOrganizerPrivateBtn = findViewById(R.id.co_organizer_button_private);
+        if (coOrganizerPrivateBtn != null) {
+            coOrganizerPrivateBtn.setOnClickListener(v -> openInviteScreen(InviteEntrantActivity.INVITE_TYPE_COORGANIZER));
+        }
+    }
+
+    private void openInviteScreen(String inviteType) {
+        if (existingEventId == null || existingEventId.trim().isEmpty()) {
+            Toast.makeText(this, "Save event details first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, InviteEntrantActivity.class);
+        intent.putExtra("eventId", existingEventId);
+        intent.putExtra(InviteEntrantActivity.EXTRA_INVITE_TYPE, inviteType);
+        startActivity(intent);
+    }
+
+    private void setupDrawAction() {
+        int drawBtnId = isPrivate ? R.id.draw_waitlist_button_private : R.id.draw_waitlist_button_public;
+        View drawButton = findViewById(drawBtnId);
+        if (drawButton == null) return;
+
+        drawButton.setOnClickListener(v -> {
+            if (existingEventId == null || existingEventId.trim().isEmpty()) {
+                Toast.makeText(this, "Please save the event first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            showDrawDialog();
+        });
+    }
+
+    private void showDrawDialog() {
+        final EditText input = new EditText(this);
+        input.setHint("How many entrants to draw?");
+        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Draw Random Entrants")
+                .setView(input)
+                .setPositiveButton("Draw", (dialog, which) -> {
+                    String value = input.getText().toString().trim();
+                    if (TextUtils.isEmpty(value)) {
+                        Toast.makeText(this, "Enter a number", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    int count;
+                    try {
+                        count = Integer.parseInt(value);
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, "Invalid number", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (count <= 0) {
+                        Toast.makeText(this, "Number must be greater than 0", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    eventRepository.drawFromWaitlist(existingEventId, count, new EventRepository.SimpleCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(CreateEventActivity.this,
+                                    "Random draw completed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(CreateEventActivity.this,
+                                    "Draw failed: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     /**
