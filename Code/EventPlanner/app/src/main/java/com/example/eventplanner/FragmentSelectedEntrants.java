@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -24,6 +25,13 @@ import java.util.Set;
 
 /** Dialog displaying all selected entrants (invited, accepted, or declined) for an event. */
 public class FragmentSelectedEntrants extends DialogFragment {
+
+    private static final List<String> SELECTED_STATUSES = java.util.Arrays.asList(
+            "invited",
+            "accepted",
+            "declined",
+            "cancelled"
+    );
 
     private final List<Entrant> entrantList = new ArrayList<>();
     private WaitlistAdapter adapter;
@@ -64,18 +72,18 @@ public class FragmentSelectedEntrants extends DialogFragment {
 
     private void loadSelectedEntrants() {
         FirebaseFirestore.getInstance()
-                .collection("events")
-                .document(eventId)
+                .collection("registrations")
+                .whereEqualTo("eventId", eventId)
+                .whereIn("status", SELECTED_STATUSES)
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
+                .addOnSuccessListener(querySnapshot -> {
                     Set<String> selectedIds = new LinkedHashSet<>();
-                    List<String> pendingIds = (List<String>) documentSnapshot.get("pendingEntrants");
-                    List<String> chosenIds = (List<String>) documentSnapshot.get("chosenEntrants");
-                    List<String> cancelledIds = (List<String>) documentSnapshot.get("cancelledEntrants");
-
-                    if (pendingIds != null) selectedIds.addAll(pendingIds);
-                    if (chosenIds != null) selectedIds.addAll(chosenIds);
-                    if (cancelledIds != null) selectedIds.addAll(cancelledIds);
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        String userId = doc.getString("userId");
+                        if (userId != null && !userId.trim().isEmpty()) {
+                            selectedIds.add(userId);
+                        }
+                    }
 
                     if (selectedIds.isEmpty()) {
                         Toast.makeText(getContext(), "No selected entrants found",
@@ -105,7 +113,7 @@ public class FragmentSelectedEntrants extends DialogFragment {
                     }
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Error loading event",
+                        Toast.makeText(getContext(), "Error loading selected entrants",
                                 Toast.LENGTH_SHORT).show());
     }
 
@@ -131,17 +139,18 @@ public class FragmentSelectedEntrants extends DialogFragment {
 
     private void sendNoticeToSelected(String message) {
         FirebaseFirestore.getInstance()
-                .collection("events")
-                .document(eventId)
+                .collection("registrations")
+                .whereEqualTo("eventId", eventId)
+                .whereIn("status", SELECTED_STATUSES)
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     Set<String> selectedIds = new LinkedHashSet<>();
-                    List<String> pendingIds = (List<String>) snapshot.get("pendingEntrants");
-                    List<String> chosenIds = (List<String>) snapshot.get("chosenEntrants");
-                    List<String> cancelledIds = (List<String>) snapshot.get("cancelledEntrants");
-                    if (pendingIds != null) selectedIds.addAll(pendingIds);
-                    if (chosenIds != null) selectedIds.addAll(chosenIds);
-                    if (cancelledIds != null) selectedIds.addAll(cancelledIds);
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        String userId = doc.getString("userId");
+                        if (userId != null && !userId.trim().isEmpty()) {
+                            selectedIds.add(userId);
+                        }
+                    }
 
                     if (selectedIds.isEmpty()) {
                         Toast.makeText(getContext(), "No selected entrants found", Toast.LENGTH_SHORT).show();
