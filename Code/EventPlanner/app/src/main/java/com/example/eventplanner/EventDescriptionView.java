@@ -237,6 +237,20 @@ public class EventDescriptionView extends AppCompatActivity {
                     detailsView.setText(event.getDetails());
                 }
 
+                Button inviteEntrantsButton = findViewById(R.id.invite_entrants_button);
+                if (inviteEntrantsButton != null) {
+                    if (deviceId.equals(event.getOrganizerId())) {
+                        inviteEntrantsButton.setVisibility(View.VISIBLE);
+                        inviteEntrantsButton.setOnClickListener(v -> {
+                            Intent intent = new Intent(EventDescriptionView.this, InviteEntrantActivity.class);
+                            intent.putExtra("eventId", eventId);
+                            startActivity(intent);
+                        });
+                    } else {
+                        inviteEntrantsButton.setVisibility(View.GONE);
+                    }
+                }
+
             }
 
             @Override

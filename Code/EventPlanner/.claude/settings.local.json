@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep:*)",
+      "Bash(grep -r \"waitlist\\\\|registration\\\\|invitation\\\\|invited\\\\|accepted\\\\|declined\" /c/cmput301/Potato-Planner/Code/EventPlanner/app/src/main/java/com/example/eventplanner/*.java)",
+      "Bash(grep -E \"\\\\.java$\")",
+      "Bash(./gradlew compileDebugJavaWithJavac)",
+      "Bash(sed -i 's/^public class EventList extends CustomLogs {/\\\\/** Displays a list of events using a custom log-based layout. *\\\\/\\\\npublic class EventList extends CustomLogs {/' EventList.java)",
+      "Bash(sed -i 's/^public class History extends CustomLogs{/\\\\/** Displays historical log entries using a custom log-based layout. *\\\\/\\\\npublic class History extends CustomLogs{/' History.java)",
+      "Bash(sed -i 's/^public class Admin extends User {/\\\\/** Represents an admin user with elevated privileges for managing events, users, and content. *\\\\/\\\\npublic class Admin extends User {/' Admin.java)",
+      "Bash(sed -i 's/^public class Notification {/\\\\/** Model representing a notification sent to a user about an event action. *\\\\/\\\\npublic class Notification {/' Notification.java)",
+      "Bash(sed -i 's/^public class Organizer extends User {/\\\\/** Represents an organizer who can create and manage events. *\\\\/\\\\npublic class Organizer extends User {/' Organizer.java)",
+      "Bash(sed -i 's/^public class WaitlistActivity extends AppCompatActivity {/\\\\/** Activity displaying the waitlist for a specific event with real-time updates. *\\\\/\\\\npublic class WaitlistActivity extends AppCompatActivity {/' WaitlistActivity.java)",
+      "Bash(sed -i 's/^public class WaitlistAdapter extends RecyclerView.Adapter<WaitlistAdapter.ViewHolder> {/\\\\/** RecyclerView adapter for displaying entrant names and emails in a waitlist. *\\\\/\\\\npublic class WaitlistAdapter extends RecyclerView.Adapter<WaitlistAdapter.ViewHolder> {/' WaitlistAdapter.java)",
+      "Bash(sed -i 's/^public class EntrantLocation{/\\\\/** Model storing an entrant'\\\\''s geographic coordinates for geolocation-required events. *\\\\/\\\\npublic class EntrantLocation{/' EntrantLocation.java)",
+      "Bash(sed -i 's/^public class EventTypeFragment extends DialogFragment {/\\\\/** Dialog fragment that lets the user choose between creating a public or private event. *\\\\/\\\\npublic class EventTypeFragment extends DialogFragment {/' EventTypeFragment.java)",
+      "Bash(sed -i 's/^public class MainActivity extends AppCompatActivity {/\\\\/** Entry point of the app. Checks if the user has a profile and routes to setup or home. *\\\\/\\\\npublic class MainActivity extends AppCompatActivity {/' MainActivity.java)",
+      "Bash(sed -i 's/^public class AdminNotificationAdapter/\\\\/** RecyclerView adapter for displaying notification log entries in the admin view. *\\\\/\\\\npublic class AdminNotificationAdapter/' AdminNotificationAdapter.java)",
+      "Bash(sed -i 's/^public class AdminNotificationLogsActivity/\\\\/** Admin screen that displays all notification logs across the system. *\\\\/\\\\npublic class AdminNotificationLogsActivity/' AdminNotificationLogsActivity.java)",
+      "Bash(sed -i 's/^public class BrowseEventsActivity/\\\\/** Activity for browsing and filtering events with search, sort, and tag filtering. *\\\\/\\\\npublic class BrowseEventsActivity/' BrowseEventsActivity.java)",
+      "Bash(sed -i 's/^public class FragmentPrivateEventSetup/\\\\/** Setup dialog for creating a private event with registration dates, capacity, and tags. *\\\\/\\\\npublic class FragmentPrivateEventSetup/' FragmentPrivateEventSetup.java)",
+      "Bash(sed -i 's/^public class FragmentPublicEventSetup/\\\\/** Setup dialog for creating a public event with registration dates, capacity, and tags. *\\\\/\\\\npublic class FragmentPublicEventSetup/' FragmentPublicEventSetup.java)",
+      "Bash(sed -i 's/^public class MapViewActivity/\\\\/** Activity displaying a Google Map with entrant location pins for an event. *\\\\/\\\\npublic class MapViewActivity/' MapViewActivity.java)",
+      "Bash(sed -i 's/^public class HomePage/\\\\/** Main home screen with navigation bar and upcoming event notifications. *\\\\/\\\\npublic class HomePage/' HomePage.java)",
+      "Bash(sed -i 's/^public class EventAdapter/\\\\/** RecyclerView adapter for event cards, routing to organizer or entrant views based on role. *\\\\/\\\\npublic class EventAdapter/' EventAdapter.java)",
+      "Bash(sed -i 's/^public class EventWaitlistActivity/\\\\/** Activity showing the waitlist for an event with join and leave functionality. *\\\\/\\\\npublic class EventWaitlistActivity/' EventWaitlistActivity.java)",
+      "Bash(sed -i 's/^public class FragmentFinalEntrantList/\\\\/** Dialog showing the event waitlist with navigation to pending, selected, and cancelled entrant views. *\\\\/\\\\npublic class FragmentFinalEntrantList/' FragmentFinalEntrantList.java)",
+      "Bash(sed -i 's/^public class InviteEntrantActivity/\\\\/** Activity allowing organizers to search for users and send event invitations. *\\\\/\\\\npublic class InviteEntrantActivity/' InviteEntrantActivity.java)",
+      "Bash(sed -i 's/^public class InvitationsActivity/\\\\/** Activity displaying pending invitations for the current user with event name and organizer. *\\\\/\\\\npublic class InvitationsActivity/' InvitationsActivity.java)",
+      "Bash(sed -i 's/^public class MyCreatedEventsActivity/\\\\/** Activity listing all events created by the current user with status and visibility info. *\\\\/\\\\npublic class MyCreatedEventsActivity/' MyCreatedEventsActivity.java)",
+      "Bash(sed -i 's/^public class NonAdminBrowseEvents/\\\\/** Browse screen for non-admin users to discover and filter public events. *\\\\/\\\\npublic class NonAdminBrowseEvents/' NonAdminBrowseEvents.java)",
+      "Bash(sed -i 's/^public class SearchScreen/\\\\/** Activity for scanning QR codes to quickly navigate to an event page. *\\\\/\\\\npublic class SearchScreen/' SearchScreen.java)"
+    ]
+  }
+}

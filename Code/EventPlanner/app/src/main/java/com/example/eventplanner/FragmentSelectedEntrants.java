@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Dialog displaying entrants who have accepted their invitation for an event. */
 public class FragmentSelectedEntrants extends DialogFragment {
 
     private final List<Entrant> entrantList = new ArrayList<>();

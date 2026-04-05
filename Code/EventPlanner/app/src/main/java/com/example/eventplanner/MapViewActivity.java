@@ -34,6 +34,7 @@ import java.util.List;
  *   intent.putExtra("eventId", eventId);
  *   startActivity(intent);
  */
+/** Activity displaying a Google Map with entrant location pins for an event. */
 public class MapViewActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private MapView mapView;

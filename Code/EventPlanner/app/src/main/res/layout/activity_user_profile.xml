@@ -4,30 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00B61919"
-    android:backgroundTint="#005B1B1B">
-
-    <ImageView
-        android:id="@+id/background"
-        android:layout_width="440dp"
-        android:layout_height="920dp"
-        android:background="@color/background"
-        app:layout_constraintBottom_toBottomOf="@+id/home_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="380dp"
-        android:layout_height="675dp"
-        app:layout_constraintBottom_toTopOf="@+id/home_bar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.548"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.746"
-        app:srcCompat="@drawable/input_background" />
+    android:background="@color/background">
 
     <ImageButton
         android:id="@+id/exit_button_event_page"
@@ -41,205 +18,261 @@
         app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
     <ImageView
-        android:id="@+id/event_image_background"
-        android:layout_width="162dp"
-        android:layout_height="162dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toTopOf="@+id/imageView7"
-        app:srcCompat="@drawable/button_purple" />
+        android:id="@+id/imageView8"
+        android:layout_width="174dp"
+        android:layout_height="49dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/scrollContainer"
+        app:layout_constraintVertical_bias="0.5"
+        app:srcCompat="@drawable/input_background" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User Profile"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView8"
+        app:layout_constraintEnd_toEndOf="@+id/imageView8"
+        app:layout_constraintStart_toStartOf="@+id/imageView8"
+        app:layout_constraintTop_toTopOf="@+id/imageView8" />
+
+    <Button
+        android:id="@+id/settings_button_profile"
+        android:layout_width="64dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/event_image_icon"
-        android:layout_width="159dp"
-        android:layout_height="159dp"
-        app:layout_constraintBottom_toBottomOf="@+id/event_image_background"
-        app:layout_constraintEnd_toEndOf="@+id/event_image_background"
-        app:layout_constraintStart_toStartOf="@+id/event_image_background"
-        app:layout_constraintTop_toTopOf="@+id/event_image_background"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
+        android:id="@+id/imageView11"
+        android:layout_width="52dp"
+        android:layout_height="56dp"
+        app:layout_constraintBottom_toBottomOf="@+id/settings_button_profile"
+        app:layout_constraintEnd_toEndOf="@+id/settings_button_profile"
+        app:layout_constraintStart_toStartOf="@+id/settings_button_profile"
+        app:layout_constraintTop_toTopOf="@+id/settings_button_profile"
+        app:srcCompat="@drawable/gearicon" />
 
-    <TextView
-        android:id="@+id/profile_name"
+    <ScrollView
+        android:id="@+id/scrollContainer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
-        android:text="Last Name / First Name"
-        android:textColor="#000000"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toEndOf="@+id/event_image_background"
-        app:layout_constraintTop_toTopOf="@+id/imageView7" />
-
-    <TextView
-        android:id="@+id/profile_username"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Username"
-        android:textColor="#666666"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/profile_name"
-        app:layout_constraintStart_toStartOf="@+id/profile_name"
-        app:layout_constraintTop_toBottomOf="@+id/profile_name" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="About Me"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/event_image_background" />
-
-    <TextView
-        android:id="@+id/profile_user_description"
-        android:layout_width="0dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:gravity="top|left"
-        android:text="Description"
-        android:textColor="#333333"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Contact Information"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/profile_user_description" />
-
-    <TextView
-        android:id="@+id/profile_email"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="Email: "
-        android:textColor="#333333"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-    <TextView
-        android:id="@+id/profile_phone"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="Phone: "
-        android:textColor="#333333"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/profile_email" />
-
-    <TextView
-        android:id="@+id/profile_address"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="Address: "
-        android:textColor="#333333"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/profile_phone" />
-
-    <TextView
-        android:id="@+id/profile_country"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="Country: "
-        android:textColor="#333333"
-        android:textSize="16sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/profile_address" />
-
-
-    <Button
-        android:id="@+id/admin_hub_button"
-        android:layout_width="349dp"
-        android:layout_height="48dp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="#C498D0"
-        android:text="Admin Hub"
-        android:textAllCaps="false"
-        android:textColor="#4C2162"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/my_created_events_button"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7" />
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:background="@drawable/input_background"
+        app:layout_constraintBottom_toTopOf="@+id/home_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings_button_profile">
 
-    <Button
-        android:id="@+id/my_created_events_button"
-        android:layout_width="349dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="#C498D0"
-        android:text="My Created Events"
-        android:textAllCaps="false"
-        android:textColor="#4C2162"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/join_event_button"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <Button
-        android:id="@+id/join_event_button"
-        android:layout_width="349dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="#C498D0"
-        android:text="View Event History"
-        android:textAllCaps="false"
-        android:textColor="#4C2162"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
-        app:layout_constraintEnd_toEndOf="@+id/imageView7"
-        app:layout_constraintStart_toStartOf="@+id/imageView7" />
+            <!-- Profile header: image + name -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
+                <FrameLayout
+                    android:layout_width="130dp"
+                    android:layout_height="130dp">
+
+                    <ImageView
+                        android:id="@+id/event_image_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/button_purple" />
+
+                    <ImageView
+                        android:id="@+id/event_image_icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/ic_launcher_foreground" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/profile_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Last Name / First Name"
+                        android:textColor="#000000"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/profile_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Username"
+                        android:textColor="#666666"
+                        android:textSize="15sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- About Me -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="About Me"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/profile_user_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="60dp"
+                android:gravity="top|start"
+                android:text="Description"
+                android:textColor="#333333"
+                android:textSize="16sp" />
+
+            <!-- Contact Information -->
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Contact Information"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/profile_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Email: "
+                android:textColor="#333333"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/profile_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Phone: "
+                android:textColor="#333333"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/profile_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Address: "
+                android:textColor="#333333"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/profile_country"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Country: "
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <!-- Spacer to push buttons to bottom when content is short -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Buttons -->
+            <Button
+                android:id="@+id/admin_hub_button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#C498D0"
+                android:text="Admin Hub"
+                android:textAllCaps="false"
+                android:textColor="#4C2162"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/my_created_events_button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="#C498D0"
+                android:text="My Created Events"
+                android:textAllCaps="false"
+                android:textColor="#4C2162"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/join_event_button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="#C498D0"
+                android:text="View Event History"
+                android:textAllCaps="false"
+                android:textColor="#4C2162"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom nav bar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/home_bar"
-        android:layout_width="415dp"
+        android:layout_width="0dp"
         android:layout_height="90dp"
         android:background="@color/home_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/new_event_button_profile"
+        android:layout_width="76dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/qr_button_profile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
     <ImageButton
         android:id="@+id/qr_button_profile"
@@ -285,28 +318,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/home_bar" />
 
-    <ImageButton
-        android:id="@+id/new_event_button_profile"
-        android:layout_width="76dp"
-        android:layout_height="75dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="2dp"
-        android:background="#00FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/qr_button_profile"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/home_bar" />
-
-    <ImageView
-        android:id="@+id/icon_home"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        app:layout_constraintBottom_toBottomOf="@+id/home_button_profile"
-        app:layout_constraintEnd_toEndOf="@+id/home_button_profile"
-        app:layout_constraintStart_toStartOf="@+id/home_button_profile"
-        app:layout_constraintTop_toTopOf="@+id/home_button_profile"
-        app:srcCompat="@drawable/homeicon" />
-
     <ImageView
         android:id="@+id/icon_new"
         android:layout_width="60dp"
@@ -328,14 +339,14 @@
         app:srcCompat="@drawable/qrcodebutton" />
 
     <ImageView
-        android:id="@+id/icon_profile"
+        android:id="@+id/icon_home"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        app:layout_constraintBottom_toBottomOf="@+id/profile_button_profile"
-        app:layout_constraintEnd_toEndOf="@+id/profile_button_profile"
-        app:layout_constraintStart_toStartOf="@+id/profile_button_profile"
-        app:layout_constraintTop_toTopOf="@+id/profile_button_profile"
-        app:srcCompat="@drawable/profileicon" />
+        app:layout_constraintBottom_toBottomOf="@+id/home_button_profile"
+        app:layout_constraintEnd_toEndOf="@+id/home_button_profile"
+        app:layout_constraintStart_toStartOf="@+id/home_button_profile"
+        app:layout_constraintTop_toTopOf="@+id/home_button_profile"
+        app:srcCompat="@drawable/homeicon" />
 
     <ImageView
         android:id="@+id/icon_browse"
@@ -348,48 +359,13 @@
         app:srcCompat="@drawable/browseicon" />
 
     <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="174dp"
-        android:layout_height="49dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.254"
-        app:srcCompat="@drawable/input_background" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="User Profile"
-        android:textAlignment="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView8"
-        app:layout_constraintEnd_toEndOf="@+id/imageView8"
-        app:layout_constraintStart_toStartOf="@+id/imageView8"
-        app:layout_constraintTop_toTopOf="@+id/imageView8" />
-
-    <Button
-        android:id="@+id/settings_button_profile"
-        android:layout_width="64dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView11"
-        android:layout_width="52dp"
-        android:layout_height="56dp"
-        app:layout_constraintBottom_toBottomOf="@+id/settings_button_profile"
-        app:layout_constraintEnd_toEndOf="@+id/settings_button_profile"
-        app:layout_constraintStart_toStartOf="@+id/settings_button_profile"
-        app:layout_constraintTop_toTopOf="@+id/settings_button_profile"
-        app:srcCompat="@drawable/gearicon" />
+        android:id="@+id/icon_profile"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_button_profile"
+        app:layout_constraintEnd_toEndOf="@+id/profile_button_profile"
+        app:layout_constraintStart_toStartOf="@+id/profile_button_profile"
+        app:layout_constraintTop_toTopOf="@+id/profile_button_profile"
+        app:srcCompat="@drawable/profileicon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

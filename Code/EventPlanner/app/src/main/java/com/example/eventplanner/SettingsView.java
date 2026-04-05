@@ -19,6 +19,7 @@ import androidx.appcompat.widget.SwitchCompat;
  * Loads the current user's data from Firestore and populates the fields.
  * Includes a master notification toggle.
  */
+/** Activity allowing the user to edit profile fields and toggle notification preferences. */
 public class SettingsView extends AppCompatActivity {
 
     private TextView tvName, tvEmail, tvPhone, tvCountry, tvAddress, tvUsername;

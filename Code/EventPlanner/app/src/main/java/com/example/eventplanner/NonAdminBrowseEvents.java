@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/** Browse screen for non-admin users to discover and filter public events. */
 public class NonAdminBrowseEvents extends AppCompatActivity {
 
     private final EventRepository eventRepository = new EventRepository();
@@ -39,7 +40,8 @@ public class NonAdminBrowseEvents extends AppCompatActivity {
 
         // Home bar navigation
         findViewById(R.id.new_event_button_browse).setOnClickListener(v -> {
-            startActivity(new Intent(NonAdminBrowseEvents.this, CreateEventActivity.class));
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
         });
 
         findViewById(R.id.qr_button_browse).setOnClickListener(v -> {

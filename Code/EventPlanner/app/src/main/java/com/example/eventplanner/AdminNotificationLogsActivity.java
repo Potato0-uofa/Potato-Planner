@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Admin screen that displays all notification logs across the system. */
 public class AdminNotificationLogsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;

@@ -13,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/** Entry point of the app. Checks if the user has a profile and routes to setup or home. */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";

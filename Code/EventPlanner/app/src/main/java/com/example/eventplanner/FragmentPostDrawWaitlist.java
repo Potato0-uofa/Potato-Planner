@@ -17,6 +17,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Shows cancelled/declined entrants and allows the organizer to redraw
+ * replacements from the waiting list.
+ *
+ * US 02.05.03: Organizer draws replacement applicant from the pooling system.
+ */
 public class FragmentPostDrawWaitlist extends DialogFragment {
 
     private final List<Entrant> entrantList = new ArrayList<>();
@@ -48,11 +54,27 @@ public class FragmentPostDrawWaitlist extends DialogFragment {
 
         view.findViewById(R.id.exit_button_canceled_waitlist).setOnClickListener(v -> dismiss());
 
-        // Redraw — placeholder for lottery system
-        view.findViewById(R.id.redraw_entrants_button).setOnClickListener(v ->
-                Toast.makeText(getContext(), "Redraw coming soon", Toast.LENGTH_SHORT).show());
+        // US 02.05.03 - Redraw: draw a replacement from the waitlist
+        view.findViewById(R.id.redraw_entrants_button).setOnClickListener(v -> {
+            EventRepository eventRepository = new EventRepository();
+            eventRepository.drawFromWaitlist(eventId, 1, new EventRepository.SimpleCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(getContext(),
+                            "Replacement entrant drawn from waitlist!",
+                            Toast.LENGTH_SHORT).show();
+                }
 
-        // Notification button — placeholder
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(getContext(),
+                            "Redraw failed: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        // Notification button placeholder
         view.findViewById(R.id.notification_button_canceled_waitlist).setOnClickListener(v ->
                 Toast.makeText(getContext(), "Notifications coming soon", Toast.LENGTH_SHORT).show());
 

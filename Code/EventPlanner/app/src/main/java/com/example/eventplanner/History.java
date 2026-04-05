@@ -2,6 +2,7 @@ package com.example.eventplanner;
 
 import java.util.List;
 
+/** Displays historical log entries using a custom log-based layout. */
 public class History extends CustomLogs{
     private List<Events> events;
 

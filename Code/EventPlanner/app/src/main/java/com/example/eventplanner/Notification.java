@@ -1,5 +1,6 @@
 package com.example.eventplanner;
 
+/** Model representing a notification sent to a user about an event action. */
 public class Notification {
     private String message;
     private String senderName;

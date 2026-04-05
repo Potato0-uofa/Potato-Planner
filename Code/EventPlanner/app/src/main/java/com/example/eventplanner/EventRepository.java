@@ -242,4 +242,104 @@ public class EventRepository {
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
+
+    /**
+     * Moves a user from pendingEntrants to chosenEntrants when they accept an invitation.
+     */
+    public void acceptEntrant(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("pendingEntrants", FieldValue.arrayRemove(userId));
+        data.put("chosenEntrants", FieldValue.arrayUnion(userId));
+        db.collection(COLLECTION_EVENTS).document(eventId)
+                .update(data)
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    /**
+     * Moves a user from pendingEntrants to cancelledEntrants when they decline or are cancelled.
+     */
+    public void cancelEntrant(@NonNull String eventId, @NonNull String userId, @NonNull SimpleCallback cb) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("pendingEntrants", FieldValue.arrayRemove(userId));
+        data.put("cancelledEntrants", FieldValue.arrayUnion(userId));
+        db.collection(COLLECTION_EVENTS).document(eventId)
+                .update(data)
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
+
+    /**
+     * Draws a specified number of random entrants from the waitingList,
+     * moves them to pendingEntrants, and creates "invited" registration records.
+     */
+    public void drawFromWaitlist(@NonNull String eventId, int count, @NonNull SimpleCallback cb) {
+        db.collection(COLLECTION_EVENTS).document(eventId).get()
+                .addOnSuccessListener(snapshot -> {
+                    if (!snapshot.exists()) {
+                        cb.onFailure(new Exception("Event not found"));
+                        return;
+                    }
+
+                    List<String> waitingList = (List<String>) snapshot.get("waitingList");
+                    if (waitingList == null || waitingList.isEmpty()) {
+                        cb.onFailure(new Exception("No entrants on the waiting list"));
+                        return;
+                    }
+
+                    // Shuffle and pick up to 'count' entrants
+                    java.util.Collections.shuffle(waitingList);
+                    int toDraw = Math.min(count, waitingList.size());
+                    List<String> drawn = new ArrayList<>(waitingList.subList(0, toDraw));
+
+                    // Update event arrays: remove from waitingList, add to pendingEntrants
+                    Map<String, Object> updates = new HashMap<>();
+                    for (String userId : drawn) {
+                        updates.put("waitingList", FieldValue.arrayRemove(userId));
+                    }
+                    // Firestore doesn't allow the same field in one update with multiple arrayRemove,
+                    // so we do it in a batch
+                    com.google.firebase.firestore.WriteBatch batch = db.batch();
+                    com.google.firebase.firestore.DocumentReference eventRef =
+                            db.collection(COLLECTION_EVENTS).document(eventId);
+
+                    for (String userId : drawn) {
+                        // Each user needs their own update since FieldValue operations
+                        // on the same field can't be batched in a single map.
+                        // We'll use a transaction instead.
+                    }
+
+                    db.runTransaction(transaction -> {
+                        DocumentSnapshot freshSnap = transaction.get(eventRef);
+                        List<String> currentWaitlist = (List<String>) freshSnap.get("waitingList");
+                        List<String> currentPending = (List<String>) freshSnap.get("pendingEntrants");
+                        if (currentWaitlist == null) currentWaitlist = new ArrayList<>();
+                        if (currentPending == null) currentPending = new ArrayList<>();
+
+                        for (String userId : drawn) {
+                            currentWaitlist.remove(userId);
+                            if (!currentPending.contains(userId)) {
+                                currentPending.add(userId);
+                            }
+                        }
+
+                        transaction.update(eventRef, "waitingList", currentWaitlist);
+                        transaction.update(eventRef, "pendingEntrants", currentPending);
+                        return null;
+                    }).addOnSuccessListener(unused -> {
+                        // Create "invited" registration records for each drawn user
+                        RegistrationRepository regRepo = new RegistrationRepository();
+                        for (String userId : drawn) {
+                            regRepo.inviteUserToEvent(eventId, userId, new RegistrationRepository.SimpleCallback() {
+                                @Override
+                                public void onSuccess() { }
+                                @Override
+                                public void onFailure(Exception e) { }
+                            });
+                        }
+                        cb.onSuccess();
+                    }).addOnFailureListener(cb::onFailure);
+                })
+                .addOnFailureListener(cb::onFailure);
+    }
 }

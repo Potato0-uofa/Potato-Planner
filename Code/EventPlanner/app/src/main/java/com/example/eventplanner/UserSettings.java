@@ -1,5 +1,6 @@
 package com.example.eventplanner;
 
+/** Model holding user preference settings such as notification toggles. */
 public class UserSettings {
     /** The user's name */
     private String name;

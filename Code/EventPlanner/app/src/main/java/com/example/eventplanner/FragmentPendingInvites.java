@@ -17,10 +17,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Shows entrants with pending invitations (status "invited", not yet accepted).
+ * Allows the organizer to cancel entrants who did not sign up.
+ *
+ * US 02.06.04: Organizer cancels entrants that did not sign up for the event.
+ */
 public class FragmentPendingInvites extends DialogFragment {
 
     private final List<Entrant> entrantList = new ArrayList<>();
-    private WaitlistAdapter adapter;
+    private PendingEntrantAdapter adapter;
     private String eventId;
 
     public static FragmentPendingInvites newInstance(String eventId) {
@@ -43,7 +49,52 @@ public class FragmentPendingInvites extends DialogFragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new WaitlistAdapter(entrantList);
+
+        // US 02.06.04 - Cancel entrants who did not sign up
+        adapter = new PendingEntrantAdapter(entrantList, (entrant, position) -> {
+            String userId = entrant.getDeviceId();
+            if (userId == null || userId.isEmpty()) {
+                Toast.makeText(getContext(), "Invalid entrant", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            EventRepository eventRepository = new EventRepository();
+            RegistrationRepository registrationRepository = new RegistrationRepository();
+
+            // Move from pendingEntrants to cancelledEntrants on the event
+            eventRepository.cancelEntrant(eventId, userId, new EventRepository.SimpleCallback() {
+                @Override
+                public void onSuccess() {
+                    // Update registration status to cancelled
+                    registrationRepository.cancelRegistration(eventId, userId,
+                            new RegistrationRepository.SimpleCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    entrantList.remove(entrant);
+                                    adapter.notifyDataSetChanged();
+                                    Toast.makeText(getContext(),
+                                            "Entrant cancelled",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Toast.makeText(getContext(),
+                                            "Cancelled from event but registration update failed",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Toast.makeText(getContext(),
+                            "Failed to cancel entrant: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
         recyclerView.setAdapter(adapter);
 
         view.findViewById(R.id.exit_button_pending_list).setOnClickListener(v -> dismiss());

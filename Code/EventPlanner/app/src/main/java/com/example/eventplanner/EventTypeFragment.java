@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/** Dialog fragment that lets the user choose between creating a public or private event. */
 public class EventTypeFragment extends DialogFragment {
 
     @Nullable

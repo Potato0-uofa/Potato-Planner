@@ -73,6 +73,7 @@
         <activity android:name=".AdminBrowseCommentsActivity" />
         <activity android:name=".FinalRegisteredEntrantsActivity" />
         <activity android:name=".InvitationsActivity" />
+        <activity android:name=".InviteEntrantActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
