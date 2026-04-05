@@ -1,12 +1,16 @@
 package com.example.eventplanner;
 
 public class Notification {
+    private String notificationId;
     private String message;
     private String senderName;
     private String receiverName;
     private String eventName;
     private String timestamp;
     private String type;
+    private String status;
+    private String eventId;
+    private String fromOrganizerId;
 
     public Notification() {}
 
@@ -19,6 +23,9 @@ public class Notification {
         this.timestamp = timestamp;
         this.type = type;
     }
+
+    public String getNotificationId() { return notificationId; }
+    public void setNotificationId(String notificationId) { this.notificationId = notificationId; }
 
     public String getMessage() {
         return message;
@@ -67,4 +74,10 @@ public class Notification {
     public void setType(String type) {
         this.type = type;
     }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getEventId() { return eventId; }
+    public void setEventId(String eventId) { this.eventId = eventId; }
 }
