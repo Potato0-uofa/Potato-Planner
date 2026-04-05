@@ -110,11 +110,21 @@ public class MapViewActivity extends AppCompatActivity implements OnMapReadyCall
 
                         try {
                             LatLngBounds bounds = boundsBuilder.build();
-                            googleMap.animateCamera(
-                                    CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                            mapView.post(() -> {
+                                try {
+                                    googleMap.animateCamera(
+                                            CameraUpdateFactory.newLatLngBounds(bounds, 150));
+                                } catch (Exception ex) {
+                                    if (!locations.isEmpty()) {
+                                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                                new LatLng(locations.get(0).getLat(),
+                                                        locations.get(0).getLng()), 12f));
+                                    }
+                                }
+                            });
                         } catch (Exception e) {
                             if (!locations.isEmpty()) {
-                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(locations.get(0).getLat(),
                                                 locations.get(0).getLng()), 12f));
                             }

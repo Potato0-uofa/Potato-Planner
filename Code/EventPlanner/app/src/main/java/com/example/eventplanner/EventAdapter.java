@@ -35,7 +35,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.tvStatus.setText(event.getStatus() != null ? event.getStatus() : "Open");
 
         holder.itemView.setOnClickListener(v -> {
-            // Get the current device ID
             String deviceId = android.provider.Settings.Secure.getString(
                     v.getContext().getContentResolver(),
                     android.provider.Settings.Secure.ANDROID_ID);

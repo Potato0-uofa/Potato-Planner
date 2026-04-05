@@ -497,7 +497,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     Toast.makeText(CreateEventActivity.this, "Private event created!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(CreateEventActivity.this, HomePage.class));
                     finish();
-                } else {
+                } else if (!isFinishing()){
                     showQrDialog(event.getEventId());
                 }
             }

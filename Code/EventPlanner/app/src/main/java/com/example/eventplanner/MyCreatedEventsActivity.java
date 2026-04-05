@@ -44,7 +44,7 @@ public class MyCreatedEventsActivity extends AppCompatActivity {
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
             Events selectedEvent = createdEvents.get(position);
-            Intent intent = new Intent(MyCreatedEventsActivity.this, EventDescriptionView.class);
+            Intent intent = new Intent(MyCreatedEventsActivity.this, CreateEventActivity.class);
             intent.putExtra("eventId", selectedEvent.getEventId());
             intent.putExtra("eventName", selectedEvent.getName());
             intent.putExtra("eventDescription", selectedEvent.getDescription());
@@ -55,8 +55,10 @@ public class MyCreatedEventsActivity extends AppCompatActivity {
         findViewById(R.id.exit_button_created_events).setOnClickListener(v -> finish());
 
         // Navigation bar
-        findViewById(R.id.new_event_button_created).setOnClickListener(v ->
-                startActivity(new Intent(this, CreateEventActivity.class)));
+        findViewById(R.id.new_event_button_created).setOnClickListener(v -> {
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
+        });
         findViewById(R.id.qr_button_created).setOnClickListener(v ->
                 startActivity(new Intent(this, SearchScreen.class)));
         findViewById(R.id.home_button_created).setOnClickListener(v ->
