@@ -24,14 +24,30 @@ public class  AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.E
         void onDeleteClicked(Events event, int position);
     }
 
+    /** List of events displayed by this adapter. */
     private final List<Events> events;
+
+    /** Callback listener for event moderation actions. */
     private final OnEventActionListener listener;
 
+    /**
+     * Constructs an adapter with the given event list and action listener.
+     *
+     * @param events   list of events to display
+     * @param listener callback for delete actions
+     */
     public AdminEventAdapter(List<Events> events, OnEventActionListener listener) {
         this.events = events;
         this.listener = listener;
     }
 
+    /**
+     * Inflates the event item layout and creates a new ViewHolder.
+     *
+     * @param parent   the parent ViewGroup
+     * @param viewType the view type of the new View
+     * @return a new EventViewHolder
+     */
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,6 +56,12 @@ public class  AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.E
         return new EventViewHolder(view);
     }
 
+    /**
+     * Binds event data to the ViewHolder at the given position.
+     *
+     * @param holder   the ViewHolder to bind data to
+     * @param position the position of the item in the adapter
+     */
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Events event = events.get(position);
@@ -56,15 +78,28 @@ public class  AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.E
         });
     }
 
+    /**
+     * Returns the total number of events in the list.
+     *
+     * @return the event count
+     */
     @Override
     public int getItemCount() {
         return events == null ? 0 : events.size();
     }
 
+    /** ViewHolder for an admin event row containing name, date, location, status, and a remove button. */
     static class EventViewHolder extends RecyclerView.ViewHolder {
+        /** TextViews displaying event name, date, location, and status. */
         TextView txtEventName, txtEventDate, txtEventLocation, txtEventStatus;
+        /** Button to remove the event. */
         Button btnRemoveEvent;
 
+        /**
+         * Constructs the ViewHolder and binds the views.
+         *
+         * @param itemView the inflated item layout
+         */
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             txtEventName = itemView.findViewById(R.id.txt_admin_event_name);
@@ -75,6 +110,13 @@ public class  AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.E
         }
     }
 
+    /**
+     * Returns the value if non-null and non-empty, otherwise returns the fallback.
+     *
+     * @param value    the string to check
+     * @param fallback the fallback string if value is empty
+     * @return the safe display text
+     */
     private String safeText(String value, String fallback) {
         return (value == null || value.trim().isEmpty()) ? fallback : value;
     }

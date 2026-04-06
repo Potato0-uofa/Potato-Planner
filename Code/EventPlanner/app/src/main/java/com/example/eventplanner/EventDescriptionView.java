@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -277,7 +279,10 @@ public class EventDescriptionView extends AppCompatActivity {
                 if (event.getImageUrl() != null && !event.getImageUrl().isEmpty()) {
                     ImageView eventImageView = findViewById(R.id.event_image_icon);
                     if (eventImageView != null) {
-                        eventImageView.setImageURI(android.net.Uri.parse(event.getImageUrl()));
+                        Glide.with(EventDescriptionView.this)
+                                .load(event.getImageUrl())
+                                .centerCrop()
+                                .into(eventImageView);
                     }
                 }
 

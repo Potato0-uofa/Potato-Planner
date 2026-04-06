@@ -14,12 +14,25 @@ import java.util.List;
 /** RecyclerView adapter for event cards, routing to organizer or entrant views based on role. */
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
+    /** List of events displayed by this adapter. */
     private final List<Events> events;
 
+    /**
+     * Constructs an adapter with the given event list.
+     *
+     * @param events list of events to display
+     */
     public EventAdapter(List<Events> events) {
         this.events = events;
     }
 
+    /**
+     * Inflates the event item layout and creates a new ViewHolder.
+     *
+     * @param parent   the parent ViewGroup
+     * @param viewType the view type of the new View
+     * @return a new EventViewHolder
+     */
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -28,6 +41,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return new EventViewHolder(view);
     }
 
+    /**
+     * Binds event data to the ViewHolder and sets up the click listener
+     * to route to the organizer or entrant view based on the user's role.
+     *
+     * @param holder   the ViewHolder to bind data to
+     * @param position the position of the item in the adapter
+     */
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Events event = events.get(position);
@@ -67,14 +87,26 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         });
     }
 
+    /**
+     * Returns the total number of events in the list.
+     *
+     * @return the event count
+     */
     @Override
     public int getItemCount() {
         return events.size();
     }
 
+    /** ViewHolder for an event card containing name, category, and status. */
     static class EventViewHolder extends RecyclerView.ViewHolder {
+        /** TextViews for event name, category, and status. */
         TextView tvName, tvCategory, tvStatus;
 
+        /**
+         * Constructs the ViewHolder and binds the views.
+         *
+         * @param itemView the inflated item layout
+         */
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_event_name);

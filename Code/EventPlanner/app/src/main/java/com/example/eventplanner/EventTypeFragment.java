@@ -12,6 +12,15 @@ import androidx.fragment.app.DialogFragment;
 /** Dialog fragment that lets the user choose between creating a public or private event. */
 public class EventTypeFragment extends DialogFragment {
 
+    /**
+     * Inflates the event type selection layout and sets up click listeners
+     * for the public and private event buttons.
+     *
+     * @param inflater           the LayoutInflater to inflate views
+     * @param container          the parent ViewGroup
+     * @param savedInstanceState previously saved fragment state, if any
+     * @return the inflated view for this fragment
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,

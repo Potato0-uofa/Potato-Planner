@@ -26,11 +26,24 @@ import java.util.Random;
 /** Browse screen for non-admin users to discover and filter public events. */
 public class NonAdminBrowseEvents extends AppCompatActivity {
 
+    /** Repository for event data operations. */
     private final EventRepository eventRepository = new EventRepository();
+
+    /** In-memory list of events displayed in the list view. */
     private final List<Events> eventList = new ArrayList<>();
+
+    /** ArrayAdapter binding events to the list view. */
     private ArrayAdapter<Events> adapter;
+
+    /** Firestore database instance. */
     private FirebaseFirestore db;
 
+    /**
+     * Initializes the activity, sets up the event list view, navigation bar,
+     * and filter button.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +121,9 @@ public class NonAdminBrowseEvents extends AppCompatActivity {
         loadEvents("All");
     }
 
+    /**
+     * Displays a filter dialog allowing the user to filter events by category.
+     */
     private void showFilterDialog() {
         String[] options = {"All", "Sport", "Music"};
         new MaterialAlertDialogBuilder(this)

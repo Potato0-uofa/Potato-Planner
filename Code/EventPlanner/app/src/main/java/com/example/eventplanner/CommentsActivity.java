@@ -33,17 +33,36 @@ import java.util.List;
  */
 public class CommentsActivity extends AppCompatActivity {
 
+    /** Repository for comment CRUD operations. */
     private CommentRepository commentRepository;
+
+    /** Real-time Firestore listener for the comments subcollection. */
     private ListenerRegistration commentsListener;
 
+    /** RecyclerView displaying the comment list. */
     private RecyclerView recyclerView;
+
+    /** Adapter binding comment data to the RecyclerView. */
     private CommentAdapter adapter;
+
+    /** In-memory list of comments currently displayed. */
     private final List<Comment> commentList = new ArrayList<>();
 
+    /** Input field for composing a new comment. */
     private EditText commentInput;
+
+    /** The Firestore event ID whose comments are being viewed. */
     private String eventId;
+
+    /** The current user's device ID, used for authorship checks. */
     private String deviceId;
 
+    /**
+     * Initializes the activity, sets up the comment list and input field,
+     * and starts listening for real-time comment updates.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @SuppressLint("HardwareIds")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,12 +164,19 @@ public class CommentsActivity extends AppCompatActivity {
         startListeningToComments();
     }
 
+    /**
+     * Removes the Firestore comments listener to avoid memory leaks.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (commentsListener != null) commentsListener.remove();
     }
 
+    /**
+     * Attaches a real-time listener to the comments subcollection and updates the UI
+     * whenever comments are added, modified, or removed.
+     */
     private void startListeningToComments() {
         commentsListener = commentRepository.listenToComments(eventId,
                 new CommentRepository.CommentsCallback() {
@@ -185,6 +211,7 @@ public class CommentsActivity extends AppCompatActivity {
         void onDelete(Comment comment);
     }
 
+    /** RecyclerView adapter for displaying comments with delete support for the author and organizer. */
     static class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
 
         private final List<Comment> comments;

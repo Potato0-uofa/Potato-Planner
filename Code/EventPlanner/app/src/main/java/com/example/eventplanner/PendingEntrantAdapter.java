@@ -17,18 +17,43 @@ import java.util.List;
  */
 public class PendingEntrantAdapter extends RecyclerView.Adapter<PendingEntrantAdapter.ViewHolder> {
 
+    /**
+     * Listener interface for cancel actions on pending entrants.
+     */
     public interface OnCancelClickListener {
+        /**
+         * Called when the organizer clicks cancel on a pending entrant.
+         *
+         * @param entrant  the entrant to cancel
+         * @param position the adapter position of the entrant
+         */
         void onCancelClicked(Entrant entrant, int position);
     }
 
+    /** List of pending entrants displayed by this adapter. */
     private final List<Entrant> entrants;
+
+    /** Callback listener for cancel actions. */
     private final OnCancelClickListener cancelListener;
 
+    /**
+     * Constructs an adapter with the given entrant list and cancel listener.
+     *
+     * @param entrants       list of pending entrants to display
+     * @param cancelListener callback for cancel actions
+     */
     public PendingEntrantAdapter(List<Entrant> entrants, OnCancelClickListener cancelListener) {
         this.entrants = entrants;
         this.cancelListener = cancelListener;
     }
 
+    /**
+     * Inflates the pending entrant item layout and creates a new ViewHolder.
+     *
+     * @param parent   the parent ViewGroup
+     * @param viewType the view type of the new View
+     * @return a new ViewHolder
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -37,6 +62,12 @@ public class PendingEntrantAdapter extends RecyclerView.Adapter<PendingEntrantAd
         return new ViewHolder(view);
     }
 
+    /**
+     * Binds entrant data to the ViewHolder at the given position.
+     *
+     * @param holder   the ViewHolder to bind data to
+     * @param position the position of the item in the adapter
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Entrant entrant = entrants.get(position);
@@ -58,16 +89,30 @@ public class PendingEntrantAdapter extends RecyclerView.Adapter<PendingEntrantAd
                 cancelListener.onCancelClicked(entrant, holder.getAdapterPosition()));
     }
 
+    /**
+     * Returns the total number of pending entrants.
+     *
+     * @return the entrant count
+     */
     @Override
     public int getItemCount() {
         return entrants.size();
     }
 
+    /** ViewHolder for a pending entrant row containing name, ID, and a cancel button. */
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        /** TextView displaying the entrant's name. */
         public final TextView tvName;
+        /** TextView displaying the entrant's email or ID. */
         public final TextView tvId;
+        /** Button to cancel the pending entrant. */
         public final Button btnCancel;
 
+        /**
+         * Constructs the ViewHolder and binds the views.
+         *
+         * @param view the inflated item layout
+         */
         public ViewHolder(View view) {
             super(view);
             tvName = view.findViewById(R.id.tv_entrant_name);

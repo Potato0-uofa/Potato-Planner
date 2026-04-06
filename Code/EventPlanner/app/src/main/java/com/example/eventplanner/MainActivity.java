@@ -16,9 +16,18 @@ import androidx.core.view.WindowInsetsCompat;
 /** Entry point of the app. Checks if the user has a profile and routes to setup or home. */
 public class MainActivity extends AppCompatActivity {
 
+    /** Log tag for this activity. */
     private static final String TAG = "MainActivity";
+
+    /** Repository for checking and creating user profiles. */
     private final UserRepository userRepository = new UserRepository();
 
+    /**
+     * Initializes the login screen and checks if the user already has a profile,
+     * redirecting to the home page if so.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Checks if a user profile exists for the current device ID. If a complete
+     * profile is found, redirects to the home page. Otherwise, creates a blank
+     * user record or stays on the login screen for incomplete profiles.
+     */
     private void bootstrapUser() {
         String deviceId = Settings.Secure.getString(
                 getContentResolver(),

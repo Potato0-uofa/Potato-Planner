@@ -26,14 +26,31 @@ import java.util.Map;
  */
 public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdapter.CarouselViewHolder> {
 
+    /** List of events displayed in the carousel. */
     private final List<Events> events;
+
+    /** Cache of organizer device IDs to display names to avoid repeated lookups. */
     private final Map<String, String> organizerNames = new HashMap<>();
+
+    /** Repository for fetching organizer profile data. */
     private final UserRepository userRepository = new UserRepository();
 
+    /**
+     * Constructs a carousel adapter with the given event list.
+     *
+     * @param events list of events to display in the carousel
+     */
     public EventCarouselAdapter(List<Events> events) {
         this.events = events;
     }
 
+    /**
+     * Inflates the carousel card layout and creates a new ViewHolder.
+     *
+     * @param parent   the parent ViewGroup
+     * @param viewType the view type of the new View
+     * @return a new CarouselViewHolder
+     */
     @NonNull
     @Override
     public CarouselViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,6 +59,13 @@ public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdap
         return new CarouselViewHolder(view);
     }
 
+    /**
+     * Binds event data to the carousel card at the given position, loading
+     * the event image and organizer name asynchronously.
+     *
+     * @param holder   the ViewHolder to bind data to
+     * @param position the position of the item in the adapter
+     */
     @Override
     public void onBindViewHolder(@NonNull CarouselViewHolder holder, int position) {
         Events event = events.get(position);
@@ -105,11 +129,17 @@ public class EventCarouselAdapter extends RecyclerView.Adapter<EventCarouselAdap
         });
     }
 
+    /**
+     * Returns the total number of events in the carousel.
+     *
+     * @return the event count
+     */
     @Override
     public int getItemCount() {
         return events.size();
     }
 
+    /** ViewHolder for a carousel event card. */
     static class CarouselViewHolder extends RecyclerView.ViewHolder {
         ImageView ivImage;
         TextView tvName, tvOrganizer, tvCategory, tvDate, tvLocation;

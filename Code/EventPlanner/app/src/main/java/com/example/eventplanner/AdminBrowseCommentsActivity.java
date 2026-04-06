@@ -28,13 +28,26 @@ import java.util.List;
  */
 public class AdminBrowseCommentsActivity extends AppCompatActivity {
 
+    /** RecyclerView used to display the flat list of comments from all events. */
     private RecyclerView recyclerView;
+
+    /** Adapter that binds comment data to the RecyclerView. */
     private AdminCommentAdapter adapter;
+
+    /** In-memory list of comment items from all events. */
     private final List<AdminCommentItem> commentItems = new ArrayList<>();
 
+    /** Firestore database instance for querying events and comments. */
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    /** Repository used to delete comments. */
     private final CommentRepository commentRepository = new CommentRepository();
 
+    /**
+     * Initializes the activity, sets up the RecyclerView, and loads all comments.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +142,13 @@ public class AdminBrowseCommentsActivity extends AppCompatActivity {
         final String eventName;
         final Comment comment;
 
+        /**
+         * Constructs an AdminCommentItem.
+         *
+         * @param eventId   the Firestore event ID
+         * @param eventName the display name of the event
+         * @param comment   the comment object
+         */
         AdminCommentItem(String eventId, String eventName, Comment comment) {
             this.eventId   = eventId;
             this.eventName = eventName != null ? eventName : eventId;
@@ -137,7 +157,16 @@ public class AdminBrowseCommentsActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Listener interface for admin comment deletion actions.
+     */
     interface OnAdminDeleteListener {
+        /**
+         * Called when the admin clicks delete on a comment.
+         *
+         * @param eventId   the event the comment belongs to
+         * @param commentId the comment to delete
+         */
         void onDelete(String eventId, String commentId);
     }
 

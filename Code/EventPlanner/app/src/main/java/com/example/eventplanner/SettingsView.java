@@ -17,17 +17,32 @@ import androidx.appcompat.widget.SwitchCompat;
 /**
  * Activity that displays and allows editing of the user's profile settings.
  * Loads the current user's data from Firestore and populates the fields.
- * Includes a master notification toggle.
+ * Includes a master notification toggle, profile editing, sign-out, and
+ * profile deletion.
  */
-/** Activity allowing the user to edit profile fields and toggle notification preferences. */
 public class SettingsView extends AppCompatActivity {
 
+    /** TextViews displaying each editable profile field. */
     private TextView tvName, tvEmail, tvPhone, tvCountry, tvAddress, tvUsername;
+
+    /** Master notification toggle switch. */
     private SwitchCompat switchNotifications;
+
+    /** Repository for user profile persistence in Firestore. */
     private final UserRepository userRepository = new UserRepository();
+
+    /** The currently loaded User object from Firestore. */
     private User currentUser;
+
+    /** Guard flag to prevent the switch listener from firing during programmatic UI updates. */
     private boolean isUpdatingUI = false;
 
+    /**
+     * Initializes the settings screen, binds views, loads the user profile,
+     * and sets up edit, delete, and sign-out button listeners.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,6 +173,9 @@ public class SettingsView extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loads the current user's profile from Firestore and populates all UI fields.
+     */
     private void loadUser() {
         String deviceId = Settings.Secure.getString(
                 getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -188,6 +206,11 @@ public class SettingsView extends AppCompatActivity {
         });
     }
 
+    /**
+     * Saves the current user profile to Firestore and runs the callback on success.
+     *
+     * @param onSuccess action to run after the save completes successfully
+     */
     private void saveUser(Runnable onSuccess) {
         userRepository.upsertUser(currentUser, new UserRepository.SimpleCallback() {
             @Override
@@ -203,6 +226,14 @@ public class SettingsView extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays a dialog that allows the user to edit a single profile field.
+     *
+     * @param fieldName    the display name of the field being edited
+     * @param currentValue the current value to pre-fill in the input
+     * @param inputType    the Android InputType for the edit field
+     * @param onConfirm    callback invoked with the new value when the user confirms
+     */
     private void showEditDialog(String fieldName, String currentValue, int inputType, OnConfirmListener onConfirm) {
         EditText input = new EditText(this);
         input.setInputType(inputType);
@@ -218,7 +249,13 @@ public class SettingsView extends AppCompatActivity {
                 .show();
     }
 
+    /** Callback interface for edit dialog confirmation. */
     interface OnConfirmListener {
+        /**
+         * Called when the user confirms the edit with a new value.
+         *
+         * @param value the new value entered by the user
+         */
         void onConfirm(String value);
     }
 }
