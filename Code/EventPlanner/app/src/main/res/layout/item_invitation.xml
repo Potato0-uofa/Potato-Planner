@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/settings_row_background"
+    android:layout_marginBottom="4dp">
 
     <TextView
         android:id="@+id/tv_created_event_name"
@@ -19,8 +21,10 @@
         android:id="@+id/tv_invitation_organizer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:textColor="#BBBBBB"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:maxLines="2"
+        android:ellipsize="end" />
 
 </LinearLayout>

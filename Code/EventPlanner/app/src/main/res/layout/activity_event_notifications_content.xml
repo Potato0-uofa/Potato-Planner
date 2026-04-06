@@ -74,6 +74,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/event_image_background" />
 
+    <!-- Co-organizer role info (hidden by default) -->
+    <TextView
+        android:id="@+id/co_organizer_role_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/co_organizer_badge_bg"
+        android:gravity="center"
+        android:text="As a co-organizer you can view the waitlist, manage comments, and help run this event."
+        android:textColor="#CCCCCC"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/invitation_message" />
+
     <Button
         android:id="@+id/accept_notification_button"
         android:layout_width="0dp"
@@ -89,7 +107,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/invitation_message" />
+        app:layout_constraintTop_toBottomOf="@+id/co_organizer_role_info" />
 
     <Button
         android:id="@+id/decline_notification_button"

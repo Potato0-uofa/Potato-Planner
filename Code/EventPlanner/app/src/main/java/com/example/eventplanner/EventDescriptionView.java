@@ -36,8 +36,10 @@ public class EventDescriptionView extends AppCompatActivity {
 
     private EventRepository eventRepository;
     private LocationRepository locationRepository;
+    private RegistrationRepository registrationRepository;
 
     private boolean isOrganizer = false;
+    private boolean isCoOrganizer = false;
     private WaitingList waitingList;
     private ListenerRegistration waitlistListener;
     private TextView tvWaitlistCount;
@@ -114,6 +116,7 @@ public class EventDescriptionView extends AppCompatActivity {
 
         eventRepository = new EventRepository();
         locationRepository = new LocationRepository();
+        registrationRepository = new RegistrationRepository();
         waitingList = new WaitingList();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -181,6 +184,15 @@ public class EventDescriptionView extends AppCompatActivity {
                                         "Left Waitlist!", Toast.LENGTH_SHORT).show();
                                 stopLocationTracking();
                                 updateButtonVisibility(false);
+
+                                registrationRepository.leaveEvent(eventId, deviceId,
+                                        new RegistrationRepository.SimpleCallback() {
+                                            @Override
+                                            public void onSuccess() { }
+
+                                            @Override
+                                            public void onFailure(Exception e) { }
+                                        });
                             }
 
                             @Override
@@ -211,14 +223,41 @@ public class EventDescriptionView extends AppCompatActivity {
             public void onSuccess(Events event) {
                 ((TextView) findViewById(R.id.event_name)).setText(event.getName());
 
-                if (deviceId.equals(event.getOrganizerId()) ||
-                        event.getCoOrganizerIds().contains(deviceId)) {
+                isCoOrganizer = event.getCoOrganizerIds() != null
+                        && event.getCoOrganizerIds().contains(deviceId);
+
+                if (deviceId.equals(event.getOrganizerId()) || isCoOrganizer) {
                     btnViewWaitlist.setVisibility(View.VISIBLE);
+                }
+
+                // Set role badge for all users
+                TextView roleBadge = findViewById(R.id.role_badge);
+                if (roleBadge != null) {
+                    roleBadge.setVisibility(View.VISIBLE);
+                    if (deviceId.equals(event.getOrganizerId())) {
+                        roleBadge.setText("Organizer");
+                        roleBadge.setBackgroundResource(R.drawable.role_badge_organizer);
+                        roleBadge.setTextColor(0xFFC498D0);
+                    } else if (isCoOrganizer) {
+                        roleBadge.setText("Co-Organizer");
+                        roleBadge.setBackgroundResource(R.drawable.role_badge_coorganizer);
+                        roleBadge.setTextColor(0xFFFFB74D);
+                    } else {
+                        roleBadge.setText("Attendee");
+                        roleBadge.setBackgroundResource(R.drawable.role_badge_entrant);
+                        roleBadge.setTextColor(0xFF64FFDA);
+                    }
                 }
 
                 // Hide join/leave buttons if current user is the organizer
                 if (deviceId.equals(event.getOrganizerId())) {
                     isOrganizer = true;
+                    btnJoinEvent.setVisibility(View.GONE);
+                    btnLeaveEvent.setVisibility(View.GONE);
+                }
+
+                // Co-organizers cannot join the entrant pool
+                if (isCoOrganizer && !deviceId.equals(event.getOrganizerId())) {
                     btnJoinEvent.setVisibility(View.GONE);
                     btnLeaveEvent.setVisibility(View.GONE);
                 }
@@ -276,9 +315,30 @@ public class EventDescriptionView extends AppCompatActivity {
                     if (deviceId.equals(event.getOrganizerId())) {
                         inviteEntrantsButton.setVisibility(View.VISIBLE);
                         inviteEntrantsButton.setOnClickListener(v -> {
-                            Intent intent = new Intent(EventDescriptionView.this, InviteEntrantActivity.class);
-                            intent.putExtra("eventId", eventId);
-                            startActivity(intent);
+                            String entrantOption = event.isPrivate()
+                                    ? "Invite to private waitlist"
+                                    : "Invite entrant";
+                            String[] options = new String[]{entrantOption, "Invite co-organizer"};
+
+                            new MaterialAlertDialogBuilder(EventDescriptionView.this)
+                                    .setTitle("Send Invitation")
+                                    .setItems(options, (dialog, which) -> {
+                                        Intent intent = new Intent(EventDescriptionView.this, InviteEntrantActivity.class);
+                                        intent.putExtra("eventId", eventId);
+                                        if (which == 1) {
+                                            intent.putExtra(
+                                                    InviteEntrantActivity.EXTRA_INVITE_TYPE,
+                                                    InviteEntrantActivity.INVITE_TYPE_COORGANIZER
+                                            );
+                                        } else {
+                                            intent.putExtra(
+                                                    InviteEntrantActivity.EXTRA_INVITE_TYPE,
+                                                    InviteEntrantActivity.INVITE_TYPE_WAITLIST
+                                            );
+                                        }
+                                        startActivity(intent);
+                                    })
+                                    .show();
                         });
                     } else {
                         inviteEntrantsButton.setVisibility(View.GONE);
@@ -416,12 +476,26 @@ public class EventDescriptionView extends AppCompatActivity {
     }
 
     private void joinWaitlistAndTrack() {
+        if (isCoOrganizer) {
+            Toast.makeText(this,
+                    "Co-organizers cannot join the entrant pool",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(EventDescriptionView.this,
                         "Joined Waitlist!", Toast.LENGTH_SHORT).show();
                 updateButtonVisibility(true);
+                registrationRepository.joinEvent(eventId, deviceId,
+                        new RegistrationRepository.SimpleCallback() {
+                            @Override
+                            public void onSuccess() { }
+
+                            @Override
+                            public void onFailure(Exception e) { }
+                        });
                 if (geolocationRequired) {
                     startLocationTracking();
                 }

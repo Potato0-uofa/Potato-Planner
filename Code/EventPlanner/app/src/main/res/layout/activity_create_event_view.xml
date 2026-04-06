@@ -186,6 +186,21 @@
         app:layout_constraintTop_toTopOf="@+id/waitlist_Count" />
 
     <Button
+        android:id="@+id/draw_waitlist_button_public"
+        android:layout_width="105dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#C498D0"
+        android:text="Draw Random"
+        android:textAllCaps="false"
+        android:textColor="#4C2162"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/view_waitlist_button_public"
+        app:layout_constraintStart_toStartOf="@+id/view_waitlist_button_public"
+        app:layout_constraintTop_toBottomOf="@+id/view_waitlist_button_public" />
+
+    <Button
         android:id="@+id/view_entrants_button_public"
         android:layout_width="350dp"
         android:layout_height="60dp"
