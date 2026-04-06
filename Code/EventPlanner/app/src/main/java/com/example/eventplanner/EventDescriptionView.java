@@ -403,6 +403,10 @@ public class EventDescriptionView extends AppCompatActivity {
         stopLocationTracking();
     }
 
+    /**
+     * Shows the lottery guidelines dialog.
+     *
+     */
     private void showLotteryGuidelines() {
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Lottery Guidelines")
@@ -414,6 +418,9 @@ public class EventDescriptionView extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Checks if the current user is on the waitlist.
+     */
     private void checkWaitlistStatus() {
         eventRepository.isOnWaitingList(eventId, deviceId, new EventRepository.WaitlistStatusCallback() {
             @Override
@@ -428,12 +435,20 @@ public class EventDescriptionView extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the visibility of the join/leave buttons based on the waitlist status.
+     *
+     * @param isOnWaitlist
+     */
     private void updateButtonVisibility(boolean isOnWaitlist) {
         if (isOrganizer) return;
         btnJoinEvent.setVisibility(isOnWaitlist ? View.GONE : View.VISIBLE);
         btnLeaveEvent.setVisibility(isOnWaitlist ? View.VISIBLE : View.GONE);
     }
 
+    /**
+     * Starts listening to the event's waitlist count.
+     */
     private void startListeningToWaitlist() {
         waitlistListener = eventRepository.listenToWaitlistCount(eventId, new EventRepository.CountCallback() {
             @Override
@@ -449,6 +464,11 @@ public class EventDescriptionView extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows a QR code for the event.
+     *
+     * @param eventId
+     */
     private void showQrDialog(String eventId) {
         try {
             com.google.zxing.qrcode.QRCodeWriter writer = new com.google.zxing.qrcode.QRCodeWriter();
@@ -476,6 +496,9 @@ public class EventDescriptionView extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets up the navigation buttons.
+     */
     private void setupNavigation() {
         View homeBtn = findViewById(R.id.home_button_event_page);
         if (homeBtn != null) homeBtn.setOnClickListener(v -> startActivity(new Intent(this, HomePage.class)));
@@ -490,6 +513,9 @@ public class EventDescriptionView extends AppCompatActivity {
         if (exitBtn != null) exitBtn.setOnClickListener(v -> finish());
     }
 
+    /**
+     * Handles the geolocation join button click.
+     */
     private void handleGeolocationJoin() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -507,6 +533,9 @@ public class EventDescriptionView extends AppCompatActivity {
         }
     }
 
+    /**
+     * Joins the event's waitlist and starts tracking location.
+     */
     private void joinWaitlistAndTrack() {
         if (isCoOrganizer) {
             Toast.makeText(this,
@@ -541,6 +570,9 @@ public class EventDescriptionView extends AppCompatActivity {
         });
     }
 
+    /**
+     * Builds the location callback.
+     */
     private void buildLocationCallback() {
         locationCallback = new LocationCallback() {
             @Override
@@ -560,6 +592,9 @@ public class EventDescriptionView extends AppCompatActivity {
         };
     }
 
+    /**
+     * Starts tracking location.
+     */
     @SuppressLint("MissingPermission")
     private void startLocationTracking() {
         if (isTrackingLocation) return;
@@ -575,6 +610,9 @@ public class EventDescriptionView extends AppCompatActivity {
         isTrackingLocation = true;
     }
 
+    /**
+     * Stops tracking location.
+     */
     private void stopLocationTracking() {
         if (!isTrackingLocation) return;
         fusedLocationClient.removeLocationUpdates(locationCallback);

@@ -88,6 +88,9 @@ public class EventWaitlistActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loads the entrants for the event from Firestore and updates the RecyclerView.
+     */
     private void loadEntrants() {
         eventRepository.fetchWaitlistEntrants(eventId, new EventRepository.EntrantsCallback() {
             @Override
@@ -104,6 +107,9 @@ public class EventWaitlistActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Shows a dialog for notifying all waiting list entrants.
+     */
     private void showNotifyAllDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Notify All Waiting List");

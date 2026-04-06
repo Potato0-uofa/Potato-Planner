@@ -13,66 +13,67 @@ public abstract class CustomLogs {
         this.items = new ArrayList<>();
     }
 
+    /**
+     * This adds an item to the list if the item does not exist
+     * @param item
+     *      This is a item that is to be added
+     */
     public void addItem(Object item) {
-        /**
-         * This adds an item to the list if the item does not exist
-         * @param item
-         *      This is a item that is to be added
-         */
         items.add(item);
     }
 
+    /**
+     * Checks to see if an item is within the list or not
+     * @param item
+     *      This is a item that is to be checked
+     */
     public boolean hasItem(Object item) {
-        /**
-         * Checks to see if an item is within the list or not
-         * @param item
-         *      This is a item that is to be checked
-         */
         return items.contains(item);
     }
 
+    /**
+     * This deletes an item if it exists within the list
+     * @param item
+     *      This is a item that is to be deleted
+     */
     public void deleteItem(Object item) {
-        /**
-         * This deletes an item if it exists within the list
-         * @param item
-         *      This is a item that is to be deleted
-         */
         items.remove(item);
     }
 
+    /**
+     * This checks the number of items in the list
+     * @return
+     *      returns an int value indicating the number of items in the list
+     */
     public int countItems() {
-        /**
-         * This checks the number of items in the list
-         * @return
-         *      returns an int value indicating the number of items in the list
-         */
         return items.size();
     }
 
+    /**
+     * Clears all the items in the custom log
+     */
     public void clearItems() {
-        /**
-         * Clears all the items in the custom log
-         */
         items.clear();
     }
 
+
+    /**
+     * Adds a notification to the custom log
+     * @param notification
+     *      notification to add
+     */
     public void addNotificationLog(Notification notification) {
-        /**
-         * Adds a notification to the custom log
-         * @param notification
-         *      notification to add
-         */
         if (notification != null) {
             items.add(notification);
         }
     }
 
+    /**
+     * Returns all notification objects stored in the custom log
+     * @return
+     *      list of notifications
+     */
     public ArrayList<Notification> getNotificationLogs() {
-        /**
-         * Returns all notification objects stored in the custom log
-         * @return
-         *      list of notifications
-         */
         ArrayList<Notification> notifications = new ArrayList<>();
         for (Object item : items) {
             if (item instanceof Notification) {
