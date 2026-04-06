@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +37,8 @@ public class InviteEntrantActivity extends AppCompatActivity {
     private String eventId;
     private String inviteType = INVITE_TYPE_WAITLIST;
     private boolean isPrivateEvent = false;
+    private String organizerId;
+    private List<String> coOrganizerIds = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,12 @@ public class InviteEntrantActivity extends AppCompatActivity {
             eventRepository.fetchEventById(eventId, new EventRepository.EventCallback() {
                 @Override
                 public void onSuccess(Events event) {
-                    isPrivateEvent = event != null && event.isPrivate();
+                    if (event != null) {
+                        isPrivateEvent = event.isPrivate();
+                        organizerId = event.getOrganizerId();
+                        coOrganizerIds = event.getCoOrganizerIds() != null
+                                ? event.getCoOrganizerIds() : new ArrayList<>();
+                    }
                 }
 
                 @Override
@@ -71,7 +79,16 @@ public class InviteEntrantActivity extends AppCompatActivity {
         }
 
         adapter = new InviteUserAdapter(userList, user -> inviteUser(user));
+        if (INVITE_TYPE_COORGANIZER.equals(inviteType)) {
+            adapter.setButtonLabel("Invite as Co-Organizer");
+        }
         recyclerView.setAdapter(adapter);
+
+        // Update screen title based on invite type
+        TextView titleView = findViewById(R.id.invite_title);
+        if (titleView != null && INVITE_TYPE_COORGANIZER.equals(inviteType)) {
+            titleView.setText("Invite Co-Organizer");
+        }
 
         loadUsers();
 
@@ -120,6 +137,20 @@ public class InviteEntrantActivity extends AppCompatActivity {
                     "Missing event ID",
                     Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        if (INVITE_TYPE_COORGANIZER.equals(inviteType)) {
+            String uid = user.getDeviceId();
+            if (uid.equals(organizerId)) {
+                Toast.makeText(this, "Cannot invite the organizer as a co-organizer",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (coOrganizerIds.contains(uid)) {
+                Toast.makeText(this, "This user is already a co-organizer",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
         RegistrationRepository registrationRepository = new RegistrationRepository();
@@ -188,6 +219,9 @@ public class InviteEntrantActivity extends AppCompatActivity {
         }
 
         adapter = new InviteUserAdapter(filteredList, user -> inviteUser(user));
+        if (INVITE_TYPE_COORGANIZER.equals(inviteType)) {
+            adapter.setButtonLabel("Invite as Co-Organizer");
+        }
         recyclerView.setAdapter(adapter);
     }
 }

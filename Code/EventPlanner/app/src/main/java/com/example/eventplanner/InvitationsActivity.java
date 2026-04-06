@@ -69,7 +69,7 @@ public class InvitationsActivity extends AppCompatActivity {
                     TextView tvName = convertView.findViewById(R.id.tv_created_event_name);
                     TextView tvOrg = convertView.findViewById(R.id.tv_invitation_organizer);
                     tvName.setText(item.eventName);
-                    String statusLabel = item.status != null ? item.status.replace('_', ' ') : "notification";
+                    String statusLabel = formatStatusLabel(item.status);
                     String subtext = item.noticeMessage != null && !item.noticeMessage.isEmpty()
                             ? item.noticeMessage
                             : ("From: " + item.organizerName + " (" + statusLabel + ")");
@@ -82,13 +82,22 @@ public class InvitationsActivity extends AppCompatActivity {
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
             InvitationItem selected = invitations.get(position);
-            Intent intent = new Intent(InvitationsActivity.this, NotificationLogs.class);
-            intent.putExtra("eventId", selected.eventId);
-            intent.putExtra("status", selected.status);
-            intent.putExtra("noticeType", selected.noticeType);
-            intent.putExtra("noticeMessage", selected.noticeMessage);
-            intent.putExtra("actionable", selected.actionable);
-            startActivity(intent);
+            if (selected.actionable) {
+                // Actionable invites go to the accept/decline screen
+                Intent intent = new Intent(InvitationsActivity.this, NotificationLogs.class);
+                intent.putExtra("eventId", selected.eventId);
+                intent.putExtra("status", selected.status);
+                intent.putExtra("noticeType", selected.noticeType);
+                intent.putExtra("noticeMessage", selected.noticeMessage);
+                intent.putExtra("actionable", true);
+                startActivity(intent);
+            } else {
+                // Non-actionable items navigate to the event detail view
+                Intent intent = new Intent(InvitationsActivity.this, EventDescriptionView.class);
+                intent.putExtra("eventId", selected.eventId);
+                intent.putExtra("eventName", selected.eventName);
+                startActivity(intent);
+            }
         });
     }
 
@@ -96,6 +105,25 @@ public class InvitationsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadInvitations();
+    }
+
+    private String formatStatusLabel(String status) {
+        if (status == null) return "Notification";
+        switch (status) {
+            case "invited":                  return "Lottery Winner";
+            case "private_waitlist_invited":  return "Private Event Invite";
+            case "coorganizer_invited":       return "Co-Organizer Invite";
+            case "coorganizer_accepted":      return "Co-Organizer Accepted";
+            case "coorganizer_declined":      return "Co-Organizer Declined";
+            case "accepted":                 return "Accepted";
+            case "declined":                 return "Declined";
+            case "waitlisted":               return "Waitlisted";
+            case "cancelled":                return "Cancelled";
+            default:
+                // Capitalize first letter, replace underscores with spaces
+                String label = status.replace('_', ' ');
+                return label.substring(0, 1).toUpperCase() + label.substring(1);
+        }
     }
 
     private void loadInvitations() {
