@@ -89,26 +89,53 @@ public class EventDescriptionView extends AppCompatActivity {
      * @param uri the URI of the image to upload
      */
     private void uploadEventImage(android.net.Uri uri) {
-        com.google.firebase.storage.StorageReference storageRef = com.google.firebase.storage.FirebaseStorage
-                .getInstance().getReference("event_images")
-                .child("event_" + eventId + "_" + System.currentTimeMillis() + ".jpg");
+        byte[] imageData;
+        try (java.io.InputStream inputStream = getContentResolver().openInputStream(uri)) {
+            if (inputStream == null) {
+                Toast.makeText(this, "Upload failed: could not read image", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+            byte[] chunk = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(chunk)) != -1) {
+                buffer.write(chunk, 0, bytesRead);
+            }
+            imageData = buffer.toByteArray();
+        } catch (Exception e) {
+            Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        storageRef.putFile(uri)
-                .addOnSuccessListener(taskSnapshot ->
-                        storageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                            // Update imageUrl in Firestore
-                            com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                                    .collection("events")
-                                    .document(eventId)
-                                    .update("imageUrl", downloadUri.toString())
-                                    .addOnSuccessListener(unused -> {
-                                        Toast.makeText(EventDescriptionView.this, "Photo updated!", Toast.LENGTH_SHORT).show();
-                                    })
-                                    .addOnFailureListener(e ->
-                                            Toast.makeText(this, "Failed to update photo", Toast.LENGTH_SHORT).show());
-                        }))
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        Runnable doUpload = () -> {
+            com.google.firebase.storage.StorageReference storageRef = com.google.firebase.storage.FirebaseStorage
+                    .getInstance("gs://potato-planner-2350c.appspot.com").getReference("event_images")
+                    .child("event_" + eventId + "_" + System.currentTimeMillis() + ".jpg");
+
+            storageRef.putBytes(imageData)
+                    .addOnSuccessListener(taskSnapshot ->
+                            storageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                        .collection("events")
+                                        .document(eventId)
+                                        .update("imageUrl", downloadUri.toString())
+                                        .addOnSuccessListener(unused ->
+                                                Toast.makeText(EventDescriptionView.this, "Photo updated!", Toast.LENGTH_SHORT).show())
+                                        .addOnFailureListener(e ->
+                                                Toast.makeText(this, "Failed to update photo", Toast.LENGTH_SHORT).show());
+                            }))
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        };
+
+        if (com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() != null) {
+            doUpload.run();
+        } else {
+            com.google.firebase.auth.FirebaseAuth.getInstance().signInAnonymously()
+                    .addOnSuccessListener(result -> doUpload.run())
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        }
     }
 
     @Override

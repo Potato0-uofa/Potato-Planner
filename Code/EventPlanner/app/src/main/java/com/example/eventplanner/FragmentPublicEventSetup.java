@@ -155,7 +155,8 @@ public class FragmentPublicEventSetup extends DialogFragment {
                     intent.putExtra("eventId", event.getEventId());
                     intent.putExtra("isPrivate", false);
                     if (selectedImageUri != null) {
-                        intent.putExtra("imageUri", selectedImageUri.toString());
+                        intent.setData(selectedImageUri);
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     }
                     startActivity(intent);
                 }
