@@ -12,10 +12,20 @@ import java.util.List;
 /** Admin screen that displays all notification logs across the system. */
 public class AdminNotificationLogsActivity extends AppCompatActivity {
 
+    /** RecyclerView for displaying notification log entries. */
     private RecyclerView recyclerView;
+
+    /** Adapter binding notification data to the RecyclerView. */
     private AdminNotificationAdapter adapter;
+
+    /** In-memory list of notification logs displayed on screen. */
     private List<Notification> logList = new ArrayList<>();
 
+    /**
+     * Initializes the activity, sets up the RecyclerView, and loads notification logs.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +40,9 @@ public class AdminNotificationLogsActivity extends AppCompatActivity {
         loadLogs();
     }
 
+    /**
+     * Loads all notification log entries from the custom log store and populates the list.
+     */
     private void loadLogs() {
 
         // 🔥 get all notifications

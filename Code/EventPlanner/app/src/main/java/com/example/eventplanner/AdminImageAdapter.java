@@ -18,18 +18,43 @@ import java.util.List;
  */
 public class AdminImageAdapter extends RecyclerView.Adapter<AdminImageAdapter.ImageViewHolder> {
 
+    /**
+     * Listener interface for image removal actions triggered by the admin.
+     */
     public interface OnImageActionListener {
+        /**
+         * Called when the admin clicks the remove button for an image.
+         *
+         * @param imageUrl the URL of the image to remove
+         * @param position the adapter position of the image
+         */
         void onRemoveImage(String imageUrl, int position);
     }
 
+    /** List of image URLs displayed by this adapter. */
     private final List<String> images;
+
+    /** Callback listener for image removal actions. */
     private final OnImageActionListener listener;
 
+    /**
+     * Constructs an adapter with the given image URL list and action listener.
+     *
+     * @param images   list of image URLs to display
+     * @param listener callback for removal actions
+     */
     public AdminImageAdapter(List<String> images, OnImageActionListener listener) {
         this.images = images;
         this.listener = listener;
     }
 
+    /**
+     * Inflates the image item layout and creates a new ViewHolder.
+     *
+     * @param parent   the parent ViewGroup
+     * @param viewType the view type of the new View
+     * @return a new ImageViewHolder
+     */
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -38,6 +63,12 @@ public class AdminImageAdapter extends RecyclerView.Adapter<AdminImageAdapter.Im
         return new ImageViewHolder(view);
     }
 
+    /**
+     * Binds image data to the ViewHolder at the given position using Glide.
+     *
+     * @param holder   the ViewHolder to bind data to
+     * @param position the position of the item in the adapter
+     */
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         String imageUrl = images.get(position);
@@ -54,15 +85,29 @@ public class AdminImageAdapter extends RecyclerView.Adapter<AdminImageAdapter.Im
         });
     }
 
+    /**
+     * Returns the total number of images in the list.
+     *
+     * @return the image count
+     */
     @Override
     public int getItemCount() {
         return images == null ? 0 : images.size();
     }
+
+    /** ViewHolder for an admin image row containing the image preview and a remove button. */
     static class ImageViewHolder extends RecyclerView.ViewHolder {
 
+        /** ImageView displaying the event image. */
         ImageView imgEvent;
+        /** Button to remove the image. */
         Button btnRemoveImage;
 
+        /**
+         * Constructs the ViewHolder and binds the views.
+         *
+         * @param itemView the inflated item layout
+         */
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
 

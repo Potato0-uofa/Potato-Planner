@@ -30,7 +30,9 @@
       "Bash(sed -i 's/^public class MyCreatedEventsActivity/\\\\/** Activity listing all events created by the current user with status and visibility info. *\\\\/\\\\npublic class MyCreatedEventsActivity/' MyCreatedEventsActivity.java)",
       "Bash(sed -i 's/^public class NonAdminBrowseEvents/\\\\/** Browse screen for non-admin users to discover and filter public events. *\\\\/\\\\npublic class NonAdminBrowseEvents/' NonAdminBrowseEvents.java)",
       "Bash(sed -i 's/^public class SearchScreen/\\\\/** Activity for scanning QR codes to quickly navigate to an event page. *\\\\/\\\\npublic class SearchScreen/' SearchScreen.java)",
-      "Bash(./gradlew assembleDebug)"
+      "Bash(./gradlew assembleDebug)",
+      "Bash(grep:*)",
+      "Bash(./gradlew connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.example.eventplanner.ClearAllEventsTest)"
     ]
   }
 }

@@ -16,14 +16,33 @@ import java.util.List;
 /** Activity displaying the waitlist for a specific event with real-time updates. */
 public class WaitlistActivity extends AppCompatActivity {
 
+    /** RecyclerView for displaying the waitlist entrants. */
     private RecyclerView recyclerView;
+
+    /** Adapter binding entrant data to the RecyclerView. */
     private WaitlistAdapter adapter;
+
+    /** In-memory list of entrants on the waitlist. */
     private List<Entrant> entrantList = new ArrayList<>();
+
+    /** Repository for event and waitlist operations. */
     private EventRepository eventRepository;
+
+    /** The Firestore event ID whose waitlist is being displayed. */
     private String eventId;
+
+    /** TextView showing the current waitlist count. */
     private TextView tvWaitlistCount;
+
+    /** Real-time Firestore listener for waitlist count changes. */
     private ListenerRegistration waitlistListener;
 
+    /**
+     * Initializes the activity, sets up the RecyclerView, and starts listening
+     * to waitlist updates.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +70,9 @@ public class WaitlistActivity extends AppCompatActivity {
         startListeningToCount();
     }
 
+    /**
+     * Loads all entrants currently on the waitlist from Firestore.
+     */
     private void loadWaitlist() {
         eventRepository.fetchWaitlistEntrants(eventId, new EventRepository.EntrantsCallback() {
             @Override
@@ -67,6 +89,9 @@ public class WaitlistActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Attaches a real-time listener to the waitlist count and updates the UI.
+     */
     private void startListeningToCount() {
         waitlistListener = eventRepository.listenToWaitlistCount(eventId, new EventRepository.CountCallback() {
             @Override
@@ -83,6 +108,7 @@ public class WaitlistActivity extends AppCompatActivity {
         });
     }
 
+    /** Removes the Firestore listener to avoid memory leaks. */
     @Override
     protected void onDestroy() {
         super.onDestroy();

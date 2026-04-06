@@ -12,15 +12,37 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+/**
+ * Activity displaying the user's profile settings with notification toggles
+ * and a delete-profile option. Loads user data from Firestore and syncs
+ * preference changes back.
+ */
 public class UserSettingsActivity extends AppCompatActivity {
 
+    /** Repository used to fetch and update user data in Firestore. */
     private UserRepository userRepository;
-    private String deviceId;
-    private TextView tvName, tvUsername, tvEmail, tvPhone, tvCountry, tvAddress;
-    private SwitchCompat switchNotifications;
-    private User currentUser;
-    private boolean isUpdatingUI = false; 
 
+    /** The current device's unique identifier used as the Firestore user key. */
+    private String deviceId;
+
+    /** TextViews displaying user profile fields. */
+    private TextView tvName, tvUsername, tvEmail, tvPhone, tvCountry, tvAddress;
+
+    /** Master notification toggle switch. */
+    private SwitchCompat switchNotifications;
+
+    /** The currently loaded User object from Firestore. */
+    private User currentUser;
+
+    /** Guard flag to prevent the switch listener from firing during programmatic UI updates. */
+    private boolean isUpdatingUI = false;
+
+    /**
+     * Initializes the activity, binds views, loads user data, and sets up
+     * the notification switch and delete-profile button.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +97,9 @@ public class UserSettingsActivity extends AppCompatActivity {
         findViewById(R.id.btn_close).setOnClickListener(v -> finish());
     }
 
+    /**
+     * Loads the current user's profile from Firestore and populates the UI fields.
+     */
     private void loadUserData() {
         userRepository.getUserByDeviceId(deviceId, new UserRepository.UserCallback() {
             @Override
@@ -103,6 +128,9 @@ public class UserSettingsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Syncs the current notification preference to Firestore when the toggle changes.
+     */
     private void syncPreferences() {
         if (currentUser == null || isUpdatingUI) return;
 

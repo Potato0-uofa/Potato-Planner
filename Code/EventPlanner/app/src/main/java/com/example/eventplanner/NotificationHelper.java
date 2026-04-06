@@ -14,13 +14,23 @@ import androidx.core.app.NotificationManagerCompat;
 /** Utility for showing heads-up system notifications for invitation events. */
 public final class NotificationHelper {
 
+    /** Channel ID for invitation heads-up notifications. */
     public static final String CHANNEL_ID_INVITATIONS = "invitation_heads_up";
+
+    /** Display name for the invitation notification channel. */
     private static final String CHANNEL_NAME_INVITATIONS = "Invitation Alerts";
 
+    /** Private constructor to prevent instantiation of this utility class. */
     private NotificationHelper() {
         // Utility class
     }
 
+    /**
+     * Creates the invitation notification channel if it does not already exist.
+     * No-op on API levels below Oreo.
+     *
+     * @param context the application context
+     */
     public static void ensureChannel(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
@@ -40,6 +50,16 @@ public final class NotificationHelper {
         manager.createNotificationChannel(channel);
     }
 
+    /**
+     * Displays a heads-up system notification with the given title and message.
+     * Requires POST_NOTIFICATIONS permission on Android 13+.
+     *
+     * @param context        the application context
+     * @param notificationId unique ID for this notification
+     * @param title          the notification title
+     * @param message        the notification body text
+     * @param tapIntent      the Intent to launch when the notification is tapped
+     */
     public static void showHeadsUp(Context context,
                                    int notificationId,
                                    String title,

@@ -28,22 +28,44 @@ import java.util.Locale;
 /** Activity for browsing and filtering events with search, sort, and tag filtering. */
 public class BrowseEventsActivity extends AppCompatActivity {
 
+    /** Master list of all events loaded from Firestore, used as the source for filtering. */
     private final List<Events> allEventsList = new ArrayList<>();
+
+    /** RecyclerView displaying the filtered event list. */
     private RecyclerView recyclerView;
+
+    /** Adapter binding event data to the RecyclerView. */
     private EventAdapter adapter;
+
+    /** Filtered list of events currently displayed. */
     private final List<Events> eventList = new ArrayList<>();
+
+    /** Firestore database instance. */
     private FirebaseFirestore db;
 
-    // Active filters
+    /** Currently active date filter, or null if none. */
     private String activeAvailabilityDate = null;
+
+    /** Minimum capacity filter, or -1 if not set. */
     private int activeMinCapacity = -1;
+
+    /** Currently active tag filters that events must match. */
     private final List<String> activeTagFilters = new ArrayList<>();
+
+    /** Current sort order: "none", "alpha", "date_asc", or "date_desc". */
     private String activeSortOrder = "none";
 
+    /** All available event tags for filtering. */
     private static final String[] ALL_TAGS = {
             "Entertainment", "Sports", "Cooking", "Outdoors", "Gaming", "Music", "Active", "Art"
     };
 
+    /**
+     * Initializes the activity, sets up the event list, search bar, filter button,
+     * and bottom navigation.
+     *
+     * @param savedInstanceState previously saved activity state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +108,9 @@ public class BrowseEventsActivity extends AppCompatActivity {
         loadAllEvents();
     }
 
+    /**
+     * Displays the filter dialog with date, capacity, tag, and sort options.
+     */
     private void showFilterDialog() {
         View dialogView = LayoutInflater.from(this)
                 .inflate(R.layout.dialog_filter_events, null);
@@ -206,6 +231,9 @@ public class BrowseEventsActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Loads all events from Firestore and triggers initial filter application.
+     */
     private void loadAllEvents() {
         db.collection("events")
                 .get()
@@ -222,6 +250,12 @@ public class BrowseEventsActivity extends AppCompatActivity {
                         Toast.makeText(this, "Error loading events", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Applies the active search query, date, capacity, tag, and sort filters
+     * to the master event list and updates the displayed list.
+     *
+     * @param query the search query string to match against event names
+     */
     private void applyFilters(String query) {
         String lowerQuery = query.toLowerCase().trim();
 
