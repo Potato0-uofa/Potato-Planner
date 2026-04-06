@@ -7,6 +7,7 @@ android {
     namespace = "com.example.eventplanner"
     compileSdk {
         version = release(36)
+
     }
 
     defaultConfig {
@@ -57,3 +58,29 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }
+
+afterEvaluate {
+    tasks.register<Javadoc>("generateJavadoc") {
+        doNotTrackState("Javadoc task is not cacheable")
+
+        source = android.sourceSets.getByName("main").java.srcDirs
+            .let { files(it) }.asFileTree
+
+        classpath = files(
+            android.bootClasspath,
+            project.configurations.getByName("releaseCompileClasspath").files
+        )
+
+        setDestinationDir(file("../Javadocs"))
+        isFailOnError = false
+
+        (options as StandardJavadocDocletOptions).apply {
+            encoding = "UTF-8"
+            charSet = "UTF-8"
+            addStringOption("Xdoclint:none", "-quiet")
+        }
+
+        dependsOn("compileReleaseJavaWithJavac")
+    }
+}
+
