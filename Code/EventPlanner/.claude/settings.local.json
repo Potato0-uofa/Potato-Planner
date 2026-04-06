@@ -32,7 +32,11 @@
       "Bash(sed -i 's/^public class SearchScreen/\\\\/** Activity for scanning QR codes to quickly navigate to an event page. *\\\\/\\\\npublic class SearchScreen/' SearchScreen.java)",
       "Bash(./gradlew assembleDebug)",
       "Bash(grep:*)",
-      "Bash(./gradlew connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.example.eventplanner.ClearAllEventsTest)"
+      "Bash(./gradlew connectedAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.example.eventplanner.ClearAllEventsTest)",
+      "Bash(find /c/cmput301/Potato-Planner/Code/EventPlanner/app/src/main/java -type f -name \"*.java\" -exec basename {} \\\\;)",
+      "Bash(./gradlew test:*)",
+      "Bash(./gradlew testDebugUnitTest)",
+      "Bash(./gradlew compileDebugAndroidTestJavaWithJavac)"
     ]
   }
 }
