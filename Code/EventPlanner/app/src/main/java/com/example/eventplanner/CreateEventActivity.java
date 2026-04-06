@@ -199,7 +199,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     Toast.makeText(this, "Please save the event first", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                FragmentFinalEntrantList fragment = FragmentPreDrawWaitlist.newInstance(existingEventId);
+                FragmentPreDrawWaitlist fragment = FragmentPreDrawWaitlist.newInstance(existingEventId);
                 fragment.show(getSupportFragmentManager(), "FinalEntrantList");
             });
         }
