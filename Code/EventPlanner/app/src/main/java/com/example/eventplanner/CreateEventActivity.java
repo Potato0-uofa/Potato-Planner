@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -44,7 +45,7 @@ public class CreateEventActivity extends AppCompatActivity {
      * Firebase Storage reference used to upload event images.
      */
     private final StorageReference storageReference =
-            FirebaseStorage.getInstance().getReference("event_images");
+            FirebaseStorage.getInstance("gs://potato-planner-2350c.appspot.com").getReference("event_images");
 
     /**
      * URI of the image selected by the organizer, if any.
@@ -100,9 +101,9 @@ public class CreateEventActivity extends AppCompatActivity {
         isPrivate = getIntent().getBooleanExtra("isPrivate", false);
 
         // Pick up image URI passed from setup fragment if any
-        String imageUriStr = getIntent().getStringExtra("imageUri");
-        if (imageUriStr != null) {
-            selectedImageUri = Uri.parse(imageUriStr);
+        Uri dataUri = getIntent().getData();
+        if (dataUri != null) {
+            selectedImageUri = dataUri;
             if (eventImageView != null) {
                 eventImageView.setImageURI(selectedImageUri);
             }
@@ -465,53 +466,68 @@ public class CreateEventActivity extends AppCompatActivity {
      * @param event the event being created
      */
     private void uploadImageAndCreateEvent(Events event) {
-        String fileName = "event_" + System.currentTimeMillis() + ".jpg";
-        StorageReference imageRef = storageReference.child(fileName);
-
-        imageRef.putFile(selectedImageUri)
-                .addOnSuccessListener(taskSnapshot ->
-                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            event.setImageUrl(uri.toString());
-                            createEventInFirestore(event);
-                        }).addOnFailureListener(e ->
-                                Toast.makeText(CreateEventActivity.this,
-                                        "Failed to get image URL: " + e.getMessage(),
-                                        Toast.LENGTH_LONG).show()
-                        )
-                )
-                .addOnFailureListener(e ->
-                        Toast.makeText(CreateEventActivity.this,
-                                "Image upload failed: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show()
-                );
+        byte[] imageData = readBytesFromUri(selectedImageUri);
+        if (imageData == null) {
+            Toast.makeText(this, "Image upload failed: could not read image", Toast.LENGTH_LONG).show();
+            return;
+        }
+        ensureAuthAndUpload(imageData, uri -> {
+            event.setImageUrl(uri.toString());
+            createEventInFirestore(event);
+        });
     }
 
-    /**
-     * Uploads the selected image to Firebase Storage, stores the download URL in the event,
-     * and then updates the existing event in Firestore.
-     *
-     * @param event the event being updated
-     */
     private void uploadImageAndUpdateEvent(Events event) {
-        String fileName = "event_" + System.currentTimeMillis() + ".jpg";
-        StorageReference imageRef = storageReference.child(fileName);
+        byte[] imageData = readBytesFromUri(selectedImageUri);
+        if (imageData == null) {
+            Toast.makeText(this, "Image upload failed: could not read image", Toast.LENGTH_LONG).show();
+            return;
+        }
+        ensureAuthAndUpload(imageData, uri -> {
+            event.setImageUrl(uri.toString());
+            updateEventInFirestore(event);
+        });
+    }
 
-        imageRef.putFile(selectedImageUri)
-                .addOnSuccessListener(taskSnapshot ->
-                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            event.setImageUrl(uri.toString());
-                            updateEventInFirestore(event);
-                        }).addOnFailureListener(e ->
-                                Toast.makeText(CreateEventActivity.this,
-                                        "Failed to get image URL: " + e.getMessage(),
-                                        Toast.LENGTH_LONG).show()
-                        )
-                )
-                .addOnFailureListener(e ->
-                        Toast.makeText(CreateEventActivity.this,
-                                "Image upload failed: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show()
-                );
+    private void ensureAuthAndUpload(byte[] imageData, com.google.android.gms.tasks.OnSuccessListener<Uri> onUrl) {
+        Runnable doUpload = () -> {
+            String fileName = "event_" + System.currentTimeMillis() + ".jpg";
+            StorageReference imageRef = storageReference.child(fileName);
+            imageRef.putBytes(imageData)
+                    .addOnSuccessListener(taskSnapshot ->
+                            imageRef.getDownloadUrl().addOnSuccessListener(onUrl)
+                                    .addOnFailureListener(e ->
+                                            Toast.makeText(this, "Failed to get image URL: " + e.getMessage(),
+                                                    Toast.LENGTH_LONG).show()))
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Image upload failed: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show());
+        };
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            doUpload.run();
+        } else {
+            FirebaseAuth.getInstance().signInAnonymously()
+                    .addOnSuccessListener(result -> doUpload.run())
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Image upload failed: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show());
+        }
+    }
+
+    private byte[] readBytesFromUri(Uri uri) {
+        try (java.io.InputStream inputStream = getContentResolver().openInputStream(uri)) {
+            if (inputStream == null) return null;
+            java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+            byte[] chunk = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(chunk)) != -1) {
+                buffer.write(chunk, 0, bytesRead);
+            }
+            return buffer.toByteArray();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**

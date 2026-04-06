@@ -95,7 +95,7 @@ public class ProfileSetup extends AppCompatActivity {
 
         User user = new User(deviceId, name, email, phone);
 
-        if (email.equalsIgnoreCase("ibaldo@ualberta.ca") || email.equalsIgnoreCase("reesemedele@gmail.com")) {
+        if (email.equalsIgnoreCase("ibaldo@ualberta.ca") || email.equalsIgnoreCase("reesemedele@gmail.com") || email.equalsIgnoreCase("eypan@gmail.com")) {
             user.setAdmin(true);
         }
 
