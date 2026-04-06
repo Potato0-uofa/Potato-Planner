@@ -40,7 +40,7 @@ public class User {
         // Note: notificationsEnabled remains true by default unless changed
     }
 
-    // Getters and Setters
+    // Getters and Setter
 
     public String getDeviceId() { return deviceId; }
     public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
