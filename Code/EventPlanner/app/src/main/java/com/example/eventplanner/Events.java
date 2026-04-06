@@ -66,7 +66,6 @@ public class Events {
     private String registrationEnd;
 
     /** Whether the event is private or not */
-    @com.google.firebase.firestore.PropertyName("private")
     private boolean isPrivate;
 
     /** Whether the event requires geolocation */
@@ -359,11 +358,9 @@ public class Events {
     }
 
     /** @return isPrivate whether the event is private or not */
-    @com.google.firebase.firestore.PropertyName("private")
     public boolean isPrivate() { return isPrivate; }
 
     /** @param isPrivate the private notation to assign to an event */
-    @com.google.firebase.firestore.PropertyName("private")
     public void setPrivate(boolean isPrivate) { this.isPrivate = isPrivate; }
 
     /** @return geolocationRequired whether the event needs geolocation */
