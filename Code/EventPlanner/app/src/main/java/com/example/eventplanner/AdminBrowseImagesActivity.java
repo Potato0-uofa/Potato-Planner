@@ -52,6 +52,10 @@ public class AdminBrowseImagesActivity extends AppCompatActivity {
         loadImages();
     }
 
+    /**
+     * Activity that allows administrators to browse uploaded images
+     * associated with events.
+     */
     private void loadImages() {
         db.collection("events")
                 .get()
@@ -77,6 +81,11 @@ public class AdminBrowseImagesActivity extends AppCompatActivity {
                         Toast.makeText(this, "Failed to load images: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Removes an image from the Firestore and Firebase Storage.
+     * @param imageUrl the URL of the image to remove
+     * @param position the position of the image in the list
+     */
     private void removeImage(String imageUrl, int position) {
         if (position < 0 || position >= eventIds.size()) return;
 
