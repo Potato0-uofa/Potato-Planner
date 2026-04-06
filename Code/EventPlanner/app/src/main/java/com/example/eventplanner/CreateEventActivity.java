@@ -64,7 +64,7 @@ public class CreateEventActivity extends AppCompatActivity {
      * Whether this event is private. Determines which layout to inflate and which
      * button IDs to use for navigation and event creation.
      */
-    private boolean isPrivate = false;
+    private boolean isPrivate;
 
     /**
      * Launcher used to pick an image from device storage.
@@ -199,7 +199,7 @@ public class CreateEventActivity extends AppCompatActivity {
                     Toast.makeText(this, "Please save the event first", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                FragmentFinalEntrantList fragment = FragmentFinalEntrantList.newInstance(existingEventId);
+                FragmentFinalEntrantList fragment = FragmentPreDrawWaitlist.newInstance(existingEventId);
                 fragment.show(getSupportFragmentManager(), "FinalEntrantList");
             });
         }
@@ -282,7 +282,8 @@ public class CreateEventActivity extends AppCompatActivity {
 
         if (isPrivate) {
             findViewById(R.id.new_event_button_create_page_private).setOnClickListener(v -> {
-                // Do nothing since already on new event page
+                    EventTypeFragment fragment = new EventTypeFragment();
+                    fragment.show(getSupportFragmentManager(), "NewEventFragment");
             });
             findViewById(R.id.home_button_create_page_private).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, HomePage.class)));
@@ -292,14 +293,15 @@ public class CreateEventActivity extends AppCompatActivity {
                     startActivity(new Intent(CreateEventActivity.this, Profile.class)));
         } else {
             findViewById(R.id.new_event_button_create_page).setOnClickListener(v -> {
-                // Do nothing since already on new event page
+                    EventTypeFragment fragment = new EventTypeFragment();
+                    fragment.show(getSupportFragmentManager(), "NewEventFragment");
             });
             findViewById(R.id.qr_button_create_page).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, SearchScreen.class)));
             findViewById(R.id.home_button_create_page).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, HomePage.class)));
             findViewById(R.id.browse_button_create_page).setOnClickListener(v ->
-                    startActivity(new Intent(CreateEventActivity.this, NonAdminBrowseEvents.class)));
+                    startActivity(new Intent(CreateEventActivity.this, BrowseEventsActivity.class)));
             findViewById(R.id.profile_button_create_page).setOnClickListener(v ->
                     startActivity(new Intent(CreateEventActivity.this, Profile.class)));
         }

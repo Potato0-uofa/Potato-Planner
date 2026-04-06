@@ -71,6 +71,29 @@ public class InvitationsActivity extends AppCompatActivity {
             intent.putExtra("eventId", invitations.get(position).eventId);
             startActivity(intent);
         });
+
+        findViewById(R.id.new_event_button_created).setOnClickListener(v -> {
+            EventTypeFragment fragment = new EventTypeFragment();
+            fragment.show(getSupportFragmentManager(), "NewEventFragment");
+        });
+
+        findViewById(R.id.qr_button_created).setOnClickListener(v -> {
+            startActivity(new Intent(InvitationsActivity.this, SearchScreen.class));
+        });
+
+        findViewById(R.id.home_button_created).setOnClickListener(v -> {
+            startActivity(new Intent(InvitationsActivity.this, HomePage.class));
+        });
+
+
+        findViewById(R.id.browse_button_created).setOnClickListener(v -> {
+            startActivity(new Intent(InvitationsActivity.this, BrowseEventsActivity.class));
+        });
+
+        findViewById(R.id.profile_button_created).setOnClickListener(v -> {
+            startActivity(new Intent(InvitationsActivity.this, Profile.class));
+        });
+
     }
 
     @Override
