@@ -20,6 +20,7 @@ public class InviteUserAdapter extends RecyclerView.Adapter<InviteUserAdapter.Us
 
     private final List<User> userList;
     private final OnInviteClickListener listener;
+    private String buttonLabel = "Invite";
 
     public InviteUserAdapter(List<User> userList, OnInviteClickListener listener) {
         this.userList = userList;
@@ -40,12 +41,17 @@ public class InviteUserAdapter extends RecyclerView.Adapter<InviteUserAdapter.Us
 
         holder.txtName.setText(user.getName());
         holder.txtEmail.setText(user.getEmail());
+        holder.btnInvite.setText(buttonLabel);
 
         holder.btnInvite.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onInviteClicked(user);
             }
         });
+    }
+
+    public void setButtonLabel(String label) {
+        this.buttonLabel = label;
     }
 
     @Override

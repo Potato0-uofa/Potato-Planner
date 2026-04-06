@@ -39,6 +39,7 @@ public class EventDescriptionView extends AppCompatActivity {
     private RegistrationRepository registrationRepository;
 
     private boolean isOrganizer = false;
+    private boolean isCoOrganizer = false;
     private WaitingList waitingList;
     private ListenerRegistration waitlistListener;
     private TextView tvWaitlistCount;
@@ -222,14 +223,41 @@ public class EventDescriptionView extends AppCompatActivity {
             public void onSuccess(Events event) {
                 ((TextView) findViewById(R.id.event_name)).setText(event.getName());
 
-                if (deviceId.equals(event.getOrganizerId()) ||
-                        event.getCoOrganizerIds().contains(deviceId)) {
+                isCoOrganizer = event.getCoOrganizerIds() != null
+                        && event.getCoOrganizerIds().contains(deviceId);
+
+                if (deviceId.equals(event.getOrganizerId()) || isCoOrganizer) {
                     btnViewWaitlist.setVisibility(View.VISIBLE);
+                }
+
+                // Set role badge for all users
+                TextView roleBadge = findViewById(R.id.role_badge);
+                if (roleBadge != null) {
+                    roleBadge.setVisibility(View.VISIBLE);
+                    if (deviceId.equals(event.getOrganizerId())) {
+                        roleBadge.setText("Organizer");
+                        roleBadge.setBackgroundResource(R.drawable.role_badge_organizer);
+                        roleBadge.setTextColor(0xFFC498D0);
+                    } else if (isCoOrganizer) {
+                        roleBadge.setText("Co-Organizer");
+                        roleBadge.setBackgroundResource(R.drawable.role_badge_coorganizer);
+                        roleBadge.setTextColor(0xFFFFB74D);
+                    } else {
+                        roleBadge.setText("Attendee");
+                        roleBadge.setBackgroundResource(R.drawable.role_badge_entrant);
+                        roleBadge.setTextColor(0xFF64FFDA);
+                    }
                 }
 
                 // Hide join/leave buttons if current user is the organizer
                 if (deviceId.equals(event.getOrganizerId())) {
                     isOrganizer = true;
+                    btnJoinEvent.setVisibility(View.GONE);
+                    btnLeaveEvent.setVisibility(View.GONE);
+                }
+
+                // Co-organizers cannot join the entrant pool
+                if (isCoOrganizer && !deviceId.equals(event.getOrganizerId())) {
                     btnJoinEvent.setVisibility(View.GONE);
                     btnLeaveEvent.setVisibility(View.GONE);
                 }
@@ -448,6 +476,12 @@ public class EventDescriptionView extends AppCompatActivity {
     }
 
     private void joinWaitlistAndTrack() {
+        if (isCoOrganizer) {
+            Toast.makeText(this,
+                    "Co-organizers cannot join the entrant pool",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         eventRepository.joinWaitingList(eventId, deviceId, new EventRepository.SimpleCallback() {
             @Override
             public void onSuccess() {

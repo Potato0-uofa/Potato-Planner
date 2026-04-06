@@ -2,6 +2,7 @@ package com.example.eventplanner;
 
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,10 @@ public class NotificationLogs extends AppCompatActivity {
         } else if (STATUS_COORGANIZER_INVITED.equals(status)) {
             acceptBtn.setText("Accept Co-organizer Invite");
             declineBtn.setText("Decline Co-organizer Invite");
+            TextView roleInfo = findViewById(R.id.co_organizer_role_info);
+            if (roleInfo != null) {
+                roleInfo.setVisibility(View.VISIBLE);
+            }
         } else {
             acceptBtn.setText("Accept Invitation");
             declineBtn.setText("Decline Invitation");
@@ -139,27 +144,30 @@ public class NotificationLogs extends AppCompatActivity {
                 eventRepository.addCoOrganizer(eventId, userId, new EventRepository.SimpleCallback() {
                     @Override
                     public void onSuccess() {
-                        registrationRepository.updateInvitationStatus(
-                                eventId,
-                                userId,
-                                "coorganizer_accepted",
-                                new RegistrationRepository.SimpleCallback() {
+                        // Remove user from entrant pool if they were on it
+                        eventRepository.removeEntrantCompletely(eventId, userId,
+                                new EventRepository.SimpleCallback() {
                                     @Override
-                                    public void onSuccess() {
-                                        Toast.makeText(NotificationLogs.this,
-                                                "You are now a co-organizer",
-                                                Toast.LENGTH_SHORT).show();
-                                        finish();
-                                    }
+                                    public void onSuccess() { }
 
                                     @Override
-                                    public void onFailure(Exception e) {
-                                        Toast.makeText(NotificationLogs.this,
-                                                "Accepted but failed to update invitation status",
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                        );
+                                    public void onFailure(Exception e) { }
+                                });
+
+                        // Remove the invitation from inbox
+                        registrationRepository.leaveEvent(eventId, userId,
+                                new RegistrationRepository.SimpleCallback() {
+                                    @Override
+                                    public void onSuccess() { }
+
+                                    @Override
+                                    public void onFailure(Exception e) { }
+                                });
+
+                        Toast.makeText(NotificationLogs.this,
+                                "You are now a co-organizer!",
+                                Toast.LENGTH_SHORT).show();
+                        finish();
                     }
 
                     @Override
@@ -242,10 +250,8 @@ public class NotificationLogs extends AppCompatActivity {
             }
 
             if (STATUS_COORGANIZER_INVITED.equals(status)) {
-                registrationRepository.updateInvitationStatus(
-                        eventId,
-                        userId,
-                        "coorganizer_declined",
+                // Remove the invitation from inbox
+                registrationRepository.leaveEvent(eventId, userId,
                         new RegistrationRepository.SimpleCallback() {
                             @Override
                             public void onSuccess() {

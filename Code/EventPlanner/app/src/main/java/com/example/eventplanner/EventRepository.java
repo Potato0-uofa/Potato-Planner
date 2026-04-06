@@ -342,4 +342,23 @@ public class EventRepository {
                 })
                 .addOnFailureListener(cb::onFailure);
     }
+
+    /**
+     * Removes a user from all entrant arrays (waitingList, pendingEntrants,
+     * chosenEntrants, cancelledEntrants). Used when a user becomes a co-organizer
+     * to ensure they are no longer in the entrant pool.
+     */
+    public void removeEntrantCompletely(@NonNull String eventId,
+                                        @NonNull String userId,
+                                        @NonNull SimpleCallback cb) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("waitingList", FieldValue.arrayRemove(userId));
+        data.put("pendingEntrants", FieldValue.arrayRemove(userId));
+        data.put("chosenEntrants", FieldValue.arrayRemove(userId));
+        data.put("cancelledEntrants", FieldValue.arrayRemove(userId));
+        db.collection(COLLECTION_EVENTS).document(eventId)
+                .update(data)
+                .addOnSuccessListener(unused -> cb.onSuccess())
+                .addOnFailureListener(cb::onFailure);
+    }
 }
