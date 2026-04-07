@@ -1,9 +1,11 @@
 package com.example.eventplanner;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -56,12 +58,76 @@ public class FragmentPreDrawWaitlist extends DialogFragment {
         view.findViewById(R.id.exit_button_waitlist).setOnClickListener(v -> dismiss());
 
         view.findViewById(R.id.notification_button_waitlist).setOnClickListener(v ->
-                Toast.makeText(getContext(), "Notifications coming soon",
-                        Toast.LENGTH_SHORT).show());
+                showNotifyWaitlistDialog());
 
         loadWaitlistedEntrants();
 
         return view;
+    }
+
+    private void showNotifyWaitlistDialog() {
+        if (getContext() == null) return;
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+        builder.setTitle("Notify Waiting List");
+        final EditText input = new EditText(getContext());
+        input.setHint("Enter message for all waiting-list entrants");
+        builder.setView(input);
+        builder.setPositiveButton("Send", (dialog, which) -> {
+            String message = input.getText().toString().trim();
+            if (TextUtils.isEmpty(message)) {
+                Toast.makeText(getContext(), "Message cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            sendNoticeToWaitlist(message);
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
+
+    private void sendNoticeToWaitlist(String message) {
+        FirebaseFirestore.getInstance()
+                .collection("events")
+                .document(eventId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    List<String> waitingListIds = (List<String>) snapshot.get("waitingList");
+                    if (waitingListIds == null || waitingListIds.isEmpty()) {
+                        waitingListIds = (List<String>) snapshot.get("waitlist");
+                    }
+                    if (waitingListIds == null || waitingListIds.isEmpty()) {
+                        Toast.makeText(getContext(), "No entrants on waitlist", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    RegistrationRepository registrationRepository = new RegistrationRepository();
+                    registrationRepository.sendNoticeToUsers(
+                            eventId,
+                            waitingListIds,
+                            "waitlist_notice",
+                            message,
+                            new RegistrationRepository.SimpleCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(getContext(),
+                                            "Notification sent to waiting list",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Toast.makeText(getContext(),
+                                            "Failed to notify waiting list: " + e.getMessage(),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                    );
+                })
+                .addOnFailureListener(e -> Toast.makeText(
+                        getContext(),
+                        "Failed to load event",
+                        Toast.LENGTH_SHORT
+                ).show());
     }
 
     /**
@@ -81,6 +147,9 @@ public class FragmentPreDrawWaitlist extends DialogFragment {
                     }
 
                     List<String> deviceIds = (List<String>) eventDoc.get("waitingList");
+                    if (deviceIds == null || deviceIds.isEmpty()) {
+                        deviceIds = (List<String>) eventDoc.get("waitlist");
+                    }
                     if (deviceIds == null || deviceIds.isEmpty()) {
                         Toast.makeText(getContext(), "No entrants on the waitlist",
                                 Toast.LENGTH_SHORT).show();

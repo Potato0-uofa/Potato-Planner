@@ -1,9 +1,12 @@
 package com.example.eventplanner;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,9 +78,9 @@ public class FragmentPostDrawWaitlist extends DialogFragment {
             });
         });
 
-        // Notification button placeholder
+        // US 02.07.03 - Notify all cancelled entrants
         view.findViewById(R.id.notification_button_canceled_waitlist).setOnClickListener(v ->
-                Toast.makeText(getContext(), "Notifications coming soon", Toast.LENGTH_SHORT).show());
+                showNotifyCancelledDialog());
 
         loadCancelledEntrants();
 
@@ -119,6 +123,76 @@ public class FragmentPostDrawWaitlist extends DialogFragment {
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Error loading event", Toast.LENGTH_SHORT).show());
+    }
+
+    private void showNotifyCancelledDialog() {
+        if (getContext() == null) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Notify Cancelled Entrants");
+        final EditText input = new EditText(getContext());
+        input.setHint("Enter message for all cancelled entrants");
+        builder.setView(input);
+        builder.setPositiveButton("Send", (dialog, which) -> {
+            String message = input.getText().toString().trim();
+            if (TextUtils.isEmpty(message)) {
+                Toast.makeText(getContext(), "Message cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            sendNoticeToCancelledEntrants(message);
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
+
+    private void sendNoticeToCancelledEntrants(String message) {
+        FirebaseFirestore.getInstance()
+                .collection("registrations")
+                .whereEqualTo("eventId", eventId)
+                .whereEqualTo("status", "cancelled")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    List<String> cancelledUserIds = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : snapshot) {
+                        String userId = doc.getString("userId");
+                        if (userId != null && !userId.trim().isEmpty()) {
+                            cancelledUserIds.add(userId);
+                        }
+                    }
+
+                    if (cancelledUserIds.isEmpty()) {
+                        Toast.makeText(getContext(), "No cancelled entrants found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    RegistrationRepository registrationRepository = new RegistrationRepository();
+                    registrationRepository.sendNoticeToUsers(
+                            eventId,
+                            cancelledUserIds,
+                            "cancelled_notice",
+                            message,
+                            new RegistrationRepository.SimpleCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(getContext(),
+                                            "Notification sent to cancelled entrants",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Toast.makeText(getContext(),
+                                            "Failed to notify cancelled entrants: " + e.getMessage(),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                    );
+                })
+                .addOnFailureListener(e -> Toast.makeText(
+                        getContext(),
+                        "Failed to load cancelled entrants",
+                        Toast.LENGTH_SHORT
+                ).show());
     }
 
     @Override

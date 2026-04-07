@@ -89,6 +89,7 @@ public class HomePage extends AppCompatActivity {
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         NotificationHelper.ensureChannel(this);
+        NotificationHelper.startGlobalListener(this);
         ensureNotificationPermission();
 
         findViewById(R.id.new_event_button_home).setOnClickListener(v -> {
@@ -273,9 +274,7 @@ public class HomePage extends AppCompatActivity {
 
                 if (userNotificationsEnabled) {
                     NotificationHelper.ensureChannel(HomePage.this);
-                    startSystemNotificationListener();
                 } else {
-                    stopSystemNotificationListener();
                     NotificationManagerCompat.from(HomePage.this).cancelAll();
                 }
             }
@@ -284,7 +283,6 @@ public class HomePage extends AppCompatActivity {
             public void onFailure(Exception e) {
                 // Keep default behavior on transient profile lookup failures.
                 userNotificationsEnabled = true;
-                startSystemNotificationListener();
             }
         });
     }
@@ -293,7 +291,6 @@ public class HomePage extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         savedCarouselPosition = carouselViewPager.getCurrentItem();
-        stopSystemNotificationListener();
         autoScrollHandler.removeCallbacks(autoScrollRunnable);
     }
 
@@ -306,109 +303,5 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
-    private void startSystemNotificationListener() {
-        if (!userNotificationsEnabled) {
-            stopSystemNotificationListener();
-            return;
-        }
-
-        if (registrationListener != null) {
-            registrationListener.remove();
-            registrationListener = null;
-        }
-
-        registrationListener = FirebaseFirestore.getInstance()
-                .collection("registrations")
-                .whereEqualTo("userId", deviceId)
-                .addSnapshotListener((snapshot, error) -> {
-                    if (error != null || snapshot == null) {
-                        return;
-                    }
-
-                    for (DocumentChange change : snapshot.getDocumentChanges()) {
-                        if (change.getType() == DocumentChange.Type.ADDED
-                                || change.getType() == DocumentChange.Type.MODIFIED) {
-                            maybeShowHeadsUp(change.getDocument());
-                        }
-                    }
-                });
-    }
-
-    private void stopSystemNotificationListener() {
-        if (registrationListener != null) {
-            registrationListener.remove();
-            registrationListener = null;
-        }
-    }
-
-    private void maybeShowHeadsUp(DocumentSnapshot doc) {
-        if (!userNotificationsEnabled) {
-            return;
-        }
-
-        String status = doc.getString("status");
-        if (status == null || !SYSTEM_NOTIFY_STATUSES.contains(status)) {
-            return;
-        }
-
-        Timestamp updatedAt = doc.getTimestamp("updatedAt");
-        long nowMark = updatedAt != null ? updatedAt.toDate().getTime() : System.currentTimeMillis();
-
-        SharedPreferences prefs = getSharedPreferences(PREFS_SYSTEM_NOTIFICATIONS, MODE_PRIVATE);
-        String key = "doc_" + doc.getId();
-        long seenMark = prefs.getLong(key, 0L);
-        if (nowMark <= seenMark) {
-            return;
-        }
-
-        String noticeMessage = doc.getString("lastNoticeMessage");
-        String eventId = doc.getString("eventId");
-        String title = buildTitleForStatus(status);
-        String message = (noticeMessage != null && !noticeMessage.trim().isEmpty())
-                ? noticeMessage
-                : "You have a new update for your event invitation.";
-
-        Intent tapIntent;
-        if ("invited".equals(status) || "private_waitlist_invited".equals(status) || "coorganizer_invited".equals(status)) {
-            tapIntent = new Intent(this, NotificationLogs.class);
-            tapIntent.putExtra("eventId", eventId);
-            tapIntent.putExtra("status", status);
-            tapIntent.putExtra("noticeMessage", noticeMessage);
-            tapIntent.putExtra("actionable", true);
-        } else {
-            tapIntent = new Intent(this, InvitationsActivity.class);
-        }
-        tapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        NotificationHelper.showHeadsUp(
-                this,
-                Math.abs(doc.getId().hashCode()),
-                title,
-                message,
-                tapIntent
-        );
-
-        prefs.edit().putLong(key, nowMark).apply();
-    }
-
-    private String buildTitleForStatus(String status) {
-        switch (status) {
-            case "invited":
-                return "You won the lottery";
-            case "private_waitlist_invited":
-                return "Private event invite";
-            case "coorganizer_invited":
-                return "Co-organizer invite";
-            case "accepted":
-                return "Invitation accepted";
-            case "declined":
-                return "Invitation declined";
-            case "cancelled":
-                return "Event registration update";
-            case "waitlisted":
-                return "Waitlist update";
-            default:
-                return "Event notification";
-        }
-    }
+    // Heads-up notifications are now managed globally by NotificationHelper.
 }

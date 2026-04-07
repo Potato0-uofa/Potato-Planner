@@ -29,67 +29,40 @@ public class EventRepository {
     private static final String COLLECTION_USERS = "users";
     private final FirebaseFirestore db;
 
-    /**
-     * Callback interface for fetching a list of events.
-     */
     public interface EventsCallback {
         void onSuccess(List<Events> events);
         void onFailure(Exception e);
     }
 
-    /**
-     * Callback interface for fetching a single event.
-     */
     public interface EventCallback {
         void onSuccess(Events event);
         void onFailure(Exception e);
     }
 
-    /**
-     * Callback interface for fetching a list of entrants.
-     */
     public interface EntrantsCallback {
         void onSuccess(List<Entrant> entrants);
         void onFailure(Exception e);
     }
 
-    /**
-     * Callback interface for successful and failed operations.
-     */
     public interface SimpleCallback {
         void onSuccess();
         void onFailure(Exception e);
     }
 
-    /**
-     * Callback interface for fetching the number of entrants on a waitlist.
-     */
     public interface CountCallback {
         void onSuccess(int count);
         void onFailure(Exception e);
     }
 
-    /**
-     * Callback interface for checking if a user is on a waitlist.
-     */
     public interface WaitlistStatusCallback {
         void onSuccess(boolean isOnWaitlist);
         void onFailure(Exception e);
     }
 
-    /**
-     * Initializes the repository with a Firestore instance.
-     */
     public EventRepository() {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    /**
-     * Creates a new event document in Firestore.
-     *
-     * @param event
-     * @param cb
-     */
     public void createEvent(@NonNull Events event, @NonNull SimpleCallback cb) {
         String id = db.collection(COLLECTION_EVENTS).document().getId();
         event.setEventId(id);
@@ -104,12 +77,6 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Fetches an event document from Firestore by its ID.
-     *
-     * @param eventId
-     * @param cb
-     */
     public void fetchEventById(@NonNull String eventId, @NonNull EventCallback cb) {
         db.collection(COLLECTION_EVENTS).document(eventId).get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -126,12 +93,6 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Fetches all open events from Firestore.
-     *
-     * @param
-     * @param cb
-     */
     public void fetchOpenEvents(@NonNull EventsCallback cb) {
         db.collection(COLLECTION_EVENTS).whereEqualTo("status", "open").get()
                 .addOnSuccessListener(snapshot -> {
@@ -150,12 +111,6 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Updates an event document in Firestore.
-     *
-     * @param event
-     * @param cb
-     */
     public void updateEvent(@NonNull Events event, @NonNull SimpleCallback cb) {
         if (event.getEventId() == null || event.getEventId().isEmpty()) {
             cb.onFailure(new IllegalArgumentException("eventId is required"));
@@ -166,24 +121,12 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Deletes an event document from Firestore.
-     *
-     * @param eventId
-     * @param cb
-     */
     public void deleteEvent(@NonNull String eventId, @NonNull SimpleCallback cb) {
         db.collection(COLLECTION_EVENTS).document(eventId).delete()
                 .addOnSuccessListener(unused -> cb.onSuccess())
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Fetches all events from Firestore.
-     *
-     * @param
-     * @param cb
-     */
     public void fetchAllEvents(@NonNull EventsCallback cb) {
         db.collection(COLLECTION_EVENTS).get()
                 .addOnSuccessListener(snapshot -> {
@@ -202,13 +145,6 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Adds a user to the waitingList of an event.
-     *
-     * @param eventId
-     * @param deviceId
-     * @param cb
-     */
     public void joinWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
         Map<String, Object> data = new HashMap<>();
         data.put("waitingList", FieldValue.arrayUnion(deviceId));
@@ -217,13 +153,6 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Removes a user from the waitingList of an event.
-     *
-     * @param eventId
-     * @param deviceId
-     * @param cb
-     */
     public void leaveWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
         Map<String, Object> data = new HashMap<>();
         data.put("waitingList", FieldValue.arrayRemove(deviceId));
@@ -232,13 +161,6 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Checks if a user is on the waitingList of an event.
-     *
-     * @param eventId
-     * @param deviceId
-     * @param cb
-     */
     public void isOnWaitingList(@NonNull String eventId, @NonNull String deviceId, @NonNull WaitlistStatusCallback cb) {
         db.collection(COLLECTION_EVENTS).document(eventId).get()
                 .addOnSuccessListener(snapshot -> {
@@ -256,12 +178,6 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Fetches all entrants for an event.
-     *
-     * @param eventId
-     * @param cb
-     */
     public void fetchWaitlistEntrants(@NonNull String eventId, @NonNull EntrantsCallback cb) {
         db.collection(COLLECTION_EVENTS).document(eventId).get().addOnSuccessListener(documentSnapshot -> {
             List<String> deviceIds = (List<String>) documentSnapshot.get("waitingList");
@@ -288,13 +204,6 @@ public class EventRepository {
         }).addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Fetches the number of entrants on the waitingList of an event.
-     *
-     * @param eventId
-     * @param cb
-     * @return
-     */
     public ListenerRegistration listenToWaitlistCount(@NonNull String eventId, @NonNull CountCallback cb) {
         return db.collection(COLLECTION_EVENTS).document(eventId)
                 .addSnapshotListener((snapshot, e) -> {
@@ -315,13 +224,6 @@ public class EventRepository {
                 });
     }
 
-    /**
-     * Adds a user as a co-organizer to an event.
-     *
-     * @param eventId
-     * @param deviceId
-     * @param cb
-     */
     public void addCoOrganizer(@NonNull String eventId, @NonNull String deviceId, @NonNull SimpleCallback cb) {
         Map<String, Object> data = new HashMap<>();
         data.put("coOrganizerIds", FieldValue.arrayUnion(deviceId));
@@ -330,13 +232,6 @@ public class EventRepository {
                 .addOnFailureListener(cb::onFailure);
     }
 
-    /**
-     * Updates the geolocationRequired field of an event.
-     *
-     * @param eventId
-     * @param geolocationRequired
-     * @param cb
-     */
     public void updateGeolocationRequired(@NonNull String eventId,
                                           boolean geolocationRequired,
                                           @NonNull SimpleCallback cb) {
@@ -388,6 +283,9 @@ public class EventRepository {
 
                     List<String> waitingList = (List<String>) snapshot.get("waitingList");
                     if (waitingList == null || waitingList.isEmpty()) {
+                        waitingList = (List<String>) snapshot.get("waitlist");
+                    }
+                    if (waitingList == null || waitingList.isEmpty()) {
                         cb.onFailure(new Exception("No entrants on the waiting list"));
                         return;
                     }
@@ -417,6 +315,9 @@ public class EventRepository {
                     db.runTransaction(transaction -> {
                         DocumentSnapshot freshSnap = transaction.get(eventRef);
                         List<String> currentWaitlist = (List<String>) freshSnap.get("waitingList");
+                        if (currentWaitlist == null || currentWaitlist.isEmpty()) {
+                            currentWaitlist = (List<String>) freshSnap.get("waitlist");
+                        }
                         List<String> currentPending = (List<String>) freshSnap.get("pendingEntrants");
                         if (currentWaitlist == null) currentWaitlist = new ArrayList<>();
                         if (currentPending == null) currentPending = new ArrayList<>();
@@ -429,6 +330,7 @@ public class EventRepository {
                         }
 
                         transaction.update(eventRef, "waitingList", currentWaitlist);
+                        transaction.update(eventRef, "waitlist", currentWaitlist);
                         transaction.update(eventRef, "pendingEntrants", currentPending);
                         return null;
                     }).addOnSuccessListener(unused -> {
